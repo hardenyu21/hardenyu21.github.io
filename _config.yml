@@ -81,7 +81,7 @@ analytics:
 # Site Author
 author:
   name             : "Yu Huang"
-  avatar           : "images/profile.png"
+  avatar           : "profile.png"
   bio              : "MS student in HKU"
   location         : "Hong Kong, CN"
   employer         : #"The University of Hong Kong"
