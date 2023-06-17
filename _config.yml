@@ -84,38 +84,38 @@ author:
   avatar           : "profile.png"
   bio              : "MS student in HKU"
   location         : "Hong Kong, CN"
-  employer         : "The University of Hong Kong"
-  pubmed           : "https://www.ncbi.nlm.nih.gov/pubmed/?term=john+snow"
-  googlescholar    : "http://yourfullgooglescholarurl.com"
+  employer         : #"The University of Hong Kong"
+  #pubmed           : "https://www.ncbi.nlm.nih.gov/pubmed/?term=john+snow"
+  #googlescholar    : "http://yourfullgooglescholarurl.com"
   email            :  hardenyu221@gmail.com
   researchgate     :  # example: "https://www.researchgate.net/profile/yourprofile"
-  uri              :
-  bitbucket        :
-  codepen          :
-  dribbble         :
-  flickr           :
-  facebook         :
-  foursquare       :
-  github           : "https://github.com/hardenyu21"
-  google_plus      :
-  keybase          :
-  instagram        : "https://www.instagram.com/hardenyu221"
-  impactstory      : #"https://profiles.impactstory.org/u/xxxx-xxxx-xxxx-xxxx"
-  lastfm           :
-  linkedin         : "https://www.linkedin.com/in/yu-huang-9b17a8263/"
-  orcid            : "http://orcid.org/yourorcidurl"
-  pinterest        :
-  soundcloud       :
-  stackoverflow    : # http://stackoverflow.com/users/123456/username
-  steam            :
-  tumblr           :
-  twitter          : "https://twitter.com/hardenyu221"
-  vine             :
-  weibo            :
-  xing             :
-  youtube          : "https://www.youtube.com/channel/UC-lKz9KMk34w7W6EzJfhNJA"
-  wikipedia        :
-  bilibili         : "https://space.bilibili.com/384516205?spm_id_from=333.1007.0.0"
+  #uri              :
+  #bitbucket        :
+  #codepen          :
+  #dribbble         :
+  #flickr           :
+  #facebook         :
+  #foursquare       :
+  github           : https://github.com/hardenyu21
+  #google_plus      :
+  #keybase          :
+  instagram        : https://www.instagram.com/hardenyu221
+  #impactstory      : #"https://profiles.impactstory.org/u/xxxx-xxxx-xxxx-xxxx"
+  #lastfm           :
+  linkedin         : https://www.linkedin.com/in/yu-huang-9b17a8263
+  #orcid            : "http://orcid.org/yourorcidurl"
+  #pinterest        :
+  #soundcloud       :
+  #stackoverflow    : # http://stackoverflow.com/users/123456/username
+  #steam            :
+  #tumblr           :
+  twitter          : https://twitter.com/hardenyu221
+  #vine             :
+  #weibo            :
+  #xing             :
+  youtube          : https://www.youtube.com/channel/UC-lKz9KMk34w7W6EzJfhNJA
+  #wikipedia        :
+  bilibili         : https://space.bilibili.com/384516205?spm_id_from=333.1007.0.0
 
 # Reading Files
 include:
