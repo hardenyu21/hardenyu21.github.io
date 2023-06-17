@@ -81,7 +81,7 @@ analytics:
 # Site Author
 author:
   name             : "Yu Huang"
-  avatar           : "profile.png"
+  avatar           : "images/profile.png"
   bio              : "MS student in HKU"
   location         : "Hong Kong, CN"
   employer         : #"The University of Hong Kong"
@@ -113,7 +113,7 @@ author:
   #vine             :
   #weibo            :
   #xing             :
-  youtube          : "UC-lKz9KMk34w7W6EzJfhNJA"
+  youtube          : #"UC-lKz9KMk34w7W6EzJfhNJA"
   #wikipedia        :
   #bilibili         : https://space.bilibili.com/384516205?spm_id_from=333.1007.0.0
 
