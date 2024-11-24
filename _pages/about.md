@@ -8,7 +8,7 @@ redirect_from:
   - /about.html
 ---
 
-I am a MS student at Department of Statistics and Actuarial Science and Department of Computer Science, Faculty of Science and Engineering, HKU. Before joining HKU, I received my bachelor degree of electronic information engineering from the Excellence class, School of Microelectronics and Communication Engineering, Chongqing University, where I worked with Prof. Xin Jian.
+I am a MPhil Student at AI Thrust, Information Hub from The HongKong University of Science and Technology (Guangzhou), supervised by Prof.Xuming Hu. Before that, I was a MS student at Department of Statistics and Actuarial Science and Department of Computer Science, Faculty of Science and Engineering, HKU. Before joining HKU, I received my bachelor degree of electronic information engineering from the Excellence class, School of Microelectronics and Communication Engineering, Chongqing University, where I worked with Prof. Xin Jian.
 
 <!--
 A data-driven personal website
