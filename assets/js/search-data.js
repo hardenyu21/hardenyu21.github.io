@@ -384,7 +384,10 @@ ninja.data = [{
           description: "",
           section: "Books",handler: () => {
               window.location.href = "/books/the_godfather/";
-            },},{id: "news-start-the-life-in-hkust-gz-supervised-by-xuming-hu",
+            },},{id: "news-tada-gradudated-from-hku",
+          title: ':tada: Gradudated from HKU',
+          description: "",
+          section: "News",},{id: "news-start-the-life-in-hkust-gz-supervised-by-xuming-hu",
           title: 'Start the life in HKUST(GZ), supervised by Xuming Hu',
           description: "",
           section: "News",},{id: "projects-project-1",
