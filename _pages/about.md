@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href='#'>Affiliations</a>. Address. Contacts. Motto. Etc.
+subtitle: 
 
 profile:
   align: right
@@ -26,4 +26,4 @@ latest_posts:
 
 I am a MPhil Student at **AI Thrust**, Information Hub from **The HongKong University of Science and Technology (Guangzhou)**, supervised by Prof.[Xuming Hu](https://xuminghu.github.io/), and I am also worked with Prof.[Yi R. (May) Fung](https://mayrfung.github.io/). My research lies on the **Privacy and Security of AI** models, with a recent focus on LLMs.
 
-Before that, I Got my master degree on ##Data Science## from Department of Statistics and Actuarial Science and Department of Computer Science, Faculty of Science and Engineering, ##HKU##. I received my bachelor degree of **Electronic Information Engineering** from the Excellence class, School of Microelectronics and Communication Engineering, Chongqing University, where I worked with Prof.Xin Jian. 
+Before that, I Got my master degree on **Data Science** from Department of Statistics and Actuarial Science and Department of Computer Science, Faculty of Science and Engineering, **HKU**. I received my bachelor degree of **Electronic Information Engineering** from the Excellence class, School of Microelectronics and Communication Engineering, Chongqing University, where I worked with Prof.Xin Jian. 
