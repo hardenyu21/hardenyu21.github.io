@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-Start the life in **HKUST(GZ)**, supervised by Xuming Hu
+:smile: Start the life in **HKUST(GZ)**, supervised by Xuming Hu

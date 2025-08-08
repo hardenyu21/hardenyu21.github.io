@@ -48,7 +48,7 @@ scholar_userid: _E8sHEMAAAAJ # your Google Scholar ID https://scholar.google.com
 # x_username: # your X handle
 # youtube_id: # your youtube channel id (youtube.com/@<youtube_id>)
 # zotero_username: # your zotero username
-custom_social: # can be any name here other than the ones already defined above
-  logo: https://www.google.com/url?sa=i&url=https%3A%2F%2Fcommons.wikimedia.org%2Fwiki%2FFile%3AX_logo.jpg&psig=AOvVaw3dHI72FKNKw4Vu31qtxqBc&ust=1754732259844000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOCY8Zn1-o4DFQAAAAAdAAAAABAE # can be png, svg, jpg
-  title: X
-  url: https://x.com/hardenyu221
+#custom_social: # can be any name here other than the ones already defined above
+#  logo: https://www.google.com/url?sa=i&url=https%3A%2F%2Fcommons.wikimedia.org%2Fwiki%2FFile%3AX_logo.jpg&psig=AOvVaw3dHI72FKNKw4Vu31qtxqBc&ust=1754732259844000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOCY8Zn1-o4DFQAAAAAdAAAAABAE # can be png, svg, jpg
+#  title: X
+#  url: https://x.com/hardenyu221
