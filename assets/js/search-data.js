@@ -387,8 +387,8 @@ ninja.data = [{
             },},{id: "news-tada-gradudated-from-hku",
           title: ':tada: Gradudated from HKU',
           description: "",
-          section: "News",},{id: "news-start-the-life-in-hkust-gz-supervised-by-xuming-hu",
-          title: 'Start the life in HKUST(GZ), supervised by Xuming Hu',
+          section: "News",},{id: "news-smile-start-the-life-in-hkust-gz-supervised-by-xuming-hu",
+          title: ':smile: Start the life in HKUST(GZ), supervised by Xuming Hu',
           description: "",
           section: "News",},{id: "projects-project-1",
           title: 'project 1',
@@ -469,13 +469,6 @@ ninja.data = [{
         section: 'Socials',
         handler: () => {
           window.open("https://scholar.google.com/citations?user=_E8sHEMAAAAJ", "_blank");
-        },
-      },{
-        id: 'social-custom_social',
-        title: 'Custom_social',
-        section: 'Socials',
-        handler: () => {
-          window.open("https://x.com/hardenyu221", "_blank");
         },
       },{
       id: 'light-theme',
