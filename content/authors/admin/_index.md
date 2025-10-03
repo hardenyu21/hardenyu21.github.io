@@ -37,13 +37,13 @@ profiles:
     url: 'mailto:hardenyu221@gmail.com'
     label: E-mail Me
   - icon: brands/x
-    url: https://twitter.com/AlexAIResearch
+    url: https://x.com/hardenyu221
   - icon: brands/github
     url: https://github.com/hardenyu21
   - icon: brands/linkedin
-    url: https://www.linkedin.com/in/alexjohnsonai/
+    url: https://www.linkedin.com/in/yu-huang-9b17a8263/
   - icon: academicons/google-scholar
-    url: https://scholar.google.com/citations?user=alexjohnson
+    url: https://scholar.google.com/citations?user=_E8sHEMAAAAJ&hl=en
   # - icon: academicons/orcid
   #   url: https://orcid.org/0000-0002-1825-0097
 
@@ -52,10 +52,10 @@ interests:
   - LLM, MLLM
 
 education:
-  - area: MPhil Artificially Intelligence 
+  - area: MPhil Artificially Intelligence
     institution: HKUST(GZ)
-    date_start: 2024-09-01
-    date_end: 2026-07-01
+    date_start: '2024-09-01'
+    date_end: '2026-07-01'
     # summary: |
     #   Thesis on _Scaling Laws for Neural Language Models_. Supervised by Prof. Andrew Ng. Published 5 papers in NeurIPS and ICML, with 2 best paper awards.
     # button:
@@ -63,16 +63,16 @@ education:
     #   url: 'https://example.com/thesis.pdf'
   - area: MS Data Science
     institution: HKU
-    date_start: 2022-09-01
-    date_end: 2024-07-24
+    date_start: '2022-09-01'
+    date_end: '2024-07-24'
     # summary: |
     #   GPA: 4.0/4.0
 
     #   Specialized in machine learning and robotics.
   - area: BEng Electronic Information Engineering
     institution: Chongqing University
-    date_start: 2018-09-07
-    date_end: 2022-07-01
+    date_start: '2018-09-07'
+    date_end: '2022-07-01'
     # summary: |
     #   GPA: 3.9/4.0
 
