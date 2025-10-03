@@ -13,3 +13,7 @@ authors:
 ---
 
 I successfully graduated from The University of Hong Kong (HKU) with a Master's degree in Data Science. This marks the end of an amazing journey and the beginning of a new chapter!
+
+![The Red Wall](graduation1.jpg "HKU Red Wall")
+
+![212th Congregation](graduation2.jpg "Class of 2024")
