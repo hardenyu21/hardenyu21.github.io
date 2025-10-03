@@ -164,5 +164,9 @@ education:
 #     summary: |
 #       Recognized for contributions to scaling laws in deep learning.
 
-about: I am a Second-year MPhil student in HKUST(GZ), where I was advised by Prof. [Xuming Hu](https://xuminghu.github.io/). Before that, I have got a master degree in **Data Science** from The University of Hong Kong (**HKU**) and a bachelor degree in **Electronic Information Engineering** from Chongqing University (**CQU**).
 ---
+
+## About Me
+
+I am a Second-year MPhil student in HKUST(GZ), where I was advised by Prof. [Xuming Hu](https://xuminghu.github.io/). Before that, I have got a master degree in **Data Science** from The University of Hong Kong (**HKU**) and a bachelor degree in **Electronic Information Engineering** from Chongqing University (**CQU**).
+
