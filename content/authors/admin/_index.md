@@ -54,8 +54,8 @@ interests:
 education:
   - area: MPhil Artificially Intelligence 
     institution: HKUST(GZ)
-    date_start: 2024-09
-    date_end: 2026-07
+    date_start: 2024-09-01
+    date_end: 2026-07-01
     # summary: |
     #   Thesis on _Scaling Laws for Neural Language Models_. Supervised by Prof. Andrew Ng. Published 5 papers in NeurIPS and ICML, with 2 best paper awards.
     # button:
@@ -63,16 +63,16 @@ education:
     #   url: 'https://example.com/thesis.pdf'
   - area: MS Data Science
     institution: HKU
-    date_start: 2022-09
-    date_end: 2024-07
+    date_start: 2022-09-01
+    date_end: 2024-07-24
     # summary: |
     #   GPA: 4.0/4.0
 
     #   Specialized in machine learning and robotics.
   - area: BEng Electronic Information Engineering
     institution: Chongqing University
-    date_start: 2018-09
-    date_end: 2022-07
+    date_start: 2018-09-07
+    date_end: 2022-07-01
     # summary: |
     #   GPA: 3.9/4.0
 
