@@ -28,7 +28,7 @@ sections:
       background:
         # Matrix动画背景通过JavaScript动态添加，移除静态图片和背景色
   - block: collection
-    id: News
+    id: news
     content:
       title: News
       subtitle: ''
@@ -64,7 +64,7 @@ sections:
     design:
       columns: '1'
   - block: collection
-    id: Publications
+    id: publications
     content:
       title: Publications
       filters:
