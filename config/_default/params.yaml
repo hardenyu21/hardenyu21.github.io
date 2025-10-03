@@ -6,7 +6,7 @@
 # Appearance
 appearance:
   mode: system
-  color: indigo
+  color: emerald
 
 # SEO
 marketing:
@@ -30,7 +30,7 @@ marketing:
 header:
   navbar:
     enable: true
-    block: 'navbar'
+    blox: 'navbar'
     fixed_to_top: true
     show_search: true
     show_theme_chooser: true
@@ -58,3 +58,7 @@ features:
     enable: false
   privacy_pack:
     enable: false
+
+# meta
+meta:
+  favicon: false
