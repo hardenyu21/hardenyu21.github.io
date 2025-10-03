@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0d1117;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        #matrix-canvas {
+            display: block;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1117 100%);
+        }
+        .matrix-display {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+            padding: 0;
+        }
+    </style>
+<style type="text/css">
+		[mt_node=trans_loading]::after{
+		content: '';
+		vertical-align: middle !important;
+		width: 1em !important;
+		height: 1em !important;
+		display: inline-block !important;
+		margin: 0 4px !important;
+		border: 2px rgba(0, 0, 0, 0.25) solid !important;
+		border-top: 2px rgba(0, 0, 0, 1) solid !important;
+		border-radius: 50% !important;
+		padding: 0 !important;
+		-webkit-animation: immersive-translate-loading-animation 0.6s infinite linear !important;
+		animation: immersive-translate-loading-animation 0.6s infinite linear !important;
+		}
+
+		@keyframes immersive-translate-loading-animation {
+			from {
+				transform: rotate(0deg,0deg,0deg);
+			}
+			to {
+				transform: rotate(359deg,0deg,0deg);
+			}
+		}
+	</style><style type="text/css">[mt_node^=trans]{display: none !important;}</style></head>
+<body>
+    <canvas id="matrix-canvas" width="2912" height="1560" style="width: 1456px; height: 780px;"></canvas>
+    <div class="matrix-display" id="matrix-info">
+        <div>Matrix A:</div>
+        <div id="matrix-values">
+                    <div style="font-family: 'Courier New', monospace; font-size: 15px; line-height: 1.3;">
+                        <div style="margin-bottom: 10px; color: rgba(255,255,255,0.6); font-size: 13px;">
+                            Reflection Transform
+                        </div>
+                        <div style="color: rgba(255,255,255,0.5);">
+                            <div style="margin-bottom: 3px; display: flex; align-items: center;">
+                                <span>⎡</span>
+                                <span style="display: inline-block; width: 45px; text-align: right;">0.65</span>
+                                <span style="display: inline-block; width: 60px; text-align: right;">0.55</span>
+                                <span>⎤</span>
+                            </div>
+                            <div style="margin-bottom: 8px; display: flex; align-items: center;">
+                                <span>⎣</span>
+                                <span style="display: inline-block; width: 45px; text-align: right;">-0.55</span>
+                                <span style="display: inline-block; width: 60px; text-align: right;">0.82</span>
+                                <span>⎦</span>
+                            </div>
+                        </div>
+                        <div style="font-size: 12px; color: rgba(255,255,255,0.4);">
+                            <div>det(A) = 0.838</div>
+                            <div style="margin-top: 3px;">
+                                preserves orientation
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    </div>
+    
+    <script>
+        class MatrixTransformAnimation {
+            constructor() {
+                this.canvas = document.getElementById('matrix-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.matrixInfo = document.getElementById('matrix-values');
+                
+                this.resize();
+                this.init();
+                this.animate();
+                
+                window.addEventListener('resize', () => this.resize());
+            }
+            
+            resize() {
+                // 提高canvas分辨率以获得更清晰的显示
+                const dpr = window.devicePixelRatio || 1;
+                this.canvas.width = window.innerWidth * dpr;
+                this.canvas.height = window.innerHeight * dpr;
+                this.canvas.style.width = window.innerWidth + 'px';
+                this.canvas.style.height = window.innerHeight + 'px';
+                this.ctx.scale(dpr, dpr);
+                
+                this.width = window.innerWidth;
+                this.height = window.innerHeight;
+                
+                // 将原点向右下方偏移，避免成为过于突出的视觉重心
+                this.centerX = this.width / 2 + this.width * 0.3;   // 向右偏移30%
+                this.centerY = this.height / 2 + this.height * 0.4;  // 向下偏移40%
+                this.scale = Math.min(this.width, this.height) / 30;  // 进一步调小scale，扩大显示范围
+                
+                // 重新创建网格以适应新尺寸
+                if (this.gridLines) {
+                    this.gridLines = this.createGridLines();
+                }
+            }
+            
+            init() {
+                this.time = 0;
+                this.animationSpeed = 0.01;
+                
+                // 定义几个经典的线性变换序列
+                this.transformations = [
+                    { name: "Identity", matrix: [1, 0, 0, 1], duration: 2 },
+                    { name: "Rotation", matrix: [Math.cos(Math.PI/4), -Math.sin(Math.PI/4), Math.sin(Math.PI/4), Math.cos(Math.PI/4)], duration: 3 },
+                    { name: "Scale", matrix: [1.5, 0, 0, 0.7], duration: 2 },
+                    { name: "Shear", matrix: [1, 0.5, 0, 1], duration: 2 },
+                    { name: "Reflection", matrix: [-1, 0, 0, 1], duration: 2 },
+                    { name: "Complex", matrix: [0.8, 0.6, -0.6, 0.8], duration: 3 }
+                ];
+                
+                this.currentTransformIndex = 0;
+                this.transitionProgress = 0;
+                this.totalDuration = this.transformations.reduce((sum, t) => sum + t.duration, 0);
+                
+                // 创建一些测试向量 - 经典的基向量和测试向量
+                this.vectors = [
+                    { x: 2, y: 1, color: '#ff6b6b' },    // 红色向量
+                    { x: -1, y: 2, color: '#4ecdc4' },   // 青色向量  
+                    { x: 3, y: -1.5, color: '#45b7d1' }, // 蓝色向量
+                    { x: -1.5, y: -1, color: '#f9ca24' } // 黄色向量
+                ];
+                
+                this.gridLines = this.createGridLines();
+            }
+            
+            createGridLines() {
+                const lines = [];
+                // 动态计算网格范围，确保铺满整个屏幕
+                const rangeX = Math.ceil(this.width / this.scale) + 2;
+                const rangeY = Math.ceil(this.height / this.scale) + 2;
+                
+                // 垂直线
+                for (let x = -rangeX; x <= rangeX; x++) {
+                    lines.push({
+                        start: { x: x, y: -rangeY },
+                        end: { x: x, y: rangeY },
+                        isAxis: x === 0
+                    });
+                }
+                
+                // 水平线
+                for (let y = -rangeY; y <= rangeY; y++) {
+                    lines.push({
+                        start: { x: -rangeX, y: y },
+                        end: { x: rangeX, y: y },
+                        isAxis: y === 0
+                    });
+                }
+                
+                return lines;
+            }
+            
+            getCurrentTransformation() {
+                const cycle = (this.time * this.animationSpeed) % this.totalDuration;
+                let elapsed = 0;
+                
+                for (let i = 0; i < this.transformations.length; i++) {
+                    const transform = this.transformations[i];
+                    if (cycle <= elapsed + transform.duration) {
+                        const progress = (cycle - elapsed) / transform.duration;
+                        const nextIndex = (i + 1) % this.transformations.length;
+                        
+                        // 插值计算当前变换矩阵
+                        const current = transform.matrix;
+                        const next = this.transformations[nextIndex].matrix;
+                        
+                        // 使用平滑的缓动函数
+                        const t = this.smoothStep(progress);
+                        
+                        return {
+                            matrix: [
+                                this.lerp(current[0], next[0], t),
+                                this.lerp(current[1], next[1], t),
+                                this.lerp(current[2], next[2], t),
+                                this.lerp(current[3], next[3], t)
+                            ],
+                            name: transform.name,
+                            progress: progress
+                        };
+                    }
+                    elapsed += transform.duration;
+                }
+                
+                return { matrix: [1, 0, 0, 1], name: "Identity", progress: 0 };
+            }
+            
+            smoothStep(t) {
+                return t * t * (3 - 2 * t);
+            }
+            
+            lerp(a, b, t) {
+                return a + (b - a) * t;
+            }
+            
+            applyMatrix(x, y, matrix) {
+                return {
+                    x: matrix[0] * x + matrix[1] * y,
+                    y: matrix[2] * x + matrix[3] * y
+                };
+            }
+            
+            worldToScreen(x, y) {
+                return {
+                    x: this.centerX + x * this.scale,
+                    y: this.centerY - y * this.scale  // Y轴翻转
+                };
+            }
+            
+            drawGrid(matrix) {
+                this.ctx.save();
+                
+                this.gridLines.forEach(line => {
+                    const start = this.applyMatrix(line.start.x, line.start.y, matrix);
+                    const end = this.applyMatrix(line.end.x, line.end.y, matrix);
+                    
+                    const screenStart = this.worldToScreen(start.x, start.y);
+                    const screenEnd = this.worldToScreen(end.x, end.y);
+                    
+                    // 更清晰锐利的线条设置
+                    this.ctx.strokeStyle = line.isAxis ? 
+                        'rgba(255, 255, 255, 0.35)' : 
+                        'rgba(255, 255, 255, 0.12)';
+                    this.ctx.lineWidth = line.isAxis ? 2.0 : 1.2;
+                    
+                    // 确保线条完全锐利 - 精确像素对齐
+                    this.ctx.beginPath();
+                    const startX = Math.round(screenStart.x) + (this.ctx.lineWidth % 2 === 1 ? 0.5 : 0);
+                    const startY = Math.round(screenStart.y) + (this.ctx.lineWidth % 2 === 1 ? 0.5 : 0);
+                    const endX = Math.round(screenEnd.x) + (this.ctx.lineWidth % 2 === 1 ? 0.5 : 0);
+                    const endY = Math.round(screenEnd.y) + (this.ctx.lineWidth % 2 === 1 ? 0.5 : 0);
+                    
+                    this.ctx.moveTo(startX, startY);
+                    this.ctx.lineTo(endX, endY);
+                    this.ctx.stroke();
+                });
+                
+                this.ctx.restore();
+            }
+            
+            drawVector(vector, matrix) {
+                const transformed = this.applyMatrix(vector.x, vector.y, matrix);
+                const screen = this.worldToScreen(transformed.x, transformed.y);
+                const origin = this.worldToScreen(0, 0);
+                
+                this.ctx.save();
+                
+                // 恢复有色彩的向量，调整透明度
+                const alpha = 0.25; // 提高透明度使其可见
+                
+                // 直接解析十六进制颜色
+                const hexMatch = vector.color.match(/^#([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+                if (hexMatch) {
+                    const r = parseInt(hexMatch[1], 16);
+                    const g = parseInt(hexMatch[2], 16);
+                    const b = parseInt(hexMatch[3], 16);
+                    
+                    this.ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                    this.ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha * 1.2})`;
+                } else {
+                    // 备选方案，使用白色
+                    this.ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+                    this.ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 1.2})`;
+                }
+                this.ctx.lineWidth = 2.5;
+                this.ctx.lineCap = 'butt';   // 最锐利的端点
+                this.ctx.lineJoin = 'miter'; // 最锐利的连接
+                
+                // 绘制向量箭头主体 - 精确像素对齐
+                this.ctx.beginPath();
+                const originX = Math.round(origin.x) + (this.ctx.lineWidth % 2 === 1 ? 0.5 : 0);
+                const originY = Math.round(origin.y) + (this.ctx.lineWidth % 2 === 1 ? 0.5 : 0);
+                const screenX = Math.round(screen.x) + (this.ctx.lineWidth % 2 === 1 ? 0.5 : 0);
+                const screenY = Math.round(screen.y) + (this.ctx.lineWidth % 2 === 1 ? 0.5 : 0);
+                
+                this.ctx.moveTo(originX, originY);
+                this.ctx.lineTo(screenX, screenY);
+                this.ctx.stroke();
+                
+                // 箭头头部 - 锐利精确绘制
+                const angle = Math.atan2(screen.y - origin.y, screen.x - origin.x);
+                const headLength = 15;
+                const headAngle = Math.PI / 5;
+                
+                this.ctx.beginPath();
+                this.ctx.moveTo(screenX, screenY);
+                this.ctx.lineTo(
+                    Math.round(screen.x - headLength * Math.cos(angle - headAngle)) + (this.ctx.lineWidth % 2 === 1 ? 0.5 : 0),
+                    Math.round(screen.y - headLength * Math.sin(angle - headAngle)) + (this.ctx.lineWidth % 2 === 1 ? 0.5 : 0)
+                );
+                this.ctx.moveTo(screenX, screenY);
+                this.ctx.lineTo(
+                    Math.round(screen.x - headLength * Math.cos(angle + headAngle)) + (this.ctx.lineWidth % 2 === 1 ? 0.5 : 0),
+                    Math.round(screen.y - headLength * Math.sin(angle + headAngle)) + (this.ctx.lineWidth % 2 === 1 ? 0.5 : 0)
+                );
+                this.ctx.stroke();
+                
+                // 向量端点
+                this.ctx.beginPath();
+                this.ctx.arc(screenX, screenY, 5, 0, Math.PI * 2);
+                this.ctx.fill();
+                
+                this.ctx.restore();
+            }
+            
+            drawUnitCircle(matrix) {
+                const segments = 80; // 增加分段数以获得更平滑的圆
+                this.ctx.save();
+                
+                // 更清晰锐利的单位圆设置
+                this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
+                this.ctx.lineWidth = 2.0;
+                this.ctx.lineCap = 'butt';  // 使用最锐利的端点样式
+                this.ctx.lineJoin = 'miter'; // 使用最锐利的连接样式
+                
+                this.ctx.beginPath();
+                let first = true;
+                
+                for (let i = 0; i <= segments; i++) {
+                    const angle = (i / segments) * Math.PI * 2;
+                    const x = Math.cos(angle);
+                    const y = Math.sin(angle);
+                    
+                    const transformed = this.applyMatrix(x, y, matrix);
+                    const screen = this.worldToScreen(transformed.x, transformed.y);
+                    
+                    // 精确像素对齐以获得最锐利的线条
+                    const roundedX = Math.round(screen.x) + (this.ctx.lineWidth % 2 === 1 ? 0.5 : 0);
+                    const roundedY = Math.round(screen.y) + (this.ctx.lineWidth % 2 === 1 ? 0.5 : 0);
+                    
+                    if (first) {
+                        this.ctx.moveTo(roundedX, roundedY);
+                        first = false;
+                    } else {
+                        this.ctx.lineTo(roundedX, roundedY);
+                    }
+                }
+                
+                this.ctx.stroke();
+                this.ctx.restore();
+            }
+            
+            updateMatrixDisplay(matrix, name) {
+                const [a, b, c, d] = matrix;
+                
+                // 使用固定宽度格式，使用CSS固定宽度而不是空格填充
+                const formatNumber = (num) => {
+                    return num.toFixed(2);
+                };
+                
+                const det = (a * d - b * c);
+                const detStr = det.toFixed(3);
+                
+                this.matrixInfo.innerHTML = `
+                    <div style="font-family: 'Courier New', monospace; font-size: 15px; line-height: 1.3;">
+                        <div style="margin-bottom: 10px; color: rgba(255,255,255,0.6); font-size: 13px;">
+                            ${name} Transform
+                        </div>
+                        <div style="color: rgba(255,255,255,0.5);">
+                            <div style="margin-bottom: 3px; display: flex; align-items: center;">
+                                <span>⎡</span>
+                                <span style="display: inline-block; width: 45px; text-align: right;">${formatNumber(a)}</span>
+                                <span style="display: inline-block; width: 60px; text-align: right;">${formatNumber(b)}</span>
+                                <span>⎤</span>
+                            </div>
+                            <div style="margin-bottom: 8px; display: flex; align-items: center;">
+                                <span>⎣</span>
+                                <span style="display: inline-block; width: 45px; text-align: right;">${formatNumber(c)}</span>
+                                <span style="display: inline-block; width: 60px; text-align: right;">${formatNumber(d)}</span>
+                                <span>⎦</span>
+                            </div>
+                        </div>
+                        <div style="font-size: 12px; color: rgba(255,255,255,0.4);">
+                            <div>det(A) = ${detStr}</div>
+                            <div style="margin-top: 3px;">
+                                ${det > 0 ? 'preserves orientation' : det < 0 ? 'reverses orientation' : 'singular (det=0)'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            animate() {
+                this.time++;
+                
+                // 清除画布 - 完全清除，不使用半透明覆盖
+                this.ctx.fillStyle = '#0d1117';
+                this.ctx.fillRect(0, 0, this.width, this.height);
+                
+                // 获取当前变换
+                const current = this.getCurrentTransformation();
+                
+                // 绘制网格
+                this.drawGrid(current.matrix);
+                
+                // 绘制单位圆的变换
+                this.drawUnitCircle(current.matrix);
+                
+                // 绘制向量
+                this.vectors.forEach(vector => {
+                    this.drawVector(vector, current.matrix);
+                });
+                
+                // 更新矩阵显示
+                this.updateMatrixDisplay(current.matrix, current.name);
+                
+                // 添加数学装饰元素
+                this.drawMathDecorations();
+                
+                requestAnimationFrame(() => this.animate());
+            }
+            
+            drawMathDecorations() {
+                this.ctx.save();
+                // 极低透明度的数学符号装饰
+                this.ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+                this.ctx.font = '16px "Times New Roman", serif';
+                
+                // 线性代数相关的数学符号，每个都有明确含义
+                const mathSymbols = [
+                    { symbol: 'λ', meaning: 'eigenvalue' },      // 特征值
+                    { symbol: 'det', meaning: 'determinant' },   // 行列式  
+                    { symbol: 'tr', meaning: 'trace' },          // 矩阵的迹
+                    { symbol: '⊗', meaning: 'tensor product' },  // 张量积
+                    { symbol: '‖⋅‖', meaning: 'norm' },          // 范数
+                    { symbol: '⟨⋅,⋅⟩', meaning: 'inner product' }, // 内积
+                    { symbol: '∈', meaning: 'element of' },       // 属于
+                    { symbol: 'ℝⁿ', meaning: 'n-dim space' }     // n维实数空间
+                ];
+                
+                // 分散放置在屏幕角落，避开主要视觉区域
+                const positions = [
+                    { x: 30, y: this.height - 40 },   // 左下
+                    { x: 60, y: this.height - 80 },   
+                    { x: this.width - 100, y: 40 },   // 右上
+                    { x: this.width - 140, y: 80 },   
+                    { x: this.width - 80, y: this.height - 40 },  // 右下
+                    { x: this.width - 120, y: this.height - 80 },
+                    { x: 40, y: 50 },                 // 左上
+                    { x: 80, y: 90 }
+                ];
+                
+                mathSymbols.forEach((item, i) => {
+                    if (i < positions.length) {
+                        const pos = positions[i];
+                        this.ctx.fillText(item.symbol, pos.x, pos.y);
+                    }
+                });
+                
+                this.ctx.restore();
+            }
+        }
+        
+        // 启动矩阵变换动画
+        const matrixAnim = new MatrixTransformAnimation();
+        
+        // 清理函数
+        window.addEventListener('beforeunload', () => {
+            // 清理动画
+        });
+    </script>
+
+</body><volc-translate style="position: fixed; top: 0px; left: 0px; width: 0px; height: 0px; z-index: 2147483647;"></volc-translate></html>
