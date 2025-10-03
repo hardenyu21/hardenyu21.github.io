@@ -76,7 +76,7 @@ sections:
       columns: 2
   - block: collection
     content:
-      title: Recent Publications
+      title: Full list of Publications
       text: ''
       filters:
         folders:
