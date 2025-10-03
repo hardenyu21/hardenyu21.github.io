@@ -2,8 +2,8 @@
 title: 'KnowMT-Bench: Benchmarking Knowledge-Intensive Long-Form Question Answering in Multi-Turn Dialogues'
 authors:
   - Junhao Chen
-  - Yu Huang
   - admin
+  - Siyuan Li
   - Rui Yao
   - Hanqian Li
   - Hanyu Zhang
@@ -23,7 +23,7 @@ author_notes:
   - ''
   - ''
 date: '2025-09-26T00:00:00Z'
-doi: '10.48550/arXiv.2509.21856'
+# doi: '10.48550/arXiv.2509.21856'
 publishDate: '2025-09-26T00:00:00Z'
 publication_types: ['paper-conference']
 publication: In *arXiv preprint*
