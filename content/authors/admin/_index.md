@@ -49,7 +49,8 @@ profiles:
 
 interests:
   - Trustworthy AI
-  - LLM, MLLM
+  - LLM
+  - MLLM
 
 education:
   - area: MPhil. Artificially Intelligence
@@ -162,8 +163,5 @@ education:
 #     icon: hero/academic-cap
 #     summary: |
 #       Recognized for contributions to scaling laws in deep learning.
----
 
-## About Me
-
-I am a Second-year MPhil student in HKUST(GZ), where I was advised by Prof. [Xuming Hu](https://xuminghu.github.io/). Before that, I have got a master degree in **Data Science** from The University of Hong Kong (**HKU**) and a bachelor degree in **Electronic Information Engineering** from Chongqing University (**CQU**).
+about: I am a Second-year MPhil student in HKUST(GZ), where I was advised by Prof. [Xuming Hu](https://xuminghu.github.io/). Before that, I have got a master degree in **Data Science** from The University of Hong Kong (**HKU**) and a bachelor degree in **Electronic Information Engineering** from Chongqing University (**CQU**).
