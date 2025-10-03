@@ -19,7 +19,7 @@ sections:
         text: Download CV
         url: uploads/resume.pdf
       # headings:
-      #   # biography: ''
+      #   biography: ''
       #   about: ''
       #   education: ''
       #   interests: ''
@@ -28,7 +28,7 @@ sections:
       background:
         # Matrix动画背景通过JavaScript动态添加，移除静态图片和背景色
   - block: collection
-    id: blogs
+    # id: News
     content:
       title: News
       subtitle: ''
