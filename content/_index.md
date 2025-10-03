@@ -64,7 +64,7 @@ sections:
     design:
       columns: '1'
   - block: collection
-    id: papers
+    id: Publications
     content:
       title: Publications
       filters:
