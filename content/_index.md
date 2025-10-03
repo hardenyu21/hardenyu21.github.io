@@ -29,6 +29,10 @@ sections:
       avatar:
         size: medium # Options: small (150px), medium (200px, default), large (320px), xl (400px), xxl (500px)
         shape: circle # Options: circle (default), square, rounded
+      # Custom CSS for side-by-side layout
+      css_style: |
+        .biography-content { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        @media (max-width: 768px) { .biography-content { grid-template-columns: 1fr; } }
   - block: markdown
     content:
       title: '📚 My Research'
