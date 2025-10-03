@@ -52,7 +52,7 @@ interests:
   - LLM, MLLM
 
 education:
-  - area: MPhil Artificially Intelligence
+  - area: MPhil. Artificially Intelligence
     institution: HKUST(GZ)
     date_start: '2024-09-01'
     date_end: '2026-07-01'
@@ -61,7 +61,7 @@ education:
     # button:
     #   text: 'Read Thesis'
     #   url: 'https://example.com/thesis.pdf'
-  - area: MS Data Science
+  - area: MS. Data Science
     institution: HKU
     date_start: '2022-09-01'
     date_end: '2024-07-24'
@@ -69,7 +69,7 @@ education:
     #   GPA: 4.0/4.0
 
     #   Specialized in machine learning and robotics.
-  - area: BEng Electronic Information Engineering
+  - area: BEng. Electronic Information Engineering
     institution: Chongqing University
     date_start: '2018-09-07'
     date_end: '2022-07-01'
