@@ -1,0 +1,31 @@
+{{- $username := .Get "username" | default "@siyuanli-sven" -}}
+{{- $name := .Get "name" | default "siyuanli-sven" -}}
+{{- $theme := .Get "theme" | default "moebooru" -}}
+{{- $padding := .Get "padding" | default "7" -}}
+{{- $offset := .Get "offset" | default "0" -}}
+{{- $align := .Get "align" | default "top" -}}
+{{- $scale := .Get "scale" | default "1" -}}
+{{- $pixelated := .Get "pixelated" | default "1" -}}
+{{- $darkmode := .Get "darkmode" | default "auto" -}}
+
+{{- $baseUrl := "https://count.getloli.com/" -}}
+{{- $params := slice 
+    (printf "name=%s" $name)
+    (printf "theme=%s" $theme) 
+    (printf "padding=%s" $padding)
+    (printf "offset=%s" $offset)
+    (printf "align=%s" $align)
+    (printf "scale=%s" $scale)
+    (printf "pixelated=%s" $pixelated)
+    (printf "darkmode=%s" $darkmode)
+-}}
+{{- $queryString := delimit $params "&" -}}
+{{- $fullUrl := printf "%s%s?%s" $baseUrl $username $queryString -}}
+
+<div class="visit-counter" style="text-align: center; margin: 2rem 0; padding: 1rem 0;">
+    <img src="{{ $fullUrl | safeURL }}" 
+         alt="访问计数" 
+         style="max-width: 100%; height: auto; border: none;"
+         loading="lazy"
+         onerror="this.parentElement.style.display='none';" />
+</div>

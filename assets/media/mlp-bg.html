@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3Blue1Brown 风格神经网络动画 V2</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #05050a; /* 更深的背景色 */
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // --- 核心变量 ---
+        let scene, camera, renderer;
+        const networkLayers = [];
+        const connectionGroups = []; // --- 用于存放层间连接 ---
+        const layersCount = 20;
+        const layerDepth = 200;
+
+        // --- 动画状态 ---
+        const activationState = {
+            wavePosition: 0.0,
+            waveSpeed: 0.015,
+        };
+        
+        // --- 颜色定义 ---
+        const COLOR_NODE_DEFAULT = new THREE.Color(0x8888ff);
+        const COLOR_NODE_ACTIVE = new THREE.Color(0x00ffff);
+        const COLOR_LINE_INACTIVE = new THREE.Color(0xffffff);
+        const COLOR_LINE_ACTIVE = new THREE.Color(0x00ffff);
+
+        // --- 初始化函数 ---
+        function init() {
+            scene = new THREE.Scene();
+            scene.fog = new THREE.Fog(0x05050a, 1500, 4000);
+
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 5000);
+            camera.position.z = 1000;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setClearColor(scene.fog.color);
+            document.body.appendChild(renderer.domElement);
+            
+            // 1. 创建所有只包含节点的网络层
+            for (let i = 0; i < layersCount; i++) {
+                const layer = createNodeLayer();
+                layer.position.z = i * -layerDepth;
+                scene.add(layer);
+                networkLayers.push(layer);
+            }
+
+            // 2. 创建层与层之间的连接
+            for (let i = 0; i < layersCount - 1; i++) {
+                const sendingLayer = networkLayers[i];
+                const receivingLayer = networkLayers[i+1];
+                const connections = createConnectionGroup(sendingLayer, receivingLayer);
+                // 将连接线组放置在两层中间
+                connections.position.z = (sendingLayer.position.z + receivingLayer.position.z) / 2;
+                scene.add(connections);
+                connectionGroups.push(connections);
+            }
+            
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        // --- 创建单个节点层 (不再包含连接) ---
+        function createNodeLayer() {
+            const layerGroup = new THREE.Group();
+            const width = 1500;
+            const height = 750;
+            const cols = 20; 
+            const rows = 10;
+            const nodeCount = rows * cols;
+            const spacingX = width / cols; 
+            const spacingY = height / rows;
+
+            const nodeGeometry = new THREE.BufferGeometry();
+            const positions = [];
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const x = (c - (cols - 1) / 2) * spacingX;
+                    const y = (r - (rows - 1) / 2) * spacingY;
+                    positions.push(x, y, 0);
+                }
+            }
+            nodeGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            
+            const nodeMaterial = new THREE.PointsMaterial({
+                color: COLOR_NODE_DEFAULT,
+                size: 5,
+                transparent: true,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                sizeAttenuation: true,
+            });
+
+            const nodes = new THREE.Points(nodeGeometry, nodeMaterial);
+            layerGroup.add(nodes);
+            layerGroup.userData.nodes = nodes;
+            layerGroup.userData.nodeCount = nodeCount;
+
+            return layerGroup;
+        }
+
+        // --- 创建层间连接的函数 ---
+        function createConnectionGroup(sendingLayer, receivingLayer) {
+            const connectionGroup = new THREE.Group();
+            const totalConnectionCount = 300;
+            const activeConnectionCount = 30;
+
+            const sendingNodes = sendingLayer.userData.nodes.geometry.attributes.position.array;
+            const receivingNodes = receivingLayer.userData.nodes.geometry.attributes.position.array;
+            const sendingNodeCount = sendingLayer.userData.nodeCount;
+            const receivingNodeCount = receivingLayer.userData.nodeCount;
+
+            const inactiveLinePositions = [];
+            const activeLinePositions = [];
+
+            for (let i = 0; i < totalConnectionCount; i++) {
+                const startIndex = Math.floor(Math.random() * sendingNodeCount) * 3;
+                const endIndex = Math.floor(Math.random() * receivingNodeCount) * 3;
+
+                // 发送点坐标 (相对连接组中心，Z为负)
+                const startX = sendingNodes[startIndex];
+                const startY = sendingNodes[startIndex + 1];
+                // 接收点坐标 (相对连接组中心，Z为正)
+                const endX = receivingNodes[endIndex];
+                const endY = receivingNodes[endIndex + 1];
+
+                inactiveLinePositions.push(startX, startY, -layerDepth / 2);
+                inactiveLinePositions.push(endX, endY, layerDepth / 2);
+
+                if (i < activeConnectionCount) {
+                    activeLinePositions.push(startX, startY, -layerDepth / 2);
+                    activeLinePositions.push(endX, endY, layerDepth / 2);
+                }
+            }
+            
+            const inactiveLineGeometry = new THREE.BufferGeometry();
+            inactiveLineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(inactiveLinePositions, 3));
+            const inactiveLineMaterial = new THREE.LineBasicMaterial({
+                color: COLOR_LINE_INACTIVE, opacity: 0.05, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
+            });
+            const inactiveLines = new THREE.LineSegments(inactiveLineGeometry, inactiveLineMaterial);
+            connectionGroup.add(inactiveLines);
+            connectionGroup.userData.inactiveLines = inactiveLines;
+
+            const activeLineGeometry = new THREE.BufferGeometry();
+            activeLineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(activeLinePositions, 3));
+            const activeLineMaterial = new THREE.LineBasicMaterial({
+                color: COLOR_LINE_ACTIVE, opacity: 0, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
+            });
+            const activeLines = new THREE.LineSegments(activeLineGeometry, activeLineMaterial);
+            connectionGroup.add(activeLines);
+            connectionGroup.userData.activeLines = activeLines;
+
+            return connectionGroup;
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // --- 动画循环函数 ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const speed = 1.2;
+            const totalDepth = layersCount * layerDepth;
+
+            // 移动所有层
+            networkLayers.forEach(layer => {
+                layer.position.z += speed;
+                if (layer.position.z > camera.position.z) {
+                    layer.position.z -= totalDepth;
+                }
+            });
+            // 移动所有连接组
+            connectionGroups.forEach(group => {
+                group.position.z += speed;
+                if (group.position.z > camera.position.z) {
+                    group.position.z -= totalDepth;
+                }
+            });
+
+            activationState.wavePosition += activationState.waveSpeed;
+            if (activationState.wavePosition >= layersCount) {
+                activationState.wavePosition = 0;
+            }
+            const waveHead = activationState.wavePosition;
+            
+            // 更新节点颜色
+            networkLayers.forEach((layer, i) => {
+                const distToWave = Math.abs(waveHead - (i + 0.5));
+                const activationLevel = Math.max(0, 1 - distToWave / 1.5);
+                layer.userData.nodes.material.color.copy(COLOR_NODE_DEFAULT).lerp(COLOR_NODE_ACTIVE, activationLevel);
+            });
+
+            // 更新连接线透明度
+            connectionGroups.forEach((group, i) => {
+                const distToWave = Math.abs(waveHead - (i + 1));
+                const activationLevel = Math.max(0, 1 - distToWave / 1.0);
+                group.userData.activeLines.material.opacity = Math.sin(activationLevel * Math.PI) * 0.4;
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        // --- 启动 ---
+        init();
+        animate();
+    </script>
+</body>
+</html>

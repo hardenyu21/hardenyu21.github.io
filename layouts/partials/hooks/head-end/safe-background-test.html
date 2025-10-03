@@ -1,0 +1,120 @@
+<script>
+// 双层背景系统：忠实使用assets/media HTML文件通过iframe
+document.addEventListener('DOMContentLoaded', function() {
+    // 延迟加载确保页面完全渲染
+    setTimeout(function() {
+        
+        // === 1. 先创建Matrix About Me背景iframe ===
+        createMatrixAboutMeBackgroundIframe();
+        
+        // === 2. 简单延迟后创建MLP全站背景iframe ===
+        setTimeout(function() {
+            createMLPBackgroundIframe();
+        }, 800); // Matrix先加载，800ms后加载MLP
+        
+    }, 1000);
+});
+
+// MLP神经网络全站背景 - 使用static目录
+function createMLPBackgroundIframe() {
+    const mlpIframe = document.createElement('iframe');
+    mlpIframe.id = 'mlp-background-iframe';
+    mlpIframe.src = '/backgrounds/mlp-bg.html';
+    mlpIframe.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -2000;
+        pointer-events: none;
+        border: none;
+        opacity: 0.3;
+        background: transparent;
+    `;
+    
+    mlpIframe.onload = function() {
+        console.log('✅ MLP background loaded successfully from /backgrounds/mlp-bg.html');
+    };
+    
+    mlpIframe.onerror = function() {
+        console.warn('❌ Failed to load MLP background, removing iframe');
+        mlpIframe.remove();
+    };
+    
+    document.body.insertBefore(mlpIframe, document.body.firstChild);
+}
+
+// Matrix About Me背景 - 使用static目录
+function createMatrixAboutMeBackgroundIframe() {
+        // 寻找About Me section 
+        const aboutSection = 
+            document.querySelector('[class*="resume-biography"]') || 
+            document.querySelector('[class*="biography"]') ||
+            document.querySelector('.hero-section') ||
+            document.querySelector('section[class*="dark"]') ||
+            document.querySelector('section:first-of-type');
+        
+        console.log('Looking for About Me section:', aboutSection);
+        if (!aboutSection) {
+            console.warn('Could not find About Me section for Matrix background');
+            return;
+        }
+        
+        const matrixIframe = document.createElement('iframe');
+        matrixIframe.id = 'matrix-aboutme-background-iframe';
+        matrixIframe.src = '/backgrounds/matrix-transform-bg.html';
+        matrixIframe.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            border: none;
+            opacity: 0.4;
+            background: transparent;
+        `;
+        
+        matrixIframe.onload = function() {
+            console.log('✅ Matrix background loaded successfully from /backgrounds/matrix-transform-bg.html');
+        };
+        
+        matrixIframe.onerror = function() {
+            console.warn('❌ Failed to load Matrix background, removing iframe');
+            matrixIframe.remove();
+        };
+        
+        // 创建包装容器来控制层级
+        const backgroundWrapper = document.createElement('div');
+        backgroundWrapper.id = 'matrix-background-wrapper';
+        backgroundWrapper.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -10;
+            pointer-events: none;
+            background: #0d1117;
+        `;
+        
+        backgroundWrapper.appendChild(matrixIframe);
+        
+        // 确保section有relative定位和层级上下文 (保守方式)
+        if (!aboutSection.style.position || aboutSection.style.position === 'static') {
+            aboutSection.style.position = 'relative';
+        }
+        aboutSection.insertBefore(backgroundWrapper, aboutSection.firstChild);
+        
+        // 调试信息
+        console.log('Matrix background wrapper created and inserted');
+        console.log('About section style:', {
+            position: aboutSection.style.position,
+            zIndex: aboutSection.style.zIndex,
+            height: aboutSection.offsetHeight + 'px',
+            width: aboutSection.offsetWidth + 'px'
+        });
+}
+</script>

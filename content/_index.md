@@ -18,11 +18,11 @@ sections:
       button:
         text: Download CV
         url: uploads/resume.pdf
-      # headings:
-      #   biography: ''
-      #   about: ''
-      #   education: ''
-      #   interests: ''
+      headings:
+        biography: ''
+        about: ''
+        education: ''
+        interests: ''
     design:
       css_class: dark
       background:
@@ -55,14 +55,14 @@ sections:
       # Reduce spacing
       spacing:
         padding: [0, 0, 0, 0]
-  # - block: markdown
-  #   content:
-  #     title: '📚 My Research'
-  #     subtitle: ''
-  #     text: |-
+  - block: markdown
+    content:
+      title: '📚 My Research'
+      subtitle: ''
+      text: |-
       
-  #   design:
-  #     columns: '1'
+    design:
+      columns: '1'
   - block: collection
     id: papers
     content:
@@ -74,24 +74,24 @@ sections:
     design:
       view: article-grid
       columns: 2
-  # - block: collection
-  #   content:
-  #     title: Recent Publications
-  #     text: ''
-  #     filters:
-  #       folders:
-  #         - publications
-  #       exclude_featured: false
-  #   design:
-  #     view: citation
-  # - block: collection
-  #   id: talks
-  #   content:
-  #     title: Recent & Upcoming Talks
-  #     filters:
-  #       folders:
-  #         - events
-  #   design:
-  #     view: article-grid
-  #     columns: 1
+  - block: collection
+    content:
+      title: Recent Publications
+      text: ''
+      filters:
+        folders:
+          - publications
+        exclude_featured: false
+    design:
+      view: citation
+  - block: collection
+    id: talks
+    content:
+      title: Recent & Upcoming Talks
+      filters:
+        folders:
+          - events
+    design:
+      view: article-grid
+      columns: 1
 ---

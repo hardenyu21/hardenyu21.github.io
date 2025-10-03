@@ -1,0 +1,101 @@
+<script>
+// 访问计数器动态加载 - 仅在首页加载
+document.addEventListener('DOMContentLoaded', function() {
+    // 只在首页加载访问计数器
+    if (window.location.pathname !== '/' && window.location.pathname !== '/index.html') {
+        return;
+    }
+    
+    // 延迟加载以确保页面完全渲染
+    setTimeout(function() {
+        // 创建计数器容器
+        const counterContainer = document.createElement('div');
+        counterContainer.id = 'visit-counter';
+        counterContainer.style.cssText = `
+            text-align: center;
+            margin: 1rem auto 0.5rem auto;
+            padding: 1rem 0 0.5rem 0;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        `;
+        
+        // 创建链接元素包裹图片
+        const counterLink = document.createElement('a');
+        counterLink.href = 'https://count.getloli.com/';
+        counterLink.target = '_blank';
+        counterLink.rel = 'noopener noreferrer';
+        counterLink.style.cssText = `
+            display: inline-block;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+        `;
+        
+        // 悬停效果
+        counterLink.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.05)';
+        });
+        counterLink.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+        });
+        
+        // 创建图片元素
+        const counterImg = document.createElement('img');
+        const counterUrl = 'https://count.getloli.com/@siyuanli-sven?' + 
+                          'name=siyuanli-sven&theme=moebooru&padding=7&offset=0&' +
+                          'align=top&scale=1&pixelated=1&darkmode=auto';
+        
+        counterImg.src = counterUrl;
+        counterImg.alt = '访问计数';
+        counterImg.style.cssText = `
+            max-width: 100%;
+            height: auto;
+            border: none;
+            display: block;
+        `;
+        
+        // 创建感谢文字
+        const thankText = document.createElement('p');
+        thankText.textContent = '感谢您的访问';
+        thankText.style.cssText = `
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0;
+            text-align: center;
+        `;
+        
+        // 图片加载完成后显示
+        counterImg.onload = function() {
+            counterContainer.style.opacity = '1';
+        };
+        
+        // 错误处理
+        counterImg.onerror = function() {
+            counterContainer.style.display = 'none';
+        };
+        
+        counterLink.appendChild(counterImg);
+        counterContainer.appendChild(counterLink);
+        counterContainer.appendChild(thankText);
+        
+        // 找到版权信息并插入到其正上方
+        const footer = document.querySelector('footer');
+        const copyrightElement = footer ? footer.querySelector('p') : null;
+        
+        if (copyrightElement) {
+            // 插入到版权信息的正上方
+            copyrightElement.parentNode.insertBefore(counterContainer, copyrightElement);
+        } else if (footer) {
+            // 如果找不到版权信息，插入到footer内部的开头
+            footer.insertBefore(counterContainer, footer.firstChild);
+        } else {
+            // 最后的备选方案
+            document.body.appendChild(counterContainer);
+        }
+    }, 1000); // 延迟1秒加载
+});
+</script>
