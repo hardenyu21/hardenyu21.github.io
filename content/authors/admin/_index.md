@@ -9,8 +9,8 @@ name_pronunciation: ''
 first_name: Yu
 last_name: Huang
 
-# Pronouns (optional)
-pronouns: he/him
+# # Pronouns (optional)
+# pronouns: he/him
 
 # Status emoji
 status:

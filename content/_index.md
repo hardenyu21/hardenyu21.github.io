@@ -18,11 +18,11 @@ sections:
       button:
         text: Download CV
         url: uploads/resume.pdf
-      headings:
-        # biography: ''
-        about: ''
-        education: ''
-        interests: ''
+      # headings:
+      #   # biography: ''
+      #   about: ''
+      #   education: ''
+      #   interests: ''
     design:
       css_class: dark
       background:
