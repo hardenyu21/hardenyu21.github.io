@@ -168,5 +168,5 @@ education:
 
 ## About Me
 
-I am a Second-year MPhil student in HKUST(GZ), where I was advised by Prof. [Xuming Hu](https://xuminghu.github.io/). Before that, I have got a master degree in **Data Science** from The University of Hong Kong (**HKU**) and a bachelor degree in **Electronic Information Engineering** from Chongqing University (**CQU**).
+I am a Second-year MPhil student in HKUST(GZ), where I am advised by Prof. [Xuming Hu](https://xuminghu.github.io/) and honored to work closely with [Jungang Li](https://openreview.net/profile?id=%7EJungang_Li1) and [Song Dai](https://openreview.net/profile?id=%7ESong_Dai2). Before that, I have got a master degree in **Data Science** from The University of Hong Kong (**HKU**) and a bachelor degree in **Electronic Information Engineering** from Chongqing University (**CQU**).
 
