@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Research Agent Workspace",
+    "summary": "A modular workflow for literature review, experiment tracking, and reproducible research operations.",
+    "role": "Design and implementation",
+    "period": "2026",
+    "tags": ["LangGraph", "LLM Agents", "Research Ops"],
+    "highlights": [
+      "Structured around explicit data flow and failure visibility.",
+      "Designed for research tasks where correctness matters more than silent fallback."
+    ],
+    "links": []
+  },
+  {
+    "name": "Financial Evidence Analysis Toolkit",
+    "summary": "A prototype system for reading, organizing, and evaluating financial evidence across text and tabular sources.",
+    "role": "System design",
+    "period": "2025 - 2026",
+    "tags": ["Finance", "RAG", "Evaluation"],
+    "highlights": [
+      "Focuses on traceable claims and source-grounded analysis.",
+      "Separates retrieval, reasoning, and reporting stages."
+    ],
+    "links": []
+  }
+]

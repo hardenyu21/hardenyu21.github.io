@@ -1,0 +1,22 @@
+{
+  "name": "Harden Yu",
+  "title": "Researcher in AI, Agents, and Finance",
+  "affiliation": "Independent Research / Academic Homepage Placeholder",
+  "location": "Shanghai, China",
+  "email": "your.email@example.com",
+  "tagline": "I study reliable AI systems, agentic workflows, and their applications in research and financial decision-making.",
+  "researchInterests": [
+    "LLM Agents",
+    "Multimodal Reasoning",
+    "Financial AI",
+    "Research Automation",
+    "Evaluation"
+  ],
+  "links": [
+    {
+      "label": "GitHub",
+      "href": "https://github.com/hardenyu21"
+    }
+  ],
+  "contactNote": "Open to focused research conversations on reliable agents, evaluation, multimodal systems, and AI for finance."
+}

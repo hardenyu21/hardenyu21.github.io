@@ -1,0 +1,30 @@
+[
+  {
+    "title": "Reliable Agentic Workflows for Research-Grade AI Systems",
+    "authors": "Harden Yu",
+    "venue": "Working manuscript",
+    "year": "2026",
+    "status": "Draft",
+    "tags": ["Agents", "Evaluation", "Research Systems"],
+    "links": [],
+    "featured": true
+  },
+  {
+    "title": "Multimodal Reasoning Pipelines for Financial Evidence Analysis",
+    "authors": "Harden Yu",
+    "venue": "Project report",
+    "year": "2026",
+    "status": "In progress",
+    "tags": ["MLLM", "Finance", "Evidence"],
+    "links": []
+  },
+  {
+    "title": "Evaluation Protocols for LLM-Based Decision Support",
+    "authors": "Harden Yu",
+    "venue": "Technical note",
+    "year": "2025",
+    "status": "Preprint planned",
+    "tags": ["LLM", "Evaluation", "Decision Support"],
+    "links": []
+  }
+]
