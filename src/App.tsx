@@ -1,10 +1,12 @@
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
+import { CvSection } from './components/CvSection';
 import { NewsList } from './components/NewsList';
 import { ProjectList } from './components/ProjectList';
 import { PublicationList } from './components/PublicationList';
 import { Section } from './components/Section';
 import { Footer } from './components/Footer';
+import { cv } from './data/cv';
 import { news } from './data/news';
 import { profile } from './data/profile';
 import { projects } from './data/projects';
@@ -64,9 +66,9 @@ export default function App() {
 
         <Section
           id="about"
-          title="Research Agenda"
-          eyebrow="About"
-          aside="A concise view of the research stance behind the systems."
+          title="About Me"
+          eyebrow="Research agenda"
+          aside="A concise view of the person and research stance behind the systems."
         >
           <div className="prose">
             {profile.bio.map((paragraph) => (
@@ -78,6 +80,15 @@ export default function App() {
               <span key={interest}>{interest}</span>
             ))}
           </div>
+        </Section>
+
+        <Section
+          id="profile"
+          title="Academic Profile"
+          eyebrow="CV"
+          aside="Education, experience, internships, and academic activities. Current entries are structured placeholders until verified details are added."
+        >
+          <CvSection cv={cv} profile={profile} />
         </Section>
 
         <Section

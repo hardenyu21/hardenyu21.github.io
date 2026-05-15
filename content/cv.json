@@ -1,0 +1,35 @@
+{
+  "education": [
+    {
+      "period": "To be updated",
+      "institution": "To be updated",
+      "role": "Degree / Program to be updated",
+      "location": "To be updated",
+      "details": [
+        "Add degree, department, advisor, thesis topic, and relevant coursework."
+      ]
+    }
+  ],
+  "experience": [
+    {
+      "period": "To be updated",
+      "institution": "To be updated",
+      "role": "Research / Internship role to be updated",
+      "location": "To be updated",
+      "details": [
+        "Add internship, research assistantship, lab, company, or project responsibility."
+      ]
+    }
+  ],
+  "academicActivities": [
+    {
+      "period": "To be updated",
+      "title": "Academic activity to be updated",
+      "role": "Role to be updated",
+      "venue": "Venue / community to be updated",
+      "details": [
+        "Add talks, seminars, reviewing, competitions, workshops, conferences, or open-source academic activity."
+      ]
+    }
+  ]
+}

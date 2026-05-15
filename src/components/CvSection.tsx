@@ -1,0 +1,69 @@
+import type { CvEntry, CvProfile } from '../data/cv';
+import type { Profile } from '../data/profile';
+
+type CvSectionProps = {
+  cv: CvProfile;
+  profile: Profile;
+};
+
+type CvGroupProps = {
+  title: string;
+  items: CvEntry[];
+};
+
+function CvGroup({ title, items }: CvGroupProps) {
+  return (
+    <section className="cv-group" aria-labelledby={`cv-${title}`}>
+      <h3 id={`cv-${title}`}>{title}</h3>
+      <div className="cv-timeline">
+        {items.map((item) => (
+          <article className="cv-item" key={`${title}-${item.period}-${item.role}`}>
+            <div className="cv-period">{item.period}</div>
+            <div className="cv-copy">
+              <strong>{item.institution ?? item.title}</strong>
+              <span>{item.role}</span>
+              {item.location || item.venue ? <em>{item.location ?? item.venue}</em> : null}
+              <ul>
+                {item.details.map((detail) => (
+                  <li key={detail}>{detail}</li>
+                ))}
+              </ul>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function CvSection({ cv, profile }: CvSectionProps) {
+  return (
+    <div className="cv-layout">
+      <aside className="profile-card" aria-label="Profile summary">
+        <span className="profile-card-mark">HY</span>
+        <strong>{profile.name}</strong>
+        <p>{profile.title}</p>
+        <dl>
+          <div>
+            <dt>Location</dt>
+            <dd>{profile.location}</dd>
+          </div>
+          <div>
+            <dt>Focus</dt>
+            <dd>{profile.researchInterests.slice(0, 3).join(' / ')}</dd>
+          </div>
+          <div>
+            <dt>Status</dt>
+            <dd>CV details to be updated with verified information.</dd>
+          </div>
+        </dl>
+      </aside>
+
+      <div className="cv-groups">
+        <CvGroup title="Education" items={cv.education} />
+        <CvGroup title="Experience & Internships" items={cv.experience} />
+        <CvGroup title="Academic Activities" items={cv.academicActivities} />
+      </div>
+    </div>
+  );
+}
