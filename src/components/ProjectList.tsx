@@ -7,13 +7,21 @@ type ProjectListProps = {
 export function ProjectList({ projects }: ProjectListProps) {
   return (
     <div className="project-list">
-      {projects.map((project) => (
-        <article className="project-item" key={project.name}>
-          <div className="item-meta">
-            <span>{project.period}</span>
-            <strong>{project.role}</strong>
+      {projects.map((project, index) => (
+        <article className="project-item system-card" key={project.name}>
+          <div className="system-card-visual" aria-hidden="true">
+            <span className="system-index">{String(index + 1).padStart(2, '0')}</span>
+            <div className="system-lines">
+              <i />
+              <i />
+              <i />
+            </div>
           </div>
           <div className="item-content">
+            <div className="item-meta">
+              <span>{project.period}</span>
+              <strong>{project.role}</strong>
+            </div>
             <h3>{project.name}</h3>
             <p>{project.summary}</p>
             <ul className="compact-list">

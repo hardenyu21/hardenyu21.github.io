@@ -1,8 +1,8 @@
 const navItems = [
-  { label: 'About', href: '#about' },
   { label: 'Publications', href: '#publications' },
   { label: 'Projects', href: '#projects' },
-  { label: 'News', href: '#news' },
+  { label: 'Evidence', href: '#evidence' },
+  { label: 'About', href: '#about' },
   { label: 'Contact', href: '#contact' },
 ];
 

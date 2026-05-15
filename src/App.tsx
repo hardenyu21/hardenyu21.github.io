@@ -21,37 +21,19 @@ export default function App() {
           <a className="promo-card promo-dark" href="#publications">
             <span className="promo-kicker">Selected work</span>
             <strong>Publications</strong>
-            <p>Representative papers, working manuscripts, and evaluation protocols.</p>
+            <p>Papers and protocols with evidence-first evaluation.</p>
           </a>
           <a className="promo-card" href="#projects">
             <span className="promo-kicker">Research systems</span>
             <strong>Projects</strong>
-            <p>Agent workflows and financial evidence analysis tools built for traceability.</p>
+            <p>Agent workflows designed to fail loudly and trace decisions.</p>
           </a>
-          <a className="promo-card" href="#news">
-            <span className="promo-kicker">Updates</span>
-            <strong>News</strong>
-            <p>A compact log of academic, research, and project milestones.</p>
+          <a className="promo-card" href="#evidence">
+            <span className="promo-kicker">Research feed</span>
+            <strong>Evidence Feed</strong>
+            <p>Updates, notes, and milestones from ongoing research.</p>
           </a>
         </section>
-
-        <Section
-          id="about"
-          title="About"
-          eyebrow="Research profile"
-          aside="A concise biography and research agenda."
-        >
-          <div className="prose">
-            {profile.bio.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-          </div>
-          <div className="interest-grid" aria-label="Research interests">
-            {profile.researchInterests.map((interest) => (
-              <span key={interest}>{interest}</span>
-            ))}
-          </div>
-        </Section>
 
         <Section
           id="publications"
@@ -72,12 +54,30 @@ export default function App() {
         </Section>
 
         <Section
-          id="news"
-          title="News"
+          id="evidence"
+          title="Evidence Feed"
           eyebrow="Updates"
-          aside="A compact log for notable academic and project milestones."
+          aside="A compact research feed for milestones, notes, and active directions."
         >
           <NewsList items={news} />
+        </Section>
+
+        <Section
+          id="about"
+          title="Research Agenda"
+          eyebrow="About"
+          aside="A concise view of the research stance behind the systems."
+        >
+          <div className="prose">
+            {profile.bio.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+          <div className="interest-grid" aria-label="Research interests">
+            {profile.researchInterests.map((interest) => (
+              <span key={interest}>{interest}</span>
+            ))}
+          </div>
         </Section>
 
         <Section

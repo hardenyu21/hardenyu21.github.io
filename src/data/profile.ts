@@ -7,6 +7,11 @@ export type ProfileLink = {
   href: string;
 };
 
+export type ProfileCta = {
+  label: string;
+  href: string;
+};
+
 export type Profile = {
   name: string;
   title: string;
@@ -14,6 +19,10 @@ export type Profile = {
   location: string;
   email: string;
   tagline: string;
+  heroEyebrow: string;
+  heroSubhead: string;
+  primaryCta: ProfileCta;
+  secondaryCta: ProfileCta;
   researchInterests: string[];
   links: ProfileLink[];
   bio: string[];

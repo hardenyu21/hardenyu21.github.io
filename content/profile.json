@@ -4,7 +4,17 @@
   "affiliation": "Independent Research / Academic Homepage Placeholder",
   "location": "Shanghai, China",
   "email": "your.email@example.com",
-  "tagline": "I study reliable AI systems, agentic workflows, and their applications in research and financial decision-making.",
+  "tagline": "Reliable AI agents for research and financial evidence.",
+  "heroEyebrow": "Research OS",
+  "heroSubhead": "Designing agentic workflows that make evidence traceable, evaluation explicit, and failure visible.",
+  "primaryCta": {
+    "label": "View work",
+    "href": "#publications"
+  },
+  "secondaryCta": {
+    "label": "Explore systems",
+    "href": "#projects"
+  },
   "researchInterests": [
     "LLM Agents",
     "Multimodal Reasoning",
@@ -18,5 +28,5 @@
       "href": "https://github.com/hardenyu21"
     }
   ],
-  "contactNote": "Open to focused research conversations on reliable agents, evaluation, multimodal systems, and AI for finance."
+  "contactNote": "For focused conversations on reliable agents, evaluation, and AI for finance."
 }
