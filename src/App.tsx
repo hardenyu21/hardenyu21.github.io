@@ -28,9 +28,9 @@ export default function App() {
             <strong>Projects</strong>
             <p>Agent workflows designed to fail loudly and trace decisions.</p>
           </a>
-          <a className="promo-card" href="#evidence">
-            <span className="promo-kicker">Research feed</span>
-            <strong>Evidence Feed</strong>
+          <a className="promo-card" href="#news">
+            <span className="promo-kicker">Recent updates</span>
+            <strong>Recent News</strong>
             <p>Updates, notes, and milestones from ongoing research.</p>
           </a>
         </section>
@@ -54,10 +54,10 @@ export default function App() {
         </Section>
 
         <Section
-          id="evidence"
-          title="Evidence Feed"
+          id="news"
+          title="Recent News"
           eyebrow="Updates"
-          aside="A compact research feed for milestones, notes, and active directions."
+          aside="A compact log for milestones, notes, and active research directions."
         >
           <NewsList items={news} />
         </Section>

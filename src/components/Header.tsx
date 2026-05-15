@@ -1,7 +1,7 @@
 const navItems = [
   { label: 'Publications', href: '#publications' },
   { label: 'Projects', href: '#projects' },
-  { label: 'Evidence', href: '#evidence' },
+  { label: 'News', href: '#news' },
   { label: 'About', href: '#about' },
   { label: 'Contact', href: '#contact' },
 ];
