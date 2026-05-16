@@ -12,6 +12,16 @@ import { profile } from './data/profile';
 import { projects } from './data/projects';
 import { publications } from './data/publications';
 
+function renderInlineMarkdown(text: string) {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={`${part}-${index}`}>{part.slice(2, -2)}</strong>;
+    }
+
+    return part;
+  });
+}
+
 export default function App() {
   return (
     <>
@@ -23,11 +33,10 @@ export default function App() {
           id="about"
           title="About Me"
           eyebrow="Research agenda"
-          aside="A concise view of the person and research stance behind the systems."
         >
           <div className="prose">
             {profile.bio.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
+              <p key={paragraph}>{renderInlineMarkdown(paragraph)}</p>
             ))}
           </div>
           <div className="interest-grid" aria-label="Research interests">

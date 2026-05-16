@@ -16,11 +16,13 @@
     "href": "#publications"
   },
   "researchInterests": [
-    "LLM Agents",
-    "Multimodal Reasoning",
-    "Financial AI",
-    "Research Automation",
-    "Evaluation"
+    "MLLMs in Video",
+    "Video Understanding",
+    "Video Reasoning",
+    "Video Embedding",
+    "Trustworthy AI",
+    "AIGC Watermarking",
+    "AI Model Security"
   ],
   "links": [
     {

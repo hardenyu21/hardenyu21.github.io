@@ -4,7 +4,7 @@ type SectionProps = {
   id: string;
   title: string;
   eyebrow: string;
-  aside: string;
+  aside?: string;
   children: ReactNode;
 };
 
@@ -14,7 +14,7 @@ export function Section({ id, title, eyebrow, aside, children }: SectionProps) {
       <div className="section-heading">
         <p className="kicker">{eyebrow}</p>
         <h2>{title}</h2>
-        <p>{aside}</p>
+        {aside ? <p>{aside}</p> : null}
       </div>
       <div className="section-body">{children}</div>
     </section>
