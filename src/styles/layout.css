@@ -1,6 +1,7 @@
 .site-header {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
   z-index: 20;
   display: flex;
   align-items: center;
@@ -42,8 +43,7 @@
 }
 
 main {
-  width: min(100%, 1440px);
-  margin: 0 auto;
+  width: 100%;
 }
 
 .hero {
@@ -52,10 +52,10 @@ main {
   justify-items: center;
   align-content: space-between;
   gap: 28px;
-  min-height: calc(100svh - 120px);
-  padding: 34px 20px 28px;
+  min-height: 100svh;
+  padding: 86px 20px 28px;
   overflow: hidden;
-  border-bottom: 12px solid var(--surface);
+  border-bottom: 0;
   color: #f5f7f8;
   background:
     linear-gradient(rgba(7, 16, 20, 0.76), rgba(7, 16, 20, 0.88)),
@@ -871,8 +871,8 @@ main {
 
   .hero {
     gap: 30px;
-    min-height: calc(100svh - 96px);
-    padding: 26px 14px 20px;
+    min-height: 100svh;
+    padding: 112px 14px 20px;
   }
 
   .hero-main {
@@ -939,7 +939,6 @@ main {
 
 @media (max-width: 520px) {
   .site-header {
-    position: static;
     display: grid;
     gap: 16px;
   }
@@ -955,7 +954,7 @@ main {
   }
 
   .hero {
-    padding-top: 46px;
+    padding-top: 148px;
   }
 
   .mission-title {
