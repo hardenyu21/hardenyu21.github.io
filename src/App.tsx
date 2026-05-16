@@ -13,9 +13,18 @@ import { projects } from './data/projects';
 import { publications } from './data/publications';
 
 function renderInlineMarkdown(text: string) {
-  return text.split(/(\*\*[^*]+\*\*)/g).map((part, index) => {
+  return text.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g).map((part, index) => {
     if (part.startsWith('**') && part.endsWith('**')) {
       return <strong key={`${part}-${index}`}>{part.slice(2, -2)}</strong>;
+    }
+
+    const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    if (link) {
+      return (
+        <a key={`${part}-${index}`} href={link[2]}>
+          {link[1]}
+        </a>
+      );
     }
 
     return part;

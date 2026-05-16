@@ -431,15 +431,25 @@ main {
   margin: 0 auto;
   color: var(--text);
   font-size: 1.18rem;
-  text-align: center;
+  text-align: left;
+}
+
+.prose a {
+  color: var(--accent);
+  font-weight: 650;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0, 102, 204, 0.28);
 }
 
 .interest-grid {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 10px;
+  max-width: var(--reading-width);
   margin-top: 28px;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .interest-grid span,
