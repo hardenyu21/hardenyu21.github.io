@@ -8,12 +8,12 @@
   "heroEyebrow": "Research OS",
   "heroSubhead": "Designing agentic workflows that make evidence traceable, evaluation explicit, and failure visible.",
   "primaryCta": {
-    "label": "View work",
-    "href": "#publications"
+    "label": "About me",
+    "href": "#about"
   },
   "secondaryCta": {
-    "label": "Explore systems",
-    "href": "#projects"
+    "label": "View work",
+    "href": "#publications"
   },
   "researchInterests": [
     "LLM Agents",

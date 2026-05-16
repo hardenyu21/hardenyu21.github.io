@@ -19,6 +19,24 @@ export default function App() {
       <main>
         <Hero profile={profile} />
 
+        <Section
+          id="about"
+          title="About Me"
+          eyebrow="Research agenda"
+          aside="A concise view of the person and research stance behind the systems."
+        >
+          <div className="prose">
+            {profile.bio.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+          <div className="interest-grid" aria-label="Research interests">
+            {profile.researchInterests.map((interest) => (
+              <span key={interest}>{interest}</span>
+            ))}
+          </div>
+        </Section>
+
         <section className="promo-grid" aria-label="Homepage highlights">
           <a className="promo-card promo-dark" href="#publications">
             <span className="promo-kicker">Selected work</span>
@@ -62,24 +80,6 @@ export default function App() {
           aside="A compact log for milestones, notes, and active research directions."
         >
           <NewsList items={news} />
-        </Section>
-
-        <Section
-          id="about"
-          title="About Me"
-          eyebrow="Research agenda"
-          aside="A concise view of the person and research stance behind the systems."
-        >
-          <div className="prose">
-            {profile.bio.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-          </div>
-          <div className="interest-grid" aria-label="Research interests">
-            {profile.researchInterests.map((interest) => (
-              <span key={interest}>{interest}</span>
-            ))}
-          </div>
         </Section>
 
         <Section
