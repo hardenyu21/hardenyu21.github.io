@@ -1,3 +1,3 @@
-I work on reliable AI agents for research and financial evidence analysis, with an emphasis on traceable claims, explicit evaluation, and failure visibility.
+I am Yu Huang, an incoming PhD student in Data Science at City University of Hong Kong (CityU), where I will be supervised by Prof. Kaidi Xu. I am currently an MPhil student in AI at The Hong Kong University of Science and Technology (Guangzhou) (HKUST(GZ)), advised by Prof. Xuming Hu and co-supervised by Prof. Yi Ren Fung.
 
-My current interests sit at the intersection of LLM agents, multimodal reasoning, financial AI, and research automation. The detailed education, internship, and academic activity records are structured below and should be filled with verified information before being treated as a formal CV.
+Previously, I received an MSc in Data Science from The University of Hong Kong (HKU) and a BEng in Electronic Information Engineering from Chongqing University (CQU).
