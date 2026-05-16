@@ -37,23 +37,14 @@ export default function App() {
           </div>
         </Section>
 
-        <section className="promo-grid" aria-label="Homepage highlights">
-          <a className="promo-card promo-dark" href="#publications">
-            <span className="promo-kicker">Selected work</span>
-            <strong>Publications</strong>
-            <p>Papers and protocols with evidence-first evaluation.</p>
-          </a>
-          <a className="promo-card" href="#projects">
-            <span className="promo-kicker">Research systems</span>
-            <strong>Projects</strong>
-            <p>Agent workflows designed to fail loudly and trace decisions.</p>
-          </a>
-          <a className="promo-card" href="#news">
-            <span className="promo-kicker">Recent updates</span>
-            <strong>Recent News</strong>
-            <p>Updates, notes, and milestones from ongoing research.</p>
-          </a>
-        </section>
+        <Section
+          id="news"
+          title="Recent News"
+          eyebrow="Updates"
+          aside="A compact log for milestones, notes, and active research directions."
+        >
+          <NewsList items={news} />
+        </Section>
 
         <Section
           id="publications"
@@ -71,15 +62,6 @@ export default function App() {
           aside="Systems, agents, and reproducible research infrastructure."
         >
           <ProjectList projects={projects} />
-        </Section>
-
-        <Section
-          id="news"
-          title="Recent News"
-          eyebrow="Updates"
-          aside="A compact log for milestones, notes, and active research directions."
-        >
-          <NewsList items={news} />
         </Section>
 
         <Section
