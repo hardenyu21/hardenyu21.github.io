@@ -14,7 +14,7 @@ export type CvEntry = {
   location?: string;
   venue?: string;
   details: string[];
-  logo: CvLogo;
+  logo?: CvLogo;
 };
 
 export type CvProfile = {

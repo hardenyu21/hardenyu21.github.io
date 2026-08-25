@@ -3,7 +3,7 @@
   "location": "Hong Kong",
   "education": [
     {
-      "period": "2026 – Current",
+      "period": "2026.09 – Now",
       "institution": "City University of Hong Kong (CityU)",
       "role": "PhD Student in Data Science",
       "location": "Hong Kong",
@@ -11,12 +11,12 @@
         "Supervised by Prof. Kaidi Xu."
       ],
       "logo": {
-        "src": "https://upload.wikimedia.org/wikipedia/en/thumb/4/4a/CityU_logo.svg/330px-CityU_logo.svg.png",
+        "src": "/logos/cityu.png",
         "alt": "City University of Hong Kong logo"
       }
     },
     {
-      "period": "2024 – 2026",
+      "period": "2024.09 – 2026.07",
       "institution": "The Hong Kong University of Science and Technology (Guangzhou)",
       "role": "MPhil Student",
       "location": "Guangzhou, China",
@@ -24,29 +24,29 @@
         "Advised by Prof. Xuming Hu and co-supervised by Prof. Yi Ren Fung."
       ],
       "logo": {
-        "src": "https://summer.hkust-gz.edu.cn/assets/hkust-gz-logo.d51abfba.png",
+        "src": "/logos/hkust.png",
         "alt": "HKUST(GZ) logo"
       }
     },
     {
-      "period": "2022 – 2024",
+      "period": "2022.09 – 2024.07",
       "institution": "The University of Hong Kong (HKU)",
       "role": "MSc in Data Science",
       "location": "Hong Kong",
       "details": [],
       "logo": {
-        "src": "https://www.hku.hk/assets/img/hku-115.svg?t=1760950144",
+        "src": "/logos/hku.svg",
         "alt": "The University of Hong Kong logo"
       }
     },
     {
-      "period": "2018 – 2022",
+      "period": "2018.09 – 2022.06",
       "institution": "Chongqing University (CQU)",
       "role": "BEng in Electronic Information Engineering",
       "location": "Chongqing, China",
       "details": [],
       "logo": {
-        "src": "https://www.cqu.edu.cn/images/logo1.png",
+        "src": "/logos/cqu.png",
         "alt": "Chongqing University logo"
       }
     }
@@ -54,37 +54,21 @@
   "experience": [
     {
       "period": "2026.02 – 2026.07",
-      "institution": "Alibaba Cloud",
-      "role": "Computing Research Intern",
+      "institution": "Alibaba Cloud Computing",
+      "role": "Research Intern",
       "details": [],
       "logo": {
-        "src": "https://img.alicdn.com/imgextra/i3/O1CN01QHyAQf21EWrmcM8vI_!!6000000006953-55-tps-184-22.svg",
+        "src": "/logos/alibaba-cloud.svg",
         "alt": "Alibaba Cloud logo"
       }
     }
   ],
   "academicActivities": [
     {
-      "period": "2027",
-      "title": "AAAI 2027",
-      "role": "Reviewer",
-      "venue": "Association for the Advancement of Artificial Intelligence",
-      "details": [],
-      "logo": {
-        "label": "AAAI",
-        "alt": "AAAI"
-      }
-    },
-    {
-      "period": "2026",
-      "title": "AAAI 2026",
-      "role": "Reviewer",
-      "venue": "Association for the Advancement of Artificial Intelligence",
-      "details": [],
-      "logo": {
-        "label": "AAAI",
-        "alt": "AAAI"
-      }
+      "period": "",
+      "title": "Conference Reviewer",
+      "role": "AAAI Conference on Artificial Intelligence (AAAI): 2027, 2026",
+      "details": []
     }
   ]
 }
