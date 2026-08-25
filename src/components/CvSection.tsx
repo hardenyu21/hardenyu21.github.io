@@ -19,15 +19,24 @@ function CvGroup({ title, items }: CvGroupProps) {
         {items.map((item) => (
           <article className="cv-item" key={`${title}-${item.period}-${item.role}`}>
             <div className="cv-period">{item.period}</div>
+            <div className="cv-logo" aria-label={item.logo.alt}>
+              {item.logo.src ? (
+                <img src={item.logo.src} alt={item.logo.alt} loading="lazy" />
+              ) : (
+                <span>{item.logo.label}</span>
+              )}
+            </div>
             <div className="cv-copy">
               <strong>{item.institution ?? item.title}</strong>
               <span>{item.role}</span>
               {item.location || item.venue ? <em>{item.location ?? item.venue}</em> : null}
-              <ul>
-                {item.details.map((detail) => (
-                  <li key={detail}>{detail}</li>
-                ))}
-              </ul>
+              {item.details.length > 0 ? (
+                <ul>
+                  {item.details.map((detail) => (
+                    <li key={detail}>{detail}</li>
+                  ))}
+                </ul>
+              ) : null}
             </div>
           </article>
         ))}
@@ -42,19 +51,15 @@ export function CvSection({ cv, profile }: CvSectionProps) {
       <aside className="profile-card" aria-label="Profile summary">
         <span className="profile-card-mark">HY</span>
         <strong>{profile.name}</strong>
-        <p>{profile.title}</p>
+        <p>{cv.headline}</p>
         <dl>
           <div>
             <dt>Location</dt>
-            <dd>{profile.location}</dd>
+            <dd>{cv.location}</dd>
           </div>
           <div>
             <dt>Focus</dt>
             <dd>{profile.researchInterests.slice(0, 3).join(' / ')}</dd>
-          </div>
-          <div>
-            <dt>Status</dt>
-            <dd>CV details to be updated with verified information.</dd>
           </div>
         </dl>
       </aside>

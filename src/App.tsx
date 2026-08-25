@@ -86,7 +86,6 @@ export default function App() {
           id="profile"
           title="Academic Profile"
           eyebrow="CV"
-          aside="Education, experience, internships, and academic activities. Current entries are structured placeholders until verified details are added."
         >
           <CvSection cv={cv} profile={profile} />
         </Section>

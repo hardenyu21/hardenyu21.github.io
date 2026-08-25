@@ -1,35 +1,90 @@
 {
+  "headline": "PhD Student at CityU",
+  "location": "Hong Kong",
   "education": [
     {
-      "period": "To be updated",
-      "institution": "To be updated",
-      "role": "Degree / Program to be updated",
-      "location": "To be updated",
+      "period": "2026 – Current",
+      "institution": "City University of Hong Kong (CityU)",
+      "role": "PhD Student in Data Science",
+      "location": "Hong Kong",
       "details": [
-        "Add degree, department, advisor, thesis topic, and relevant coursework."
-      ]
+        "Supervised by Prof. Kaidi Xu."
+      ],
+      "logo": {
+        "src": "https://upload.wikimedia.org/wikipedia/en/thumb/4/4a/CityU_logo.svg/330px-CityU_logo.svg.png",
+        "alt": "City University of Hong Kong logo"
+      }
+    },
+    {
+      "period": "2024 – 2026",
+      "institution": "The Hong Kong University of Science and Technology (Guangzhou)",
+      "role": "MPhil Student",
+      "location": "Guangzhou, China",
+      "details": [
+        "Advised by Prof. Xuming Hu and co-supervised by Prof. Yi Ren Fung."
+      ],
+      "logo": {
+        "src": "https://summer.hkust-gz.edu.cn/assets/hkust-gz-logo.d51abfba.png",
+        "alt": "HKUST(GZ) logo"
+      }
+    },
+    {
+      "period": "2022 – 2024",
+      "institution": "The University of Hong Kong (HKU)",
+      "role": "MSc in Data Science",
+      "location": "Hong Kong",
+      "details": [],
+      "logo": {
+        "src": "https://www.hku.hk/assets/img/hku-115.svg?t=1760950144",
+        "alt": "The University of Hong Kong logo"
+      }
+    },
+    {
+      "period": "2018 – 2022",
+      "institution": "Chongqing University (CQU)",
+      "role": "BEng in Electronic Information Engineering",
+      "location": "Chongqing, China",
+      "details": [],
+      "logo": {
+        "src": "https://www.cqu.edu.cn/images/logo1.png",
+        "alt": "Chongqing University logo"
+      }
     }
   ],
   "experience": [
     {
-      "period": "To be updated",
-      "institution": "To be updated",
-      "role": "Research / Internship role to be updated",
-      "location": "To be updated",
-      "details": [
-        "Add internship, research assistantship, lab, company, or project responsibility."
-      ]
+      "period": "2026.02 – 2026.07",
+      "institution": "Alibaba Cloud",
+      "role": "Computing Research Intern",
+      "details": [],
+      "logo": {
+        "src": "https://img.alicdn.com/imgextra/i3/O1CN01QHyAQf21EWrmcM8vI_!!6000000006953-55-tps-184-22.svg",
+        "alt": "Alibaba Cloud logo"
+      }
     }
   ],
   "academicActivities": [
     {
-      "period": "To be updated",
-      "title": "Academic activity to be updated",
-      "role": "Role to be updated",
-      "venue": "Venue / community to be updated",
-      "details": [
-        "Add talks, seminars, reviewing, competitions, workshops, conferences, or open-source academic activity."
-      ]
+      "period": "2027",
+      "title": "AAAI 2027",
+      "role": "Reviewer",
+      "venue": "Association for the Advancement of Artificial Intelligence",
+      "details": [],
+      "logo": {
+        "label": "AAAI",
+        "alt": "AAAI"
+      }
+    },
+    {
+      "period": "2026",
+      "title": "AAAI 2026",
+      "role": "Reviewer",
+      "venue": "Association for the Advancement of Artificial Intelligence",
+      "details": [],
+      "logo": {
+        "label": "AAAI",
+        "alt": "AAAI"
+      }
     }
   ]
 }
