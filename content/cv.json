@@ -8,7 +8,7 @@
       "role": "Ph.D. in Data Science",
       "details": [],
       "logo": {
-        "src": "/logos/cityu.png",
+        "src": "/logos/cityu.svg",
         "alt": "City University of Hong Kong logo"
       }
     },
@@ -18,7 +18,7 @@
       "role": "M.Phil. Student",
       "details": [],
       "logo": {
-        "src": "/logos/hkust.png",
+        "src": "/logos/hkust.svg",
         "alt": "HKUST(GZ) logo"
       }
     },
