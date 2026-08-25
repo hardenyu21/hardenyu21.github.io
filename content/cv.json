@@ -4,7 +4,7 @@
   "education": [
     {
       "period": "2026.09 - Now",
-      "institution": "City University of Hong Kong (CityU)",
+      "institution": "City University of Hong Kong",
       "role": "Ph.D. in Data Science",
       "details": [],
       "logo": {
@@ -24,7 +24,7 @@
     },
     {
       "period": "2022.09 - 2024.07",
-      "institution": "The University of Hong Kong (HKU)",
+      "institution": "The University of Hong Kong",
       "role": "M.Sc. in Data Science",
       "details": [],
       "logo": {
@@ -34,7 +34,7 @@
     },
     {
       "period": "2018.09 - 2022.06",
-      "institution": "Chongqing University (CQU)",
+      "institution": "Chongqing University",
       "role": "B.Eng. in Electronic Information Engineering",
       "details": [],
       "logo": {
