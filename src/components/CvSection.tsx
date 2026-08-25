@@ -37,13 +37,7 @@ function CvGroup({ title, items }: CvGroupProps) {
                   <p className="cv-entry-summary">
                     {item.period ? <em className="cv-period">{item.period}</em> : null}
                     {item.period ? ', ' : null}
-                    {item.role},{' '}
-                    {title === 'Education' ? (
-                      <span>{item.institution}</span>
-                    ) : (
-                      <strong>{item.institution}</strong>
-                    )}
-                    .
+                    {item.role}, <span>{item.institution}</span>.
                   </p>
                   {item.details.length > 0 ? (
                     <ul>
