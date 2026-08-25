@@ -17,17 +17,12 @@ function CvGroup({ title, items }: CvGroupProps) {
       <h3 id={`cv-${title}`}>{title}</h3>
       <div className="cv-timeline">
         {items.map((item) => {
-          const className = [
-            'cv-item',
-            item.logo ? null : 'cv-item-no-logo',
-            item.period ? null : 'cv-item-no-period',
-          ]
+          const className = ['cv-item', item.logo ? null : 'cv-item-no-logo']
             .filter(Boolean)
             .join(' ');
 
           return (
             <article className={className} key={`${title}-${item.period}-${item.role}`}>
-              {item.period ? <div className="cv-period">{item.period}</div> : null}
               {item.logo ? (
                 <div className="cv-logo" aria-label={item.logo.alt}>
                   {item.logo.src ? (
@@ -37,18 +32,29 @@ function CvGroup({ title, items }: CvGroupProps) {
                   )}
                 </div>
               ) : null}
-              <div className="cv-copy">
-                <strong>{item.institution ?? item.title}</strong>
-                <span>{item.role}</span>
-                {item.location || item.venue ? <em>{item.location ?? item.venue}</em> : null}
-                {item.details.length > 0 ? (
+              {item.institution ? (
+                <div className="cv-copy">
+                  <p className="cv-entry-summary">
+                    {item.period ? <em className="cv-period">{item.period}</em> : null}
+                    {item.period ? ', ' : null}
+                    {item.role}, <strong>{item.institution}</strong>.
+                  </p>
+                  {item.details.length > 0 ? (
+                    <ul>
+                      {item.details.map((detail) => (
+                        <li key={detail}>{detail}</li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </div>
+              ) : (
+                <div className="cv-copy cv-service-copy">
+                  <strong>{item.title}:</strong>
                   <ul>
-                    {item.details.map((detail) => (
-                      <li key={detail}>{detail}</li>
-                    ))}
+                    <li>{item.role}</li>
                   </ul>
-                ) : null}
-              </div>
+                </div>
+              )}
             </article>
           );
         })}

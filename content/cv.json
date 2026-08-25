@@ -3,36 +3,29 @@
   "location": "Hong Kong",
   "education": [
     {
-      "period": "2026.09 – Now",
+      "period": "2026.09 - Now",
       "institution": "City University of Hong Kong (CityU)",
-      "role": "PhD Student in Data Science",
-      "location": "Hong Kong",
-      "details": [
-        "Supervised by Prof. Kaidi Xu."
-      ],
+      "role": "Ph.D. in Data Science",
+      "details": [],
       "logo": {
         "src": "/logos/cityu.png",
         "alt": "City University of Hong Kong logo"
       }
     },
     {
-      "period": "2024.09 – 2026.07",
+      "period": "2024.09 - 2026.07",
       "institution": "The Hong Kong University of Science and Technology (Guangzhou)",
-      "role": "MPhil Student",
-      "location": "Guangzhou, China",
-      "details": [
-        "Advised by Prof. Xuming Hu and co-supervised by Prof. Yi Ren Fung."
-      ],
+      "role": "M.Phil. Student",
+      "details": [],
       "logo": {
         "src": "/logos/hkust.png",
         "alt": "HKUST(GZ) logo"
       }
     },
     {
-      "period": "2022.09 – 2024.07",
+      "period": "2022.09 - 2024.07",
       "institution": "The University of Hong Kong (HKU)",
-      "role": "MSc in Data Science",
-      "location": "Hong Kong",
+      "role": "M.Sc. in Data Science",
       "details": [],
       "logo": {
         "src": "/logos/hku.svg",
@@ -40,10 +33,9 @@
       }
     },
     {
-      "period": "2018.09 – 2022.06",
+      "period": "2018.09 - 2022.06",
       "institution": "Chongqing University (CQU)",
-      "role": "BEng in Electronic Information Engineering",
-      "location": "Chongqing, China",
+      "role": "B.Eng. in Electronic Information Engineering",
       "details": [],
       "logo": {
         "src": "/logos/cqu.png",
@@ -53,12 +45,12 @@
   ],
   "experience": [
     {
-      "period": "2026.02 – 2026.07",
+      "period": "2026.02 - 2026.07",
       "institution": "Alibaba Cloud Computing",
       "role": "Research Intern",
       "details": [],
       "logo": {
-        "src": "/logos/alibaba-cloud.svg",
+        "src": "/logos/alibaba-cloud-mark.svg",
         "alt": "Alibaba Cloud logo"
       }
     }
@@ -66,7 +58,7 @@
   "academicActivities": [
     {
       "period": "",
-      "title": "Conference Reviewer",
+      "title": "Conference Program Committee",
       "role": "AAAI Conference on Artificial Intelligence (AAAI): 2027, 2026",
       "details": []
     }
