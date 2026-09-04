@@ -14,10 +14,6 @@ export type ProfileCta = {
 
 export type Profile = {
   name: string;
-  title: string;
-  affiliation: string;
-  location: string;
-  tagline: string;
   heroEyebrow: string;
   heroSubhead: string;
   primaryCta: ProfileCta;

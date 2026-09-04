@@ -1,11 +1,7 @@
 {
   "name": "Yu Huang",
-  "title": "Researcher in AI, Agents, and Finance",
-  "affiliation": "The Hong Kong University of Science and Technology (Guangzhou)",
-  "location": "Guangzhou, China",
-  "tagline": "Reliable AI agents for research and financial evidence.",
-  "heroEyebrow": "Research OS",
-  "heroSubhead": "Designing agentic workflows that make evidence traceable, evaluation explicit, and failure visible.",
+  "heroEyebrow": "Multimodal Intelligence",
+  "heroSubhead": "Exploring video understanding and generation, real-time multimodal interaction, and trustworthy AI.",
   "primaryCta": {
     "label": "About me",
     "href": "#about"
@@ -15,7 +11,9 @@
     "href": "#publications"
   },
   "researchInterests": [
-    "MLLM for Video",
+    "Video Understanding",
+    "Video Generation",
+    "Real-Time Interaction",
     "Trustworthy AI"
   ],
   "links": [

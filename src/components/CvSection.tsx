@@ -82,7 +82,7 @@ export function CvSection({ cv, profile }: CvSectionProps) {
           </div>
           <div>
             <dt>Focus</dt>
-            <dd>{profile.researchInterests.slice(0, 3).join(' / ')}</dd>
+            <dd>{profile.researchInterests.join(' / ')}</dd>
           </div>
         </dl>
         <nav className="profile-card-links" aria-label="Academic and social profiles">

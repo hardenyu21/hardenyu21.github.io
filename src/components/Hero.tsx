@@ -27,13 +27,12 @@ export function Hero({ profile }: HeroProps) {
       <div className="hero-main">
         <p className="kicker">{profile.heroEyebrow}</p>
         <h1 className="mission-title">
-          <span>Reliable</span>
-          <span className="mission-accent">AI agents</span>
-          <span>for</span>
-          <span>evidence.</span>
+          <span>See.</span>
+          <span className="mission-accent">Create.</span>
+          <span className="mission-accent">Interact.</span>
+          <span>Trust.</span>
         </h1>
         <p className="hero-subhead">{profile.heroSubhead}</p>
-        <p className="hero-affiliation">{profile.title}</p>
         <div className="hero-actions" aria-label="Primary actions">
           <a className="button button-primary" href={profile.primaryCta.href}>
             {profile.primaryCta.label}

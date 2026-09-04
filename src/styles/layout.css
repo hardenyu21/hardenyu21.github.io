@@ -225,11 +225,6 @@ main {
   font-size: clamp(1.04rem, 1.7vw, 1.3rem);
 }
 
-.hero-affiliation {
-  color: rgba(245, 247, 248, 0.58);
-  font-size: clamp(0.96rem, 1.5vw, 1.16rem);
-}
-
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
