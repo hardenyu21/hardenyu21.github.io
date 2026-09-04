@@ -490,8 +490,9 @@ main {
 
 .profile-card-photo {
   display: block;
-  width: 100%;
+  width: min(220px, 100%);
   aspect-ratio: 1;
+  justify-self: center;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 22px;
   object-fit: cover;
@@ -979,10 +980,6 @@ main {
 
   .profile-card {
     position: static;
-  }
-
-  .profile-card-photo {
-    width: min(280px, 100%);
   }
 
   .floating-card {
