@@ -10,7 +10,7 @@ export function Header() {
   return (
     <header className="site-header">
       <a className="site-mark" href="#top" aria-label="Back to top">
-        HY
+        <img src="/profile/site-mark-nav.png" alt="" aria-hidden="true" />
       </a>
       <nav className="site-nav" aria-label="Primary navigation">
         {navItems.map((item) => (

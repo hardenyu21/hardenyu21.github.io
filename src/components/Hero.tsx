@@ -19,7 +19,7 @@ export function Hero({ profile }: HeroProps) {
 
       <div className="hero-brand">
         <a className="hero-mark" href="#top" aria-label="Back to top">
-          HY
+          <img src="/profile/site-mark-hero.png" alt="" aria-hidden="true" />
         </a>
         <span>{profile.name}</span>
       </div>
