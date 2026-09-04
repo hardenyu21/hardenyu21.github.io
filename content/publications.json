@@ -1,30 +1,53 @@
 [
   {
-    "title": "Reliable Agentic Workflows for Research-Grade AI Systems",
-    "authors": "Yu Huang",
-    "venue": "Working manuscript",
+    "title": "KnowMT-Bench: Benchmarking Knowledge-Intensive Long-Form Question Answering in Multi-Turn Dialogues",
+    "titleHref": "/papers/knowmt-bench-emnlp-2026.pdf",
+    "badge": "EMNLP'26 Findings",
+    "image": {
+      "src": "/publications/knowmt-bench-emnlp-2026.png",
+      "alt": "Comparison of single-turn and multi-turn long-form question answering in KnowMT-Bench"
+    },
+    "authors": [
+      { "name": "Junhao Chen", "marker": "*" },
+      { "name": "Yu Huang", "marker": "*", "highlight": true },
+      { "name": "Siyuan Li", "marker": "*" },
+      { "name": "Rui Yao" },
+      { "name": "Hanqian Li" },
+      { "name": "Hanyu Zhang" },
+      { "name": "Jungang Li" },
+      { "name": "Jian Chen" },
+      { "name": "Bowen Wang" },
+      { "name": "Xuming Hu", "marker": "†" }
+    ],
+    "venue": "Findings of the Association for Computational Linguistics: EMNLP",
     "year": "2026",
-    "status": "Draft",
-    "tags": ["Agents", "Evaluation", "Research Systems"],
-    "links": [],
-    "featured": true
+    "links": [
+      { "label": "Paper", "href": "/papers/knowmt-bench-emnlp-2026.pdf" },
+      { "label": "Code", "href": "https://github.com/Sven-LI-sankyuu/KnowMT-Bench" }
+    ]
   },
   {
-    "title": "Multimodal Reasoning Pipelines for Financial Evidence Analysis",
-    "authors": "Yu Huang",
-    "venue": "Project report",
+    "title": "Acoustic Interference: A New Paradigm Weaponizing Acoustic Latent Semantic for Universal Jailbreak against Large Audio Language Models",
+    "titleHref": "https://openreview.net/forum?id=FygaF16KNo",
+    "badge": "ICML'26",
+    "image": {
+      "src": "/publications/acoustic-interference-icml-2026.png",
+      "alt": "Overview of the Acoustic Interference jailbreak paradigm for large audio language models"
+    },
+    "authors": [
+      { "name": "Yanyun Wang", "marker": "*" },
+      { "name": "Yu Huang", "marker": "*", "highlight": true },
+      { "name": "Zi Liang" },
+      { "name": "Xixin Wu" },
+      { "name": "Li Liu", "marker": "†" }
+    ],
+    "venue": "43rd International Conference on Machine Learning",
     "year": "2026",
-    "status": "In progress",
-    "tags": ["MLLM", "Finance", "Evidence"],
-    "links": []
-  },
-  {
-    "title": "Evaluation Protocols for LLM-Based Decision Support",
-    "authors": "Yu Huang",
-    "venue": "Technical note",
-    "year": "2025",
-    "status": "Preprint planned",
-    "tags": ["LLM", "Evaluation", "Decision Support"],
-    "links": []
+    "links": [
+      { "label": "Project Page", "href": "https://flaai.github.io/AIA_page/" },
+      { "label": "Slides", "href": "https://github.com/FlaAI/ywang/blob/main/files/Slides_ICML26.pptx" },
+      { "label": "Poster", "href": "https://github.com/FlaAI/ywang/blob/main/files/Poster_ICML26.pdf" },
+      { "label": "Code", "href": "https://github.com/FlaAI/AIA" }
+    ]
   }
 ]

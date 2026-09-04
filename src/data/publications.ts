@@ -5,15 +5,24 @@ export type PublicationLink = {
   href: string;
 };
 
+export type PublicationAuthor = {
+  name: string;
+  marker?: string;
+  highlight?: boolean;
+};
+
 export type Publication = {
   title: string;
-  authors: string;
+  titleHref: string;
+  badge: string;
+  image: {
+    src: string;
+    alt: string;
+  };
+  authors: PublicationAuthor[];
   venue: string;
   year: string;
-  status?: string;
-  tags: string[];
   links: PublicationLink[];
-  featured?: boolean;
 };
 
 export const publications: Publication[] = publicationContent;

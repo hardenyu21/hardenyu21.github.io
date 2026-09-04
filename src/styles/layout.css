@@ -675,87 +675,21 @@ main {
   margin: 0 auto;
 }
 
-.featured-publication {
-  display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.75fr);
-  gap: 24px;
-  padding: 30px;
-  border-radius: 34px;
-  color: #f5f5f7;
-  background:
-    radial-gradient(circle at 85% 90%, rgba(0, 102, 204, 0.62), transparent 40%),
-    linear-gradient(180deg, #1d1d1f, #050505);
-}
-
-.feature-copy {
-  display: grid;
-  align-content: center;
-  gap: 12px;
-  min-height: 320px;
-}
-
-.featured-publication .item-meta,
-.featured-publication .venue,
-.featured-publication .feature-summary {
-  color: #a1a1a6;
-}
-
-.featured-publication h3 {
-  max-width: 660px;
-  color: #ffffff;
-  font-size: clamp(1.9rem, 3.8vw, 3.6rem);
-  line-height: 1.02;
-}
-
-.featured-publication .authors {
-  color: #f5f5f7;
-}
-
-.featured-publication .tag-row span {
-  color: #f5f5f7;
-  background: rgba(255, 255, 255, 0.13);
-}
-
-.feature-visual {
-  display: grid;
-  align-content: end;
-  gap: 10px;
-  min-height: 300px;
-  padding: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.13);
-  border-radius: 28px;
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent 58%),
-    rgba(255, 255, 255, 0.08);
-}
-
-.feature-visual span {
-  color: #a1a1a6;
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.feature-visual strong {
-  color: #ffffff;
-  font-size: 1.1rem;
-}
-
-.feature-visual i {
-  width: 100%;
-  height: 1px;
-  margin: 8px 0;
-  background: rgba(255, 255, 255, 0.2);
-}
-
 .publication-stack {
   display: grid;
-  padding: 8px 28px;
+  gap: 18px;
+}
+
+.publication-item {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.82fr) minmax(0, 1.18fr);
+  gap: 32px;
+  align-items: center;
+  padding: 28px;
   border-radius: 30px;
   background: var(--surface);
 }
 
-.publication-item,
 .project-item {
   display: grid;
   grid-template-columns: 130px minmax(0, 1fr);
@@ -765,9 +699,91 @@ main {
   border-bottom: 1px solid var(--line);
 }
 
-.publication-item:last-child,
 .project-item:last-child {
   margin-bottom: 0;
+}
+
+.publication-visual {
+  position: relative;
+  display: grid;
+  min-height: 210px;
+  place-items: center;
+  overflow: hidden;
+  padding: 22px 16px 16px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+}
+
+.publication-visual img {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+}
+
+.publication-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 1;
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: #ffffff;
+  background: #00369f;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.publication-copy {
+  align-content: center;
+  gap: 12px;
+}
+
+.publication-copy h3 {
+  font-size: clamp(1.25rem, 2.2vw, 1.7rem);
+  line-height: 1.2;
+}
+
+.publication-copy h3 a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.publication-copy h3 a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.publication-self {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+}
+
+.publication-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.publication-links a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.publication-links a:hover {
+  text-decoration: underline;
+}
+
+.publication-author-note {
+  margin: 0 0 0 28px;
+  color: var(--muted);
+  font-size: 0.82rem;
 }
 
 .system-card {
@@ -943,16 +959,6 @@ main {
     grid-template-columns: 1fr;
   }
 
-  .featured-publication {
-    grid-template-columns: 1fr;
-    padding: 24px;
-  }
-
-  .feature-copy,
-  .feature-visual {
-    min-height: auto;
-  }
-
   .system-card {
     grid-template-columns: 1fr;
   }
@@ -984,6 +990,10 @@ main {
   .project-item {
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+
+  .publication-item {
+    padding: 24px;
   }
 
   .item-meta {
@@ -1044,8 +1054,21 @@ main {
   }
 
   .publication-stack {
-    padding: 0 18px;
+    padding: 0;
+  }
+
+  .publication-item {
+    padding: 18px;
     border-radius: 24px;
+  }
+
+  .publication-visual {
+    min-height: 180px;
+    border-radius: 18px;
+  }
+
+  .publication-author-note {
+    margin-left: 18px;
   }
 
   .system-card {

@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import type { Publication } from '../data/publications';
 
 type PublicationListProps = {
@@ -5,85 +6,50 @@ type PublicationListProps = {
 };
 
 export function PublicationList({ publications }: PublicationListProps) {
-  const featured = publications.find((publication) => publication.featured);
-  const secondary = publications.filter((publication) => publication !== featured);
-
   return (
     <div className="publication-list">
-      {featured ? (
-        <article className="featured-publication" key={featured.title}>
-          <div className="feature-copy">
-            <div className="item-meta">
-              <span>{featured.year}</span>
-              <strong>Featured</strong>
-            </div>
-            <h3>{featured.title}</h3>
-            <p className="authors">{featured.authors}</p>
-            <p className="venue">
-              {featured.venue}
-              {featured.status ? ` · ${featured.status}` : ''}
-            </p>
-            <p className="feature-summary">
-              A working line on reliable agentic workflows, explicit evaluation, and
-              research-grade failure visibility.
-            </p>
-            <div className="tag-row">
-              {featured.tags.map((tag) => (
-                <span key={tag}>{tag}</span>
-              ))}
-            </div>
-            {featured.links.length > 0 ? (
-              <div className="inline-links">
-                {featured.links.map((link) => (
-                  <a key={link.label} href={link.href}>
-                    {link.label}
-                  </a>
-                ))}
-              </div>
-            ) : null}
-          </div>
-          <div className="feature-visual" aria-hidden="true">
-            <span>Problem</span>
-            <strong>Can agents show their work?</strong>
-            <i />
-            <span>Method</span>
-            <strong>Trace every claim to evidence.</strong>
-          </div>
-        </article>
-      ) : null}
-
       <div className="publication-stack">
-        {secondary.map((publication) => (
+        {publications.map((publication) => (
           <article className="publication-item" key={publication.title}>
-            <div className="item-meta">
-              <span>{publication.year}</span>
-              {publication.featured ? <strong>Selected</strong> : null}
+            <div className="publication-visual">
+              <span className="publication-badge">{publication.badge}</span>
+              <img src={publication.image.src} alt={publication.image.alt} loading="lazy" />
             </div>
-            <div className="item-content">
-              <h3>{publication.title}</h3>
-              <p className="authors">{publication.authors}</p>
-              <p className="venue">
-                {publication.venue}
-                {publication.status ? ` · ${publication.status}` : ''}
+
+            <div className="item-content publication-copy">
+              <h3>
+                <a href={publication.titleHref} target="_blank" rel="noreferrer">
+                  {publication.title}
+                </a>
+              </h3>
+              <p className="authors">
+                {publication.authors.map((author, index) => (
+                  <Fragment key={author.name}>
+                    {author.highlight ? (
+                      <strong className="publication-self">{author.name}</strong>
+                    ) : (
+                      author.name
+                    )}
+                    {author.marker ? <sup>{author.marker}</sup> : null}
+                    {index < publication.authors.length - 1 ? ', ' : ''}
+                  </Fragment>
+                ))}
               </p>
-              <div className="tag-row">
-                {publication.tags.map((tag) => (
-                  <span key={tag}>{tag}</span>
+              <p className="venue">
+                In <em>{publication.venue}</em>, {publication.year}.
+              </p>
+              <div className="publication-links" aria-label={`${publication.title} links`}>
+                {publication.links.map((link) => (
+                  <span key={link.label}>
+                    [<a href={link.href} target="_blank" rel="noreferrer">{link.label}</a>]
+                  </span>
                 ))}
               </div>
-              {publication.links.length > 0 ? (
-                <div className="inline-links">
-                  {publication.links.map((link) => (
-                    <a key={link.label} href={link.href}>
-                      {link.label}
-                    </a>
-                  ))}
-                </div>
-              ) : null}
             </div>
           </article>
         ))}
       </div>
+      <p className="publication-author-note">* Equal contribution. † Corresponding author.</p>
     </div>
   );
 }
