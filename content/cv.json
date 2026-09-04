@@ -25,6 +25,11 @@
       "label": "Xiaohongshu",
       "href": "https://xhslink.cn/m/7WjSmyfTuEg",
       "icon": "/icons/xiaohongshu.svg"
+    },
+    {
+      "label": "Email",
+      "href": "mailto:yhuang3273-c@my.cityu.edu.hk",
+      "icon": "/icons/email.svg"
     }
   ],
   "education": [

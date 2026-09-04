@@ -84,19 +84,6 @@ export default function App() {
         >
           <CvSection cv={cv} profile={profile} />
         </Section>
-
-        <Section
-          id="contact"
-          title="Contact"
-          eyebrow="Collaboration"
-        >
-          <div className="contact-block">
-            <p>{profile.contactNote}</p>
-            <a className="primary-link" href={`mailto:${profile.email}`}>
-              {profile.email}
-            </a>
-          </div>
-        </Section>
       </main>
       <Footer />
     </>

@@ -90,8 +90,8 @@ export function CvSection({ cv, profile }: CvSectionProps) {
             <a
               key={link.label}
               href={link.href}
-              target="_blank"
-              rel="noreferrer"
+              target={link.href.startsWith('mailto:') ? undefined : '_blank'}
+              rel={link.href.startsWith('mailto:') ? undefined : 'noreferrer'}
               aria-label={link.label}
               title={link.label}
             >

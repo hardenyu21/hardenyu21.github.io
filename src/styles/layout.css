@@ -266,8 +266,7 @@ main {
 }
 
 .hero-links a,
-.inline-links a,
-.primary-link {
+.inline-links a {
   color: var(--accent);
   font-weight: 650;
   text-decoration: none;
@@ -539,7 +538,8 @@ main {
 
 .profile-card-links {
   display: flex;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 2px;
   padding-top: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
@@ -895,25 +895,6 @@ main {
 .news-list time {
   color: var(--muted);
   font-size: 0.9rem;
-}
-
-.contact-block {
-  display: grid;
-  max-width: var(--reading-width);
-  margin: 0 auto;
-  gap: 18px;
-  justify-items: center;
-  text-align: center;
-}
-
-.contact-block p {
-  color: var(--muted);
-  font-size: 1.12rem;
-}
-
-.primary-link {
-  width: fit-content;
-  font-size: 1.1rem;
 }
 
 .site-footer {

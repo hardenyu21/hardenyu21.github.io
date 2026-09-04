@@ -17,7 +17,6 @@ export type Profile = {
   title: string;
   affiliation: string;
   location: string;
-  email: string;
   tagline: string;
   heroEyebrow: string;
   heroSubhead: string;
@@ -26,7 +25,6 @@ export type Profile = {
   researchInterests: string[];
   links: ProfileLink[];
   bio: string[];
-  contactNote: string;
 };
 
 export const profile: Profile = {

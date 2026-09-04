@@ -4,7 +4,6 @@ const navItems = [
   { label: 'Publications', href: '#publications' },
   // { label: 'Projects', href: '#projects' },
   { label: 'Profile', href: '#profile' },
-  { label: 'Contact', href: '#contact' },
 ];
 
 export function Header() {

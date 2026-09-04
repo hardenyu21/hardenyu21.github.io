@@ -3,7 +3,6 @@
   "title": "Researcher in AI, Agents, and Finance",
   "affiliation": "The Hong Kong University of Science and Technology (Guangzhou)",
   "location": "Guangzhou, China",
-  "email": "hardenyu221@gmail.com",
   "tagline": "Reliable AI agents for research and financial evidence.",
   "heroEyebrow": "Research OS",
   "heroSubhead": "Designing agentic workflows that make evidence traceable, evaluation explicit, and failure visible.",
@@ -24,6 +23,5 @@
       "label": "GitHub",
       "href": "https://github.com/hardenyu21"
     }
-  ],
-  "contactNote": "For focused conversations on reliable agents, evaluation, and AI for finance."
+  ]
 }
