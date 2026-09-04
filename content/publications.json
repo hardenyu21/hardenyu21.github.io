@@ -42,6 +42,7 @@
     "venue": "43rd International Conference on Machine Learning",
     "year": "2026",
     "links": [
+      { "label": "Paper", "href": "https://arxiv.org/pdf/2605.18168" },
       { "label": "Project Page", "href": "https://flaai.github.io/AIA_page/" },
       { "label": "Code", "href": "https://github.com/FlaAI/AIA" }
     ]
