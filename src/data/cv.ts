@@ -17,9 +17,20 @@ export type CvEntry = {
   logo?: CvLogo;
 };
 
+export type CvProfileLink = {
+  label: string;
+  href: string;
+  icon: string;
+};
+
 export type CvProfile = {
   headline: string;
   location: string;
+  photo: {
+    src: string;
+    alt: string;
+  };
+  profileLinks: CvProfileLink[];
   education: CvEntry[];
   experience: CvEntry[];
   academicActivities: CvEntry[];

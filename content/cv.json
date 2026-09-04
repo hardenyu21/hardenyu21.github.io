@@ -1,6 +1,32 @@
 {
   "headline": "PhD Student at CityU",
   "location": "Hong Kong",
+  "photo": {
+    "src": "/profile/yu-huang.jpg",
+    "alt": "Portrait of Yu Huang"
+  },
+  "profileLinks": [
+    {
+      "label": "Google Scholar",
+      "href": "https://scholar.google.com/citations?hl=zh-CN&user=_E8sHEMAAAAJ&view_op=list_works&authuser=1&sortby=pubdate",
+      "icon": "/icons/google-scholar.svg"
+    },
+    {
+      "label": "LinkedIn",
+      "href": "https://www.linkedin.com/in/yu-huang-9b17a8263/",
+      "icon": "/icons/linkedin.svg"
+    },
+    {
+      "label": "X",
+      "href": "https://x.com/hardenyu221",
+      "icon": "/icons/x.svg"
+    },
+    {
+      "label": "Xiaohongshu",
+      "href": "https://xhslink.cn/m/7WjSmyfTuEg",
+      "icon": "/icons/xiaohongshu.svg"
+    }
+  ],
   "education": [
     {
       "period": "2026.09 - Now",

@@ -67,7 +67,12 @@ export function CvSection({ cv, profile }: CvSectionProps) {
   return (
     <div className="cv-layout">
       <aside className="profile-card" aria-label="Profile summary">
-        <span className="profile-card-mark">HY</span>
+        <img
+          className="profile-card-photo"
+          src={cv.photo.src}
+          alt={cv.photo.alt}
+          loading="lazy"
+        />
         <strong>{profile.name}</strong>
         <p>{cv.headline}</p>
         <dl>
@@ -80,6 +85,20 @@ export function CvSection({ cv, profile }: CvSectionProps) {
             <dd>{profile.researchInterests.slice(0, 3).join(' / ')}</dd>
           </div>
         </dl>
+        <nav className="profile-card-links" aria-label="Academic and social profiles">
+          {cv.profileLinks.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={link.label}
+              title={link.label}
+            >
+              <img src={link.icon} alt="" aria-hidden="true" />
+            </a>
+          ))}
+        </nav>
       </aside>
 
       <div className="cv-groups">

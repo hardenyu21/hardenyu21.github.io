@@ -488,16 +488,14 @@ main {
     linear-gradient(180deg, #1d1d1f, #050505);
 }
 
-.profile-card-mark {
-  display: inline-grid;
-  width: 48px;
-  height: 48px;
-  place-items: center;
-  border: 1px solid rgba(245, 247, 248, 0.22);
-  border-radius: 50%;
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
-  font-weight: 700;
+.profile-card-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 22px;
+  object-fit: cover;
+  object-position: center 24%;
 }
 
 .profile-card strong {
@@ -534,6 +532,42 @@ main {
 .profile-card dd {
   margin: 0;
   line-height: 1.5;
+}
+
+.profile-card-links {
+  display: flex;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.profile-card-links a {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.94);
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease;
+}
+
+.profile-card-links a:hover {
+  background: #ffffff;
+  transform: translateY(-2px);
+}
+
+.profile-card-links a:focus-visible {
+  outline: 3px solid rgba(118, 221, 245, 0.7);
+  outline-offset: 3px;
+}
+
+.profile-card-links img {
+  display: block;
+  width: 20px;
+  height: 20px;
 }
 
 .cv-groups {
@@ -945,6 +979,10 @@ main {
 
   .profile-card {
     position: static;
+  }
+
+  .profile-card-photo {
+    width: min(280px, 100%);
   }
 
   .floating-card {
