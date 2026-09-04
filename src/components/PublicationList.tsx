@@ -17,11 +17,7 @@ export function PublicationList({ publications }: PublicationListProps) {
             </div>
 
             <div className="item-content publication-copy">
-              <h3>
-                <a href={publication.titleHref} target="_blank" rel="noreferrer">
-                  {publication.title}
-                </a>
-              </h3>
+              <h3>{publication.title}</h3>
               <p className="authors">
                 {publication.authors.map((author, index) => (
                   <Fragment key={author.name}>

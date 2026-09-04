@@ -1,7 +1,6 @@
 [
   {
     "title": "KnowMT-Bench: Benchmarking Knowledge-Intensive Long-Form Question Answering in Multi-Turn Dialogues",
-    "titleHref": "/papers/knowmt-bench-emnlp-2026.pdf",
     "badge": "EMNLP'26 Findings",
     "image": {
       "src": "/publications/knowmt-bench-emnlp-2026.png",
@@ -28,7 +27,6 @@
   },
   {
     "title": "Acoustic Interference: A New Paradigm Weaponizing Acoustic Latent Semantic for Universal Jailbreak against Large Audio Language Models",
-    "titleHref": "https://openreview.net/forum?id=FygaF16KNo",
     "badge": "ICML'26",
     "image": {
       "src": "/publications/acoustic-interference-icml-2026.png",
@@ -45,7 +43,6 @@
     "year": "2026",
     "links": [
       { "label": "Project Page", "href": "https://flaai.github.io/AIA_page/" },
-      { "label": "Poster", "href": "https://github.com/FlaAI/ywang/blob/main/files/Poster_ICML26.pdf" },
       { "label": "Code", "href": "https://github.com/FlaAI/AIA" }
     ]
   }

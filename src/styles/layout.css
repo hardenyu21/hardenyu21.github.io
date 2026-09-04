@@ -743,18 +743,9 @@ main {
 }
 
 .publication-copy h3 {
+  color: var(--text);
   font-size: clamp(1.08rem, 1.8vw, 1.45rem);
   line-height: 1.2;
-}
-
-.publication-copy h3 a {
-  color: var(--accent);
-  text-decoration: none;
-}
-
-.publication-copy h3 a:hover {
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
 }
 
 .publication-self {

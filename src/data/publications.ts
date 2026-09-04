@@ -13,7 +13,6 @@ export type PublicationAuthor = {
 
 export type Publication = {
   title: string;
-  titleHref: string;
   badge: string;
   image: {
     src: string;
