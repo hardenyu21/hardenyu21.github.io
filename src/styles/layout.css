@@ -743,7 +743,7 @@ main {
 }
 
 .publication-copy h3 {
-  font-size: clamp(1.25rem, 2.2vw, 1.7rem);
+  font-size: clamp(1.08rem, 1.8vw, 1.45rem);
   line-height: 1.2;
 }
 

@@ -45,7 +45,6 @@
     "year": "2026",
     "links": [
       { "label": "Project Page", "href": "https://flaai.github.io/AIA_page/" },
-      { "label": "Slides", "href": "https://github.com/FlaAI/ywang/blob/main/files/Slides_ICML26.pptx" },
       { "label": "Poster", "href": "https://github.com/FlaAI/ywang/blob/main/files/Poster_ICML26.pdf" },
       { "label": "Code", "href": "https://github.com/FlaAI/AIA" }
     ]
