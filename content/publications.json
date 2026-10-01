@@ -1,5 +1,33 @@
 [
   {
+    "title": "CausalEmbed: Auto-Regressive Multi-Vector Generation in Latent Space for Visual Document Embedding",
+    "badge": "TMLR'26",
+    "image": {
+      "src": "/publications/causalembed-tmlr-2026.png",
+      "alt": "Overview of the CausalEmbed framework for auto-regressive visual document embeddings"
+    },
+    "authors": [
+      { "name": "Jiahao Huo", "marker": "*" },
+      { "name": "Yu Huang", "marker": "*", "highlight": true },
+      { "name": "Yibo Yan", "marker": "*" },
+      { "name": "Ye Pan" },
+      { "name": "Kening Zheng" },
+      { "name": "Wei-Chieh Huang" },
+      { "name": "Yi Cao" },
+      { "name": "Mingdong Ou", "marker": "†" },
+      { "name": "Philip S. Yu" },
+      { "name": "Xuming Hu", "marker": "‡" }
+    ],
+    "authorNote": "* Equal contribution. † Project leader. ‡ Corresponding author.",
+    "venue": "Transactions on Machine Learning Research",
+    "year": "2026",
+    "links": [
+      { "label": "Paper", "href": "https://arxiv.org/pdf/2601.21262" },
+      { "label": "OpenReview", "href": "https://openreview.net/forum?id=mZXoOgBxX2" },
+      { "label": "Code", "href": "https://github.com/Z1zs/Causal-Embed" }
+    ]
+  },
+  {
     "title": "KnowMT-Bench: Benchmarking Knowledge-Intensive Long-Form Question Answering in Multi-Turn Dialogues",
     "badge": "EMNLP'26 Findings",
     "image": {
@@ -18,6 +46,7 @@
       { "name": "Bowen Wang" },
       { "name": "Xuming Hu", "marker": "†" }
     ],
+    "authorNote": "* Equal contribution. † Corresponding author.",
     "venue": "Findings of the Association for Computational Linguistics: EMNLP",
     "year": "2026",
     "links": [
@@ -39,6 +68,7 @@
       { "name": "Xixin Wu" },
       { "name": "Li Liu", "marker": "†" }
     ],
+    "authorNote": "* Equal contribution. † Corresponding author.",
     "venue": "43rd International Conference on Machine Learning",
     "year": "2026",
     "links": [

@@ -1,22 +1,32 @@
 [
   {
+    "date": "2026-10",
+    "emoji": "🎉",
+    "text": "One paper is accepted to NeurIPS 2026. Congrats to Junquan!"
+  },
+  {
     "date": "2026-09",
+    "emoji": "🧩",
     "text": "CausalEmbed is accepted by TMLR 2026."
   },
   {
     "date": "2026-08",
+    "emoji": "📚",
     "text": "KnowMTBench is accepted by EMNLP 2026 as a Findings paper."
   },
   {
     "date": "2026-05",
+    "emoji": "🎧",
     "text": "AIA is accepted by ICML 2026."
   },
   {
     "date": "2026-03",
+    "emoji": "🐱",
     "text": "CAT is accepted by TMLR."
   },
   {
     "date": "2026-02",
+    "emoji": "👁️",
     "text": "One paper is accepted by CVPR 2026 as a finding paper."
   }
 ]

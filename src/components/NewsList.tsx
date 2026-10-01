@@ -10,7 +10,10 @@ export function NewsList({ items }: NewsListProps) {
       {items.map((item) => (
         <li key={`${item.date}-${item.text}`}>
           <time>{item.date}</time>
-          {item.href ? <a href={item.href}>{item.text}</a> : <span>{item.text}</span>}
+          <div className="news-copy">
+            <span className="news-emoji" aria-hidden="true">{item.emoji}</span>
+            {item.href ? <a href={item.href}>{item.text}</a> : <span>{item.text}</span>}
+          </div>
         </li>
       ))}
     </ol>

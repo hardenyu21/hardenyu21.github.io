@@ -34,6 +34,7 @@ export function PublicationList({ publications }: PublicationListProps) {
               <p className="venue">
                 In <em>{publication.venue}</em>, {publication.year}.
               </p>
+              <p className="publication-author-note">{publication.authorNote}</p>
               <div className="publication-links" aria-label={`${publication.title} links`}>
                 {publication.links.map((link) => (
                   <span key={link.label}>
@@ -45,7 +46,6 @@ export function PublicationList({ publications }: PublicationListProps) {
           </article>
         ))}
       </div>
-      <p className="publication-author-note">* Equal contribution. † Corresponding author.</p>
     </div>
   );
 }

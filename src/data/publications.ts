@@ -19,6 +19,7 @@ export type Publication = {
     alt: string;
   };
   authors: PublicationAuthor[];
+  authorNote: string;
   venue: string;
   year: string;
   links: PublicationLink[];
