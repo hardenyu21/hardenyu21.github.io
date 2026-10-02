@@ -24,7 +24,8 @@
     "year": "2026",
     "links": [
       { "label": "Paper", "href": "https://arxiv.org/pdf/2610.01499" },
-      { "label": "Code", "href": "https://github.com/hardenyu21/VTR-Bench" }
+      { "label": "Code", "href": "https://github.com/hardenyu21/VTR-Bench" },
+      { "label": "Hugging Face", "href": "https://huggingface.co/datasets/hardenyu/VTR-Bench" }
     ]
   },
   {
