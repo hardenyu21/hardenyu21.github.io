@@ -23,7 +23,8 @@
     "venue": "arXiv preprint arXiv:2610.01499",
     "year": "2026",
     "links": [
-      { "label": "Paper", "href": "https://arxiv.org/pdf/2610.01499" }
+      { "label": "Paper", "href": "https://arxiv.org/pdf/2610.01499" },
+      { "label": "Code", "href": "https://github.com/hardenyu21/VTR-Bench" }
     ]
   },
   {
