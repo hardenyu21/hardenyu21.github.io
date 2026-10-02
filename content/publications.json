@@ -1,5 +1,32 @@
 [
   {
+    "title": "VTR-Bench: A Systematic Benchmark for Evaluating Visual Text Rendering in Video Generation",
+    "badge": "Preprint'26",
+    "image": {
+      "src": "/publications/vtr-bench-preprint-2026.jpg",
+      "alt": "VTR-Bench overview showing generated video frames, visual text rendering errors, and word error rates across video generation models"
+    },
+    "authors": [
+      { "name": "Yu Huang", "highlight": true },
+      { "name": "Jungang Li" },
+      { "name": "Zhiyuan Wang" },
+      { "name": "Yonghua Hei" },
+      { "name": "Song Dai" },
+      { "name": "Jiayu Yang" },
+      { "name": "Deyuan Liu" },
+      { "name": "Xiang Zheng" },
+      { "name": "Xiaoshuang Shi" },
+      { "name": "Hao Cheng" },
+      { "name": "Kaidi Xu", "marker": "✉" }
+    ],
+    "authorNote": "✉ Corresponding author.",
+    "venue": "arXiv preprint arXiv:2610.01499",
+    "year": "2026",
+    "links": [
+      { "label": "Paper", "href": "https://arxiv.org/pdf/2610.01499" }
+    ]
+  },
+  {
     "title": "CausalEmbed: Auto-Regressive Multi-Vector Generation in Latent Space for Visual Document Embedding",
     "badge": "TMLR'26",
     "image": {
