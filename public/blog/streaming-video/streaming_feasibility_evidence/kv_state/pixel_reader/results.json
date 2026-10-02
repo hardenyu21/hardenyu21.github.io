@@ -1,0 +1,146 @@
+{
+  "selected_view": "temporal_contrast",
+  "selected_alpha": 1.0,
+  "selection": "Validation bit accuracy only; test read after selection.",
+  "training_samples": 96,
+  "validation_trials": [
+    {
+      "view": "global",
+      "alpha": 1.0,
+      "bit_accuracy": 0.5
+    },
+    {
+      "view": "global",
+      "alpha": 10.0,
+      "bit_accuracy": 0.5
+    },
+    {
+      "view": "global",
+      "alpha": 100.0,
+      "bit_accuracy": 0.4973958333333333
+    },
+    {
+      "view": "global",
+      "alpha": 1000.0,
+      "bit_accuracy": 0.5026041666666666
+    },
+    {
+      "view": "global",
+      "alpha": 10000.0,
+      "bit_accuracy": 0.5026041666666666
+    },
+    {
+      "view": "suffix32",
+      "alpha": 1.0,
+      "bit_accuracy": 0.5026041666666666
+    },
+    {
+      "view": "suffix32",
+      "alpha": 10.0,
+      "bit_accuracy": 0.4973958333333333
+    },
+    {
+      "view": "suffix32",
+      "alpha": 100.0,
+      "bit_accuracy": 0.4973958333333333
+    },
+    {
+      "view": "suffix32",
+      "alpha": 1000.0,
+      "bit_accuracy": 0.5052083333333334
+    },
+    {
+      "view": "suffix32",
+      "alpha": 10000.0,
+      "bit_accuracy": 0.4973958333333333
+    },
+    {
+      "view": "temporal_contrast",
+      "alpha": 1.0,
+      "bit_accuracy": 0.5234375
+    },
+    {
+      "view": "temporal_contrast",
+      "alpha": 10.0,
+      "bit_accuracy": 0.5182291666666666
+    },
+    {
+      "view": "temporal_contrast",
+      "alpha": 100.0,
+      "bit_accuracy": 0.5182291666666666
+    },
+    {
+      "view": "temporal_contrast",
+      "alpha": 1000.0,
+      "bit_accuracy": 0.5182291666666666
+    },
+    {
+      "view": "temporal_contrast",
+      "alpha": 10000.0,
+      "bit_accuracy": 0.5182291666666666
+    }
+  ],
+  "blind": {
+    "train": {
+      "bit_accuracy": 0.9993489583333334,
+      "exact_messages": 95,
+      "messages": 96
+    },
+    "validation": {
+      "bit_accuracy": 0.5234375,
+      "exact_messages": 0,
+      "messages": 24
+    },
+    "test": {
+      "bit_accuracy": 0.517578125,
+      "exact_messages": 0,
+      "messages": 64
+    }
+  },
+  "attacks": {
+    "random_cut_13": {
+      "bit_accuracy": 0.5029296875,
+      "exact_messages": 0,
+      "messages": 64
+    },
+    "drop25": {
+      "bit_accuracy": 0.513671875,
+      "exact_messages": 0,
+      "messages": 64
+    },
+    "insert13": {
+      "bit_accuracy": 0.5078125,
+      "exact_messages": 0,
+      "messages": 64
+    },
+    "reverse": {
+      "bit_accuracy": 0.48828125,
+      "exact_messages": 0,
+      "messages": 64
+    },
+    "crf35": {
+      "bit_accuracy": 0.51171875,
+      "exact_messages": 0,
+      "messages": 64
+    },
+    "crop10": {
+      "bit_accuracy": 0.515625,
+      "exact_messages": 0,
+      "messages": 64
+    }
+  },
+  "oracle_pair_only": {
+    "alpha": 1.0,
+    "test": {
+      "bit_accuracy": 0.671875,
+      "exact_messages": 1,
+      "messages": 32
+    },
+    "warning": "Requires same-seed complementary-message counterpart; not blind extraction."
+  },
+  "permuted_label_pair_control": {
+    "bit_accuracy": 0.52734375,
+    "exact_messages": 0,
+    "messages": 32
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "python": "3.12.3",
+  "packages": {
+    "torch": "2.8.0",
+    "torchvision": "0.23.0",
+    "transformers": "4.49.0",
+    "diffusers": "0.31.0",
+    "numpy": "2.5.2",
+    "av": "13.1.0",
+    "omegaconf": "2.3.0",
+    "triton": "3.4.0",
+    "safetensors": "0.8.0"
+  },
+  "nvidia": [
+    "NVIDIA H20, 580.126.20",
+    "NVIDIA H20, 580.126.20",
+    "NVIDIA H20, 580.126.20",
+    "NVIDIA H20, 580.126.20"
+  ],
+  "longlive_commit": "6b36d20ec6f7958d29d11a704dfa64611a9f2572",
+  "runtime_helper": "scripts/longlive2_utils.py",
+  "source_sha256": {
+    "scripts/kv_stream_learning.py": "d1a55e36b513fd052b86b9338bda99f60fce56f233e0fd86bd26b68cb9c9b856",
+    "scripts/kv_stream_multitrain.py": "0be08869220cd75b5eab97461784e3030afe2a053c4c939e5cce827ad9892c90",
+    "scripts/kv_stream_calibrate.py": "974edd547dcc397f9f9a3f0b9a19b310a620251bc09089f2fcff1788a313b574",
+    "scripts/kv_stream_evaluate.py": "6bce9dd26a1c6ae268adbb249e27cf20c1dcff100c61eb1ea2429f3530f4212c",
+    "scripts/kv_stream_native_quality.py": "235386f28cf0f71aeb83928aa130d75298b877498e0705cfc699df3dca72cc69",
+    "scripts/kv_stream_serialized_readout.py": "e84054c300b371663e1a08ddb761088d38246040ab0cb2f46c50c69f1d5121b8",
+    "scripts/pixel_capacity_control.py": "2b6d11dad4e2b57e6b14d7a4f3246a9295f50ba20c9a81ecb1f8635836fa52fb",
+    "scripts/analyze_stream_learning.py": "f2d95e7291fe821072c986defeb3505f3d6596c5d09fa83524ea097512959529",
+    "scripts/summarize_stream_learning.py": "690c16ff8218a35db7f0b5e112c865c14a55b44425533278d44b511a3cd68949",
+    "scripts/longlive2_utils.py": "bb1b6f8579846d83afa152d91e7d5d05d2071b236d7b76aee38986e04d3a4ca0",
+    "scripts/learning_plan.json": "fa088ddd78e0aeefdfdeefe4af04ad4e4c01fbeab20d761c974c5c4f856e708b",
+    "scripts/evaluation_plan.json": "b918befb89be1675a5bd6a624660f12880bf9853903b43d5e1b48e0bb4bf2eeb",
+    "scripts/evaluation_smoke_plan.json": "e06245aeccbdb7fa96b473899725095ad5ca3ea1d99eceba7233d035964e34ff",
+    "third_party/LongLive/pipeline/causal_diffusion_inference.py": "701692c987241be6895247ef7ab265f20af71088700d2fb72d3597fc42b60346",
+    "third_party/LongLive/wan_5b/modules/causal_model.py": "97c07c990963a885a850662d857ecb0fbbf6fc4140b840d2138619a7b8326435",
+    "third_party/LongLive/wan_5b/modules/vae2_2.py": "8d0a68c40ec3c7a36e079ea1c581239daa67cdf8caab73d24e6341214ea9c881"
+  }
+}

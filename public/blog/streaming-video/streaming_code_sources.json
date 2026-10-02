@@ -1,0 +1,27 @@
+{
+  "Self-Forcing": {
+    "origin": "https://github.com/guandeh17/Self-Forcing",
+    "commit": "33593df3e81fa3ec10239271dd2c100facac6de1",
+    "checked": "2026-09-27"
+  },
+  "LongLive": {
+    "origin": "https://github.com/NVlabs/LongLive",
+    "commit": "6b36d20ec6f7958d29d11a704dfa64611a9f2572",
+    "checked": "2026-09-27"
+  },
+  "SIGMark": {
+    "origin": "https://github.com/JeremyZhao1998/SIGMark-release",
+    "commit": "3713243f2e002cb21bbc3da896094d39b2b528c9",
+    "checked": "2026-09-27"
+  },
+  "Video-Signature": {
+    "origin": "https://github.com/hardenyu21/Video-Signature",
+    "commit": "9d219c47670c30fdaaccd17b24e7783c976a8c66",
+    "checked": "2026-09-27"
+  },
+  "videoseal": {
+    "origin": "https://github.com/facebookresearch/videoseal",
+    "commit": "870ca7fb33578b90f14c602016b6c2788096226e",
+    "checked": "2026-09-27"
+  }
+}

@@ -1,0 +1,1276 @@
+{
+  "complete_conditions": 10,
+  "records": [
+    {
+      "id": "clean_a0",
+      "config": {
+        "id": "clean_a0",
+        "mode": "clean",
+        "amplitude": 0,
+        "message": [
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "seed": 4101,
+        "prompt": "A tranquil river flowing through a lush green forest, sunlight filtering through the leaves, gentle ripples on the water, cinematic realistic footage.",
+        "latent_frames": 64,
+        "split": "mechanism_probe"
+      },
+      "chunks": [
+        {
+          "chunk": 0,
+          "rgb_start": 0,
+          "rgb_end": 29,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "-1": 7040
+          }
+        },
+        {
+          "chunk": 1,
+          "rgb_start": 29,
+          "rgb_end": 61,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "-1": 14080
+          }
+        },
+        {
+          "chunk": 2,
+          "rgb_start": 61,
+          "rgb_end": 93,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "-1": 21120
+          }
+        },
+        {
+          "chunk": 3,
+          "rgb_start": 93,
+          "rgb_end": 125,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        },
+        {
+          "chunk": 4,
+          "rgb_start": 125,
+          "rgb_end": 157,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        },
+        {
+          "chunk": 5,
+          "rgb_start": 157,
+          "rgb_end": 189,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        },
+        {
+          "chunk": 6,
+          "rgb_start": 189,
+          "rgb_end": 221,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        },
+        {
+          "chunk": 7,
+          "rgb_start": 221,
+          "rgb_end": 253,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        }
+      ]
+    },
+    {
+      "id": "clean_repeat_a0",
+      "config": {
+        "id": "clean_repeat_a0",
+        "mode": "clean_repeat",
+        "amplitude": 0,
+        "message": [
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "seed": 4101,
+        "prompt": "A tranquil river flowing through a lush green forest, sunlight filtering through the leaves, gentle ripples on the water, cinematic realistic footage.",
+        "latent_frames": 64,
+        "split": "mechanism_probe"
+      },
+      "chunks": [
+        {
+          "chunk": 0,
+          "rgb_start": 0,
+          "rgb_end": 29,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "-1": 7040
+          }
+        },
+        {
+          "chunk": 1,
+          "rgb_start": 29,
+          "rgb_end": 61,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "-1": 14080
+          }
+        },
+        {
+          "chunk": 2,
+          "rgb_start": 61,
+          "rgb_end": 93,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "-1": 21120
+          }
+        },
+        {
+          "chunk": 3,
+          "rgb_start": 93,
+          "rgb_end": 125,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        },
+        {
+          "chunk": 4,
+          "rgb_start": 125,
+          "rgb_end": 157,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        },
+        {
+          "chunk": 5,
+          "rgb_start": 157,
+          "rgb_end": 189,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        },
+        {
+          "chunk": 6,
+          "rgb_start": 189,
+          "rgb_end": 221,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        },
+        {
+          "chunk": 7,
+          "rgb_start": 221,
+          "rgb_end": 253,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        }
+      ]
+    },
+    {
+      "id": "every_a0.05",
+      "config": {
+        "id": "every_a0.05",
+        "mode": "every",
+        "amplitude": 0.05,
+        "message": [
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "seed": 4101,
+        "prompt": "A tranquil river flowing through a lush green forest, sunlight filtering through the leaves, gentle ripples on the water, cinematic realistic footage.",
+        "latent_frames": 64,
+        "split": "mechanism_probe"
+      },
+      "chunks": [
+        {
+          "chunk": 0,
+          "rgb_start": 0,
+          "rgb_end": 29,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 1,
+          "rgb_start": 29,
+          "rgb_end": 61,
+          "paired_lowres_rmse_255": 0.73944558491407,
+          "paired_lowres_psnr": 50.75267920472716,
+          "latent_rmse": 0.013232388533651829,
+          "explicit_carrier_after_chunk": {
+            "0": 7040,
+            "1": 7040
+          }
+        },
+        {
+          "chunk": 2,
+          "rgb_start": 61,
+          "rgb_end": 93,
+          "paired_lowres_rmse_255": 1.8893461987206563,
+          "paired_lowres_psnr": 42.60457272532855,
+          "latent_rmse": 0.048637550324201584,
+          "explicit_carrier_after_chunk": {
+            "0": 7040,
+            "1": 7040,
+            "2": 7040
+          }
+        },
+        {
+          "chunk": 3,
+          "rgb_start": 93,
+          "rgb_end": 125,
+          "paired_lowres_rmse_255": 3.782703156686016,
+          "paired_lowres_psnr": 36.574758371359486,
+          "latent_rmse": 0.10182248800992966,
+          "explicit_carrier_after_chunk": {
+            "0": 7040,
+            "1": 7040,
+            "2": 7040,
+            "3": 7040
+          }
+        },
+        {
+          "chunk": 4,
+          "rgb_start": 125,
+          "rgb_end": 157,
+          "paired_lowres_rmse_255": 5.739904458900743,
+          "paired_lowres_psnr": 32.95271033673889,
+          "latent_rmse": 0.14692914485931396,
+          "explicit_carrier_after_chunk": {
+            "0": 7040,
+            "2": 7040,
+            "3": 7040,
+            "4": 7040
+          }
+        },
+        {
+          "chunk": 5,
+          "rgb_start": 157,
+          "rgb_end": 189,
+          "paired_lowres_rmse_255": 14.319092955768678,
+          "paired_lowres_psnr": 25.01249344027704,
+          "latent_rmse": 0.3039429485797882,
+          "explicit_carrier_after_chunk": {
+            "0": 7040,
+            "3": 7040,
+            "4": 7040,
+            "5": 7040
+          }
+        },
+        {
+          "chunk": 6,
+          "rgb_start": 189,
+          "rgb_end": 221,
+          "paired_lowres_rmse_255": 20.171856151026468,
+          "paired_lowres_psnr": 22.03588635928835,
+          "latent_rmse": 0.39716413617134094,
+          "explicit_carrier_after_chunk": {
+            "0": 7040,
+            "4": 7040,
+            "5": 7040,
+            "6": 7040
+          }
+        },
+        {
+          "chunk": 7,
+          "rgb_start": 221,
+          "rgb_end": 253,
+          "paired_lowres_rmse_255": 23.67989480524666,
+          "paired_lowres_psnr": 20.64320823347428,
+          "latent_rmse": 0.41639426350593567,
+          "explicit_carrier_after_chunk": {
+            "0": 7040,
+            "5": 7040,
+            "6": 7040,
+            "7": 7040
+          }
+        }
+      ]
+    },
+    {
+      "id": "every_a0.2",
+      "config": {
+        "id": "every_a0.2",
+        "mode": "every",
+        "amplitude": 0.2,
+        "message": [
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "seed": 4101,
+        "prompt": "A tranquil river flowing through a lush green forest, sunlight filtering through the leaves, gentle ripples on the water, cinematic realistic footage.",
+        "latent_frames": 64,
+        "split": "mechanism_probe"
+      },
+      "chunks": [
+        {
+          "chunk": 0,
+          "rgb_start": 0,
+          "rgb_end": 29,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 1,
+          "rgb_start": 29,
+          "rgb_end": 61,
+          "paired_lowres_rmse_255": 1.4725862861066081,
+          "paired_lowres_psnr": 44.769188575393606,
+          "latent_rmse": 0.032662734389305115,
+          "explicit_carrier_after_chunk": {
+            "0": 7040,
+            "1": 7040
+          }
+        },
+        {
+          "chunk": 2,
+          "rgb_start": 61,
+          "rgb_end": 93,
+          "paired_lowres_rmse_255": 4.058858951445843,
+          "paired_lowres_psnr": 35.96272441861374,
+          "latent_rmse": 0.10718603432178497,
+          "explicit_carrier_after_chunk": {
+            "0": 7040,
+            "1": 7040,
+            "2": 7040
+          }
+        },
+        {
+          "chunk": 3,
+          "rgb_start": 93,
+          "rgb_end": 125,
+          "paired_lowres_rmse_255": 10.342649512577982,
+          "paired_lowres_psnr": 27.838167453841017,
+          "latent_rmse": 0.22867611050605774,
+          "explicit_carrier_after_chunk": {
+            "0": 7040,
+            "1": 7040,
+            "2": 7040,
+            "3": 7040
+          }
+        },
+        {
+          "chunk": 4,
+          "rgb_start": 125,
+          "rgb_end": 157,
+          "paired_lowres_rmse_255": 11.814946598989156,
+          "paired_lowres_psnr": 26.68216834757076,
+          "latent_rmse": 0.25902509689331055,
+          "explicit_carrier_after_chunk": {
+            "0": 7040,
+            "2": 7040,
+            "3": 7040,
+            "4": 7040
+          }
+        },
+        {
+          "chunk": 5,
+          "rgb_start": 157,
+          "rgb_end": 189,
+          "paired_lowres_rmse_255": 18.3266140396624,
+          "paired_lowres_psnr": 22.869158935430125,
+          "latent_rmse": 0.37140974402427673,
+          "explicit_carrier_after_chunk": {
+            "0": 7040,
+            "3": 7040,
+            "4": 7040,
+            "5": 7040
+          }
+        },
+        {
+          "chunk": 6,
+          "rgb_start": 189,
+          "rgb_end": 221,
+          "paired_lowres_rmse_255": 27.05843295575769,
+          "paired_lowres_psnr": 19.484750777766063,
+          "latent_rmse": 0.4813642203807831,
+          "explicit_carrier_after_chunk": {
+            "0": 7040,
+            "4": 7040,
+            "5": 7040,
+            "6": 7040
+          }
+        },
+        {
+          "chunk": 7,
+          "rgb_start": 221,
+          "rgb_end": 253,
+          "paired_lowres_rmse_255": 37.908171529200025,
+          "paired_lowres_psnr": 16.55614686709302,
+          "latent_rmse": 0.5648847818374634,
+          "explicit_carrier_after_chunk": {
+            "0": 7040,
+            "5": 7040,
+            "6": 7040,
+            "7": 7040
+          }
+        }
+      ]
+    },
+    {
+      "id": "once_roll_a0.05",
+      "config": {
+        "id": "once_roll_a0.05",
+        "mode": "once_roll",
+        "amplitude": 0.05,
+        "message": [
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "seed": 4101,
+        "prompt": "A tranquil river flowing through a lush green forest, sunlight filtering through the leaves, gentle ripples on the water, cinematic realistic footage.",
+        "latent_frames": 64,
+        "split": "mechanism_probe"
+      },
+      "chunks": [
+        {
+          "chunk": 0,
+          "rgb_start": 0,
+          "rgb_end": 29,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "-1": 7040
+          }
+        },
+        {
+          "chunk": 1,
+          "rgb_start": 29,
+          "rgb_end": 61,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "-1": 7040,
+            "1": 7040
+          }
+        },
+        {
+          "chunk": 2,
+          "rgb_start": 61,
+          "rgb_end": 93,
+          "paired_lowres_rmse_255": 0.6774313318032873,
+          "paired_lowres_psnr": 51.51349802307381,
+          "latent_rmse": 0.011816808953881264,
+          "explicit_carrier_after_chunk": {
+            "-1": 14080,
+            "1": 7040
+          }
+        },
+        {
+          "chunk": 3,
+          "rgb_start": 93,
+          "rgb_end": 125,
+          "paired_lowres_rmse_255": 0.9849238129371889,
+          "paired_lowres_psnr": 48.262750854577746,
+          "latent_rmse": 0.02217305265367031,
+          "explicit_carrier_after_chunk": {
+            "-1": 21120,
+            "1": 7040
+          }
+        },
+        {
+          "chunk": 4,
+          "rgb_start": 125,
+          "rgb_end": 157,
+          "paired_lowres_rmse_255": 1.6649241480224124,
+          "paired_lowres_psnr": 43.70291456169056,
+          "latent_rmse": 0.03795044869184494,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        },
+        {
+          "chunk": 5,
+          "rgb_start": 157,
+          "rgb_end": 189,
+          "paired_lowres_rmse_255": 5.419574270104346,
+          "paired_lowres_psnr": 33.45150016354344,
+          "latent_rmse": 0.1216435506939888,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        },
+        {
+          "chunk": 6,
+          "rgb_start": 189,
+          "rgb_end": 221,
+          "paired_lowres_rmse_255": 21.106988018739305,
+          "paired_lowres_psnr": 21.64227833633849,
+          "latent_rmse": 0.38742780685424805,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        },
+        {
+          "chunk": 7,
+          "rgb_start": 221,
+          "rgb_end": 253,
+          "paired_lowres_rmse_255": 33.40012712973084,
+          "paired_lowres_psnr": 17.655841211588225,
+          "latent_rmse": 0.5398896932601929,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        }
+      ]
+    },
+    {
+      "id": "once_roll_a0.2",
+      "config": {
+        "id": "once_roll_a0.2",
+        "mode": "once_roll",
+        "amplitude": 0.2,
+        "message": [
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "seed": 4101,
+        "prompt": "A tranquil river flowing through a lush green forest, sunlight filtering through the leaves, gentle ripples on the water, cinematic realistic footage.",
+        "latent_frames": 64,
+        "split": "mechanism_probe"
+      },
+      "chunks": [
+        {
+          "chunk": 0,
+          "rgb_start": 0,
+          "rgb_end": 29,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "-1": 7040
+          }
+        },
+        {
+          "chunk": 1,
+          "rgb_start": 29,
+          "rgb_end": 61,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "-1": 7040,
+            "1": 7040
+          }
+        },
+        {
+          "chunk": 2,
+          "rgb_start": 61,
+          "rgb_end": 93,
+          "paired_lowres_rmse_255": 1.1095018650552857,
+          "paired_lowres_psnr": 47.22824287646163,
+          "latent_rmse": 0.02324502170085907,
+          "explicit_carrier_after_chunk": {
+            "-1": 14080,
+            "1": 7040
+          }
+        },
+        {
+          "chunk": 3,
+          "rgb_start": 93,
+          "rgb_end": 125,
+          "paired_lowres_rmse_255": 2.4065961505577222,
+          "paired_lowres_psnr": 40.50273925477374,
+          "latent_rmse": 0.06300734728574753,
+          "explicit_carrier_after_chunk": {
+            "-1": 21120,
+            "1": 7040
+          }
+        },
+        {
+          "chunk": 4,
+          "rgb_start": 125,
+          "rgb_end": 157,
+          "paired_lowres_rmse_255": 2.9798793303622504,
+          "paired_lowres_psnr": 38.64683005345522,
+          "latent_rmse": 0.08196303248405457,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        },
+        {
+          "chunk": 5,
+          "rgb_start": 157,
+          "rgb_end": 189,
+          "paired_lowres_rmse_255": 6.901824372217801,
+          "paired_lowres_psnr": 31.351525532887994,
+          "latent_rmse": 0.17832700908184052,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        },
+        {
+          "chunk": 6,
+          "rgb_start": 189,
+          "rgb_end": 221,
+          "paired_lowres_rmse_255": 15.70691753419129,
+          "paired_lowres_psnr": 24.20898433721357,
+          "latent_rmse": 0.3381482660770416,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        },
+        {
+          "chunk": 7,
+          "rgb_start": 221,
+          "rgb_end": 253,
+          "paired_lowres_rmse_255": 19.416575590876953,
+          "paired_lowres_psnr": 22.367350851228657,
+          "latent_rmse": 0.36943191289901733,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        }
+      ]
+    },
+    {
+      "id": "once_sink_a0.05",
+      "config": {
+        "id": "once_sink_a0.05",
+        "mode": "once_sink",
+        "amplitude": 0.05,
+        "message": [
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "seed": 4101,
+        "prompt": "A tranquil river flowing through a lush green forest, sunlight filtering through the leaves, gentle ripples on the water, cinematic realistic footage.",
+        "latent_frames": 64,
+        "split": "mechanism_probe"
+      },
+      "chunks": [
+        {
+          "chunk": 0,
+          "rgb_start": 0,
+          "rgb_end": 29,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 1,
+          "rgb_start": 29,
+          "rgb_end": 61,
+          "paired_lowres_rmse_255": 0.73944558491407,
+          "paired_lowres_psnr": 50.75267920472716,
+          "latent_rmse": 0.013232388533651829,
+          "explicit_carrier_after_chunk": {
+            "-1": 7040,
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 2,
+          "rgb_start": 61,
+          "rgb_end": 93,
+          "paired_lowres_rmse_255": 1.8861635706279432,
+          "paired_lowres_psnr": 42.619216556021094,
+          "latent_rmse": 0.048937924206256866,
+          "explicit_carrier_after_chunk": {
+            "-1": 14080,
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 3,
+          "rgb_start": 93,
+          "rgb_end": 125,
+          "paired_lowres_rmse_255": 3.7022284260357625,
+          "paired_lowres_psnr": 36.761539387838084,
+          "latent_rmse": 0.10083501040935516,
+          "explicit_carrier_after_chunk": {
+            "-1": 21120,
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 4,
+          "rgb_start": 125,
+          "rgb_end": 157,
+          "paired_lowres_rmse_255": 5.477778587696084,
+          "paired_lowres_psnr": 33.358714127666545,
+          "latent_rmse": 0.1453334242105484,
+          "explicit_carrier_after_chunk": {
+            "-1": 21120,
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 5,
+          "rgb_start": 157,
+          "rgb_end": 189,
+          "paired_lowres_rmse_255": 15.37330972125479,
+          "paired_lowres_psnr": 24.395456071386636,
+          "latent_rmse": 0.31306296586990356,
+          "explicit_carrier_after_chunk": {
+            "-1": 21120,
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 6,
+          "rgb_start": 189,
+          "rgb_end": 221,
+          "paired_lowres_rmse_255": 26.065120202536402,
+          "paired_lowres_psnr": 19.80960896726803,
+          "latent_rmse": 0.4538750648498535,
+          "explicit_carrier_after_chunk": {
+            "-1": 21120,
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 7,
+          "rgb_start": 221,
+          "rgb_end": 253,
+          "paired_lowres_rmse_255": 37.859791563869834,
+          "paired_lowres_psnr": 16.567239235938835,
+          "latent_rmse": 0.5685126185417175,
+          "explicit_carrier_after_chunk": {
+            "-1": 21120,
+            "0": 7040
+          }
+        }
+      ]
+    },
+    {
+      "id": "once_sink_a0.2",
+      "config": {
+        "id": "once_sink_a0.2",
+        "mode": "once_sink",
+        "amplitude": 0.2,
+        "message": [
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "seed": 4101,
+        "prompt": "A tranquil river flowing through a lush green forest, sunlight filtering through the leaves, gentle ripples on the water, cinematic realistic footage.",
+        "latent_frames": 64,
+        "split": "mechanism_probe"
+      },
+      "chunks": [
+        {
+          "chunk": 0,
+          "rgb_start": 0,
+          "rgb_end": 29,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 1,
+          "rgb_start": 29,
+          "rgb_end": 61,
+          "paired_lowres_rmse_255": 1.4725862861066081,
+          "paired_lowres_psnr": 44.769188575393606,
+          "latent_rmse": 0.032662734389305115,
+          "explicit_carrier_after_chunk": {
+            "-1": 7040,
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 2,
+          "rgb_start": 61,
+          "rgb_end": 93,
+          "paired_lowres_rmse_255": 3.960466075546631,
+          "paired_lowres_psnr": 36.17587765720249,
+          "latent_rmse": 0.10463979840278625,
+          "explicit_carrier_after_chunk": {
+            "-1": 14080,
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 3,
+          "rgb_start": 93,
+          "rgb_end": 125,
+          "paired_lowres_rmse_255": 9.931872633369869,
+          "paired_lowres_psnr": 28.190180778421485,
+          "latent_rmse": 0.21926292777061462,
+          "explicit_carrier_after_chunk": {
+            "-1": 21120,
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 4,
+          "rgb_start": 125,
+          "rgb_end": 157,
+          "paired_lowres_rmse_255": 11.470377451873192,
+          "paired_lowres_psnr": 26.93924942228659,
+          "latent_rmse": 0.2529023289680481,
+          "explicit_carrier_after_chunk": {
+            "-1": 21120,
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 5,
+          "rgb_start": 157,
+          "rgb_end": 189,
+          "paired_lowres_rmse_255": 18.93246850965845,
+          "paired_lowres_psnr": 22.586658745959028,
+          "latent_rmse": 0.3763279318809509,
+          "explicit_carrier_after_chunk": {
+            "-1": 21120,
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 6,
+          "rgb_start": 189,
+          "rgb_end": 221,
+          "paired_lowres_rmse_255": 26.353616544018138,
+          "paired_lowres_psnr": 19.713999159009667,
+          "latent_rmse": 0.46824368834495544,
+          "explicit_carrier_after_chunk": {
+            "-1": 21120,
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 7,
+          "rgb_start": 221,
+          "rgb_end": 253,
+          "paired_lowres_rmse_255": 37.20133049537992,
+          "paired_lowres_psnr": 16.71963415702574,
+          "latent_rmse": 0.5563895106315613,
+          "explicit_carrier_after_chunk": {
+            "-1": 21120,
+            "0": 7040
+          }
+        }
+      ]
+    },
+    {
+      "id": "once_sink_erase_a0.2",
+      "config": {
+        "id": "once_sink_erase_a0.2",
+        "mode": "once_sink_erase",
+        "amplitude": 0.2,
+        "message": [
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "seed": 4101,
+        "prompt": "A tranquil river flowing through a lush green forest, sunlight filtering through the leaves, gentle ripples on the water, cinematic realistic footage.",
+        "latent_frames": 64,
+        "split": "mechanism_probe"
+      },
+      "chunks": [
+        {
+          "chunk": 0,
+          "rgb_start": 0,
+          "rgb_end": 29,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 1,
+          "rgb_start": 29,
+          "rgb_end": 61,
+          "paired_lowres_rmse_255": 1.4725862861066081,
+          "paired_lowres_psnr": 44.769188575393606,
+          "latent_rmse": 0.032662734389305115,
+          "explicit_carrier_after_chunk": {
+            "-1": 7040,
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 2,
+          "rgb_start": 61,
+          "rgb_end": 93,
+          "paired_lowres_rmse_255": 3.960466075546631,
+          "paired_lowres_psnr": 36.17587765720249,
+          "latent_rmse": 0.10463979840278625,
+          "explicit_carrier_after_chunk": {
+            "-1": 14080,
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 3,
+          "rgb_start": 93,
+          "rgb_end": 125,
+          "paired_lowres_rmse_255": 9.931872633369869,
+          "paired_lowres_psnr": 28.190180778421485,
+          "latent_rmse": 0.21926292777061462,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        },
+        {
+          "chunk": 4,
+          "rgb_start": 125,
+          "rgb_end": 157,
+          "paired_lowres_rmse_255": 11.507195198531418,
+          "paired_lowres_psnr": 26.911414005312835,
+          "latent_rmse": 0.2532939016819,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        },
+        {
+          "chunk": 5,
+          "rgb_start": 157,
+          "rgb_end": 189,
+          "paired_lowres_rmse_255": 18.8511235949526,
+          "paired_lowres_psnr": 22.624058792065576,
+          "latent_rmse": 0.37532517313957214,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        },
+        {
+          "chunk": 6,
+          "rgb_start": 189,
+          "rgb_end": 221,
+          "paired_lowres_rmse_255": 26.142132284244372,
+          "paired_lowres_psnr": 19.78398344989882,
+          "latent_rmse": 0.46591541171073914,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        },
+        {
+          "chunk": 7,
+          "rgb_start": 221,
+          "rgb_end": 253,
+          "paired_lowres_rmse_255": 36.92512528088959,
+          "paired_lowres_psnr": 16.784364059151432,
+          "latent_rmse": 0.5541711449623108,
+          "explicit_carrier_after_chunk": {
+            "-1": 28160
+          }
+        }
+      ]
+    },
+    {
+      "id": "periodic_a0.2",
+      "config": {
+        "id": "periodic_a0.2",
+        "mode": "periodic",
+        "amplitude": 0.2,
+        "message": [
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "seed": 4101,
+        "prompt": "A tranquil river flowing through a lush green forest, sunlight filtering through the leaves, gentle ripples on the water, cinematic realistic footage.",
+        "latent_frames": 64,
+        "split": "mechanism_probe"
+      },
+      "chunks": [
+        {
+          "chunk": 0,
+          "rgb_start": 0,
+          "rgb_end": 29,
+          "paired_lowres_rmse_255": 0.0,
+          "paired_lowres_psnr": null,
+          "latent_rmse": 0.0,
+          "explicit_carrier_after_chunk": {
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 1,
+          "rgb_start": 29,
+          "rgb_end": 61,
+          "paired_lowres_rmse_255": 1.4725862861066081,
+          "paired_lowres_psnr": 44.769188575393606,
+          "latent_rmse": 0.032662734389305115,
+          "explicit_carrier_after_chunk": {
+            "-1": 7040,
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 2,
+          "rgb_start": 61,
+          "rgb_end": 93,
+          "paired_lowres_rmse_255": 3.960466075546631,
+          "paired_lowres_psnr": 36.17587765720249,
+          "latent_rmse": 0.10463979840278625,
+          "explicit_carrier_after_chunk": {
+            "-1": 14080,
+            "0": 7040
+          }
+        },
+        {
+          "chunk": 3,
+          "rgb_start": 93,
+          "rgb_end": 125,
+          "paired_lowres_rmse_255": 9.931872633369869,
+          "paired_lowres_psnr": 28.190180778421485,
+          "latent_rmse": 0.21926292777061462,
+          "explicit_carrier_after_chunk": {
+            "-1": 14080,
+            "0": 7040,
+            "3": 7040
+          }
+        },
+        {
+          "chunk": 4,
+          "rgb_start": 125,
+          "rgb_end": 157,
+          "paired_lowres_rmse_255": 11.25853415399963,
+          "paired_lowres_psnr": 27.10116661590415,
+          "latent_rmse": 0.2492636740207672,
+          "explicit_carrier_after_chunk": {
+            "-1": 14080,
+            "0": 7040,
+            "3": 7040
+          }
+        },
+        {
+          "chunk": 5,
+          "rgb_start": 157,
+          "rgb_end": 189,
+          "paired_lowres_rmse_255": 18.101374553282792,
+          "paired_lowres_psnr": 22.976572511030557,
+          "latent_rmse": 0.3663232624530792,
+          "explicit_carrier_after_chunk": {
+            "-1": 14080,
+            "0": 7040,
+            "3": 7040
+          }
+        },
+        {
+          "chunk": 6,
+          "rgb_start": 189,
+          "rgb_end": 221,
+          "paired_lowres_rmse_255": 27.280721405988025,
+          "paired_lowres_psnr": 19.41368659800984,
+          "latent_rmse": 0.4784511625766754,
+          "explicit_carrier_after_chunk": {
+            "-1": 14080,
+            "0": 7040,
+            "6": 7040
+          }
+        },
+        {
+          "chunk": 7,
+          "rgb_start": 221,
+          "rgb_end": 253,
+          "paired_lowres_rmse_255": 38.1886529369693,
+          "paired_lowres_psnr": 16.492116821081243,
+          "latent_rmse": 0.5626731514930725,
+          "explicit_carrier_after_chunk": {
+            "-1": 14080,
+            "0": 7040,
+            "6": 7040
+          }
+        }
+      ]
+    }
+  ],
+  "interpretation": "Paired change only; no message decoder or robustness claim."
+}

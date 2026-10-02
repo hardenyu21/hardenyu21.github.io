@@ -1,0 +1,65 @@
+{
+  "first61_equal": true,
+  "carrier_counts_by_chunk": [
+    {
+      "chunk": 0,
+      "direct_carrier_counts": {
+        "-1": 7040
+      },
+      "scope": "Direct writes only. Rolling trace is interpreted for single-shot cases; shot pin relocation requires separate analysis."
+    },
+    {
+      "chunk": 1,
+      "direct_carrier_counts": {
+        "-1": 7040,
+        "1": 7040
+      },
+      "scope": "Direct writes only. Rolling trace is interpreted for single-shot cases; shot pin relocation requires separate analysis."
+    },
+    {
+      "chunk": 2,
+      "direct_carrier_counts": {
+        "-1": 14080,
+        "1": 7040
+      },
+      "scope": "Direct writes only. Rolling trace is interpreted for single-shot cases; shot pin relocation requires separate analysis."
+    },
+    {
+      "chunk": 3,
+      "direct_carrier_counts": {
+        "-1": 21120,
+        "1": 7040
+      },
+      "scope": "Direct writes only. Rolling trace is interpreted for single-shot cases; shot pin relocation requires separate analysis."
+    },
+    {
+      "chunk": 4,
+      "direct_carrier_counts": {
+        "-1": 28160
+      },
+      "scope": "Direct writes only. Rolling trace is interpreted for single-shot cases; shot pin relocation requires separate analysis."
+    },
+    {
+      "chunk": 5,
+      "direct_carrier_counts": {
+        "-1": 28160
+      },
+      "scope": "Direct writes only. Rolling trace is interpreted for single-shot cases; shot pin relocation requires separate analysis."
+    },
+    {
+      "chunk": 6,
+      "direct_carrier_counts": {
+        "-1": 28160
+      },
+      "scope": "Direct writes only. Rolling trace is interpreted for single-shot cases; shot pin relocation requires separate analysis."
+    },
+    {
+      "chunk": 7,
+      "direct_carrier_counts": {
+        "-1": 28160
+      },
+      "scope": "Direct writes only. Rolling trace is interpreted for single-shot cases; shot pin relocation requires separate analysis."
+    }
+  ],
+  "blind_windows": 29
+}

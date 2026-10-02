@@ -1,0 +1,1605 @@
+{
+  "checked": "2026-09-27",
+  "scope": "20篇生成/解码/系统研究、10篇水印及相邻研究，另补充7篇基础读物；共37篇，非穷尽性目录。",
+  "verification": "各条目保留自己的核实日期。基础读物于2026-10-02转为Markdown并核对方法、署名和官方资源；本目录记录文献核验，不代表实验状态，实验见正文链接。 2026-10-03根据用户提供的帖子截图补读Rolling Forcing、Causal Forcing、DMD与DMD2，新增三条目录并补核Causal Forcing数据资源；其余条目沿用各自日期。",
+  "missing_value_semantics": "空列表表示本轮未找到，不等同于作者明确尚未公开。",
+  "papers": [
+    {
+      "id": "fifo_diffusion",
+      "title": "FIFO-Diffusion: Generating Infinite Videos from Text without Training",
+      "authors": [
+        "Kim, Jihwan",
+        "Kang, Junoh",
+        "Choi, Jinyoung",
+        "Han, Bohyung"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2024-05-19",
+      "latest_version_date": "2024-11-03",
+      "paper": "https://arxiv.org/abs/2405.11473",
+      "fulltext": "https://arxiv.org/html/2405.11473v4",
+      "checked": "2026-09-27",
+      "metadata_sha256": "ba551ecc833e2c9b3058a1599148893b2b9259bcfb07fb0e747b4dd3a800770d",
+      "affiliations": [
+        "Seoul National University"
+      ],
+      "publication_status": "NeurIPS 2024",
+      "publication_status_source": "https://proceedings.neurips.cc/paper_files/paper/2024/hash/a397986e0f34d4b1f0b640686ceaeff7-Abstract-Conference.html",
+      "resource_note": "无需训练的推理方法；使用既有 T2V 权重。专属 HF 权重与数据仓库未找到。",
+      "resources": {
+        "project": [
+          "https://jjihwan.github.io/projects/FIFO-Diffusion/"
+        ],
+        "github": [
+          "https://github.com/jjihwan/FIFO-Diffusion_public"
+        ],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统"
+    },
+    {
+      "id": "diffusion_forcing",
+      "title": "Diffusion Forcing: Next-token Prediction Meets Full-Sequence Diffusion",
+      "authors": [
+        "Chen, Boyuan",
+        "Monso, Diego Marti",
+        "Du, Yilun",
+        "Simchowitz, Max",
+        "Tedrake, Russ",
+        "Sitzmann, Vincent"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2024-07-01",
+      "latest_version_date": "2024-12-10",
+      "paper": "https://arxiv.org/abs/2407.01392",
+      "fulltext": "https://arxiv.org/html/2407.01392v4",
+      "checked": "2026-09-27",
+      "metadata_sha256": "f8db07880732abcd33b8b35c8f40ea678eaa31066275660913e674d7c1f7eef4",
+      "affiliations": [
+        "MIT CSAIL",
+        "Technical University of Munich"
+      ],
+      "publication_status": "NeurIPS 2024",
+      "publication_status_source": "https://proceedings.neurips.cc/paper_files/paper/2024/hash/2aee1c4159e48407d68fe16ae8e6e49e-Abstract-Conference.html",
+      "resource_note": "官方仓库 main 为 v1.5 temporal-attention 实现；paper 分支保留原论文 RNN 实现，不应混用。 官方 Drive 包含 quick-start 权重与小型数据；未下载大文件。",
+      "resources": {
+        "project": [
+          "https://boyuan.space/diffusion-forcing/"
+        ],
+        "github": [
+          "https://github.com/buoyancy99/diffusion-forcing"
+        ],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": [
+          "https://drive.google.com/file/d/1xAOQxWcLzcFyD4zc0_rC9jGXe_uaHb7b/view?usp=sharing"
+        ]
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-03",
+      "method_review_note": "基于已归档全文Markdown重读方法、算法及关键实验，另复查官方项目或论文入口；发表状态保留原核实记录。",
+      "reading_section": "streaming_video_research.html#paper-diffusion-forcing"
+    },
+    {
+      "id": "live2diff",
+      "title": "Live2Diff: Live Stream Translation via Uni-directional Attention in Video Diffusion Models",
+      "authors": [
+        "Xing, Zhening",
+        "Fox, Gereon",
+        "Zeng, Yanhong",
+        "Pan, Xingang",
+        "Elgharib, Mohamed",
+        "Theobalt, Christian",
+        "Chen, Kai"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2024-07-11",
+      "latest_version_date": "2024-07-11",
+      "paper": "https://arxiv.org/abs/2407.08701",
+      "fulltext": "https://arxiv.org/html/2407.08701v1",
+      "checked": "2026-09-27",
+      "metadata_sha256": "66b7dc7290d3b662c223c39a815d0d36f5fadcc4f44ea4f876b3eb93969a90b9",
+      "affiliations": [
+        "Shanghai AI Laboratory",
+        "Saarland Informatics Campus / Max Planck Institute for Informatics",
+        "NTU S-Lab"
+      ],
+      "publication_status": "预印本 / technical report；本轮未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2407.08701",
+      "resource_note": "任务是在线 video-to-video translation。官方 Space：https://huggingface.co/spaces/Leoxing/Live2Diff。未把检索到的匿名 under-review PDF 当作录用证明。",
+      "resources": {
+        "project": [
+          "https://live2diff.github.io/"
+        ],
+        "github": [
+          "https://github.com/open-mmlab/Live2Diff"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/Leoxing/Live2Diff"
+        ],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统"
+    },
+    {
+      "id": "causvid",
+      "title": "From Slow Bidirectional to Fast Autoregressive Video Diffusion Models",
+      "authors": [
+        "Yin, Tianwei",
+        "Zhang, Qiang",
+        "Zhang, Richard",
+        "Freeman, William T.",
+        "Durand, Fredo",
+        "Shechtman, Eli",
+        "Huang, Xun"
+      ],
+      "authors_format": "arXiv metadata 原样；通常为 Family, Given；团体作者保留",
+      "first_submitted": "2024-12-10",
+      "latest_version_date": "2025-09-23",
+      "paper": "https://arxiv.org/abs/2412.07772",
+      "fulltext": "https://arxiv.org/html/2412.07772v4",
+      "checked": "2026-09-27",
+      "metadata_sha256": "c55e4b7fe00d437f0c18adcdc50a55dd7be1e8e2e6a33531040d0bbcfbff1adf",
+      "affiliations": [
+        "Massachusetts Institute of Technology",
+        "Adobe"
+      ],
+      "role": "causal autoregressive video generation backbone",
+      "publication_status": "CVPR 2025",
+      "publication_status_source": "https://causvid.github.io/",
+      "resources": {
+        "project": [
+          "https://causvid.github.io/"
+        ],
+        "github": [
+          "https://github.com/tianweiy/CausVid"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/tianweiy/CausVid"
+        ],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "resource_note": "模型与推理代码入口已核实；未找到自建完整训练数据仓库。论文报告的吞吐只对其硬件/配置成立。",
+      "academic_category": "背景：生成模型论文，不计为该场景的水印进展",
+      "direct_focus_targets": [],
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-03",
+      "method_review_note": "基于已归档全文Markdown重读方法、算法及关键实验，另复查官方项目或论文入口；发表状态保留原核实记录。",
+      "reading_section": "streaming_video_research.html#paper-causvid"
+    },
+    {
+      "id": "magi1",
+      "title": "MAGI-1: Autoregressive Video Generation at Scale",
+      "authors": [
+        "ai, Sand.",
+        "Teng, Hansi",
+        "Jia, Hongyu",
+        "Sun, Lei",
+        "Li, Lingzhi",
+        "Li, Maolin",
+        "Tang, Mingqiu",
+        "Han, Shuai",
+        "Zhang, Tianning",
+        "Zhang, W. Q.",
+        "Luo, Weifeng",
+        "Kang, Xiaoyang",
+        "Sun, Yuchen",
+        "Cao, Yue",
+        "Huang, Yunpeng",
+        "Lin, Yutong",
+        "Fang, Yuxin",
+        "Tao, Zewei",
+        "Zhang, Zheng",
+        "Wang, Zhongshu",
+        "Liu, Zixun",
+        "Shi, Dai",
+        "Su, Guoli",
+        "Sun, Hanwen",
+        "Pan, Hong",
+        "Wang, Jie",
+        "Sheng, Jiexin",
+        "Cui, Min",
+        "Hu, Min",
+        "Yan, Ming",
+        "Yin, Shucheng",
+        "Zhang, Siran",
+        "Liu, Tingting",
+        "Yin, Xianping",
+        "Yang, Xiaoyu",
+        "Song, Xin",
+        "Hu, Xuan",
+        "Zhang, Yankai",
+        "Li, Yuqiao"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2025-05-19",
+      "latest_version_date": "2025-05-19",
+      "paper": "https://arxiv.org/abs/2505.13211",
+      "fulltext": "https://arxiv.org/html/2505.13211v1",
+      "checked": "2026-09-27",
+      "metadata_sha256": "659190ac4cd8df4649f523a5e6fba95ebbe69be84932dd900a518f10177b4c76",
+      "affiliations": [
+        "Sand AI"
+      ],
+      "publication_status": "预印本 / technical report；本轮未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2505.13211",
+      "resource_note": "技术报告另有官方 PDF：https://static.magi.world/static/files/MAGI_1.pdf。代码与模型区分 4.5B / 24B、base / distill / quant；仓库还含后续 MAGI-1.1。",
+      "resources": {
+        "project": [],
+        "github": [
+          "https://github.com/SandAI-org/MAGI-1"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/sand-ai/MAGI-1"
+        ],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-03",
+      "method_review_note": "基于已归档全文Markdown重读方法、算法及关键实验，另复查官方项目或论文入口；发表状态保留原核实记录。",
+      "reading_section": "streaming_video_research.html#paper-magi1"
+    },
+    {
+      "id": "skyreels2",
+      "title": "SkyReels-V2: Infinite-length Film Generative Model",
+      "authors": [
+        "Chen, Guibin",
+        "Lin, Dixuan",
+        "Yang, Jiangping",
+        "Lin, Chunze",
+        "Zhu, Junchen",
+        "Fan, Mingyuan",
+        "Zhang, Hao",
+        "Chen, Sheng",
+        "Chen, Zheng",
+        "Ma, Chengcheng",
+        "Xiong, Weiming",
+        "Wang, Wei",
+        "Pang, Nuo",
+        "Kang, Kang",
+        "Xu, Zhiheng",
+        "Jin, Yuzhe",
+        "Liang, Yupeng",
+        "Song, Yubing",
+        "Zhao, Peng",
+        "Xu, Boyuan",
+        "Qiu, Di",
+        "Li, Debang",
+        "Fei, Zhengcong",
+        "Li, Yang",
+        "Zhou, Yahui"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2025-04-17",
+      "latest_version_date": "2025-04-21",
+      "paper": "https://arxiv.org/abs/2504.13074",
+      "fulltext": "https://arxiv.org/html/2504.13074v3",
+      "checked": "2026-09-27",
+      "metadata_sha256": "f9f12e69d39c708a0933bdb400951fc02b9b45525bb720b0ab25e3edb98c82c6",
+      "affiliations": [
+        "Skywork AI"
+      ],
+      "publication_status": "预印本 / technical report；本轮未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2504.13074",
+      "resource_note": "所列为 DF 版；官方另有 14B、540P / 720P 和 I2V / T2V 权重。不要把固定长度 I2V 版当作 DF 版。",
+      "resources": {
+        "project": [],
+        "github": [
+          "https://github.com/SkyworkAI/SkyReels-V2"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/Skywork/SkyReels-V2-DF-1.3B-540P"
+        ],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统"
+    },
+    {
+      "id": "self_forcing",
+      "title": "Self Forcing: Bridging the Train-Test Gap in Autoregressive Video Diffusion",
+      "authors": [
+        "Huang, Xun",
+        "Li, Zhengqi",
+        "He, Guande",
+        "Zhou, Mingyuan",
+        "Shechtman, Eli"
+      ],
+      "authors_format": "arXiv metadata 原样；通常为 Family, Given；团体作者保留",
+      "first_submitted": "2025-06-09",
+      "latest_version_date": "2025-11-10",
+      "paper": "https://arxiv.org/abs/2506.08009",
+      "fulltext": "https://arxiv.org/html/2506.08009v2",
+      "checked": "2026-09-27",
+      "metadata_sha256": "43d223a2eb7a7d99bccac981c20594172456278d47ace25bf793f535b6efda03",
+      "affiliations": [
+        "Adobe Research",
+        "The University of Texas at Austin"
+      ],
+      "role": "causal autoregressive video generation backbone",
+      "publication_status": "NeurIPS 2025 Spotlight（官方仓库/arXiv 标注；论文集确认会议）",
+      "publication_status_source": "https://papers.neurips.cc/paper_files/paper/2025/hash/f4823f831af67a3ef15e41a85434422a-Abstract-Conference.html",
+      "resources": {
+        "project": [
+          "https://self-forcing.github.io/"
+        ],
+        "github": [
+          "https://github.com/guandeh17/Self-Forcing"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/gdhe17/Self-Forcing"
+        ],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "resource_note": "正文提及 watermark 的社会影响建议不能算已有水印实现；代码与权重可用，未找到专属完整训练数据仓库。",
+      "academic_category": "背景：生成模型论文，不计为该场景的水印进展",
+      "direct_focus_targets": [],
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-03",
+      "method_review_note": "基于已归档全文Markdown重读方法、算法及关键实验，另复查官方项目或论文入口；发表状态保留原核实记录。",
+      "reading_section": "streaming_video_research.html#paper-self-forcing"
+    },
+    {
+      "id": "streamdit",
+      "title": "StreamDiT: Real-Time Streaming Text-to-Video Generation",
+      "authors": [
+        "Kodaira, Akio",
+        "Hou, Tingbo",
+        "Hou, Ji",
+        "Georgopoulos, Markos",
+        "Juefei-Xu, Felix",
+        "Tomizuka, Masayoshi",
+        "Zhao, Yue"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2025-07-04",
+      "latest_version_date": "2026-03-27",
+      "paper": "https://arxiv.org/abs/2507.03745",
+      "fulltext": "https://arxiv.org/html/2507.03745v4",
+      "checked": "2026-09-27",
+      "metadata_sha256": "7f12d47a961181ef8c1d2fd356bfd54d1b157de79d48ea99f547b8417d810401",
+      "affiliations": [
+        "UC Berkeley",
+        "Meta"
+      ],
+      "publication_status": "CVPR 2026（作者项目页与 arXiv Comments 确认）",
+      "publication_status_source": "https://cumulo-autumn.github.io/StreamDiT/",
+      "resource_note": "项目页可访问；本轮未找到模型实现或权重。https://github.com/streamdit/streamdit.github.io 为网页源码，不等同于模型代码。",
+      "resources": {
+        "project": [
+          "https://cumulo-autumn.github.io/StreamDiT/"
+        ],
+        "github": [],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-03",
+      "method_review_note": "基于已归档全文Markdown重读方法、算法及关键实验，另复查官方项目或论文入口；发表状态保留原核实记录。",
+      "reading_section": "streaming_video_research.html#paper-streamdit"
+    },
+    {
+      "id": "matrix_game2",
+      "title": "Matrix-game 2.0: An open-source real-time and streaming interactive world model",
+      "authors": [
+        "He, Xianglong",
+        "Peng, Chunli",
+        "Liu, Zexiang",
+        "Wang, Boyang",
+        "Zhang, Yifan",
+        "Cui, Qi",
+        "Kang, Fei",
+        "Jiang, Biao",
+        "An, Mengyin",
+        "Ren, Yangyang",
+        "Xu, Baixin",
+        "Guo, Hao-Xiang",
+        "Gong, Kaixiong",
+        "Wu, Size",
+        "Li, Wei",
+        "Song, Xuchen",
+        "Liu, Yang",
+        "Li, Yangguang",
+        "Zhou, Yahui"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2025-08-18",
+      "latest_version_date": "2026-04-07",
+      "paper": "https://arxiv.org/abs/2508.13009",
+      "fulltext": "https://arxiv.org/html/2508.13009v4",
+      "checked": "2026-09-27",
+      "metadata_sha256": "ff7bfa4d4a75025e614a0b1e7e810e7b14483f1b67a234346ec832f4ff14c61a",
+      "affiliations": [
+        "Skywork AI"
+      ],
+      "publication_status": "预印本 / technical report；本轮未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2508.13009",
+      "resource_note": "方法与数据生产系统 technical report；训练用数据量按实验部分理解，不能将数据引擎规模直接当作同一模型训练集大小。",
+      "resources": {
+        "project": [
+          "https://matrix-game-v2.github.io/"
+        ],
+        "github": [
+          "https://github.com/SkyworkAI/Matrix-Game/tree/main/Matrix-Game-2"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/Skywork/Matrix-Game-2.0"
+        ],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统"
+    },
+    {
+      "id": "longlive",
+      "title": "LongLive: Real-time Interactive Long Video Generation",
+      "authors": [
+        "Yang, Shuai",
+        "Huang, Wei",
+        "Chu, Ruihang",
+        "Xiao, Yicheng",
+        "Zhao, Yuyang",
+        "Wang, Xianbang",
+        "Li, Muyang",
+        "Xie, Enze",
+        "Chen, Yingcong",
+        "Lu, Yao",
+        "Han, Song",
+        "Chen, Yukang"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2025-09-26",
+      "latest_version_date": "2025-10-13",
+      "paper": "https://arxiv.org/abs/2509.22622",
+      "fulltext": "https://arxiv.org/html/2509.22622v2",
+      "checked": "2026-09-27",
+      "metadata_sha256": "690084a7b14972a7536273fb2682dc8aae4d223e86a5e6c1ba2c6cb5b2035e82",
+      "affiliations": [
+        "NVIDIA",
+        "MIT",
+        "HKUST (Guangzhou)",
+        "University of Hong Kong",
+        "Tsinghua University"
+      ],
+      "publication_status": "ICLR 2026（官方仓库 2026-01-27 公告）",
+      "publication_status_source": "https://github.com/NVlabs/LongLive",
+      "resource_note": "旧论文代码已移至 v1.0 分支；仓库 main 当前为 2.0。",
+      "resources": {
+        "project": [
+          "https://nvlabs.github.io/LongLive/"
+        ],
+        "github": [
+          "https://github.com/NVlabs/LongLive/tree/v1.0"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/Efficient-Large-Model/LongLive-1.3B"
+        ],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-03",
+      "method_review_note": "基于已归档全文Markdown重读方法、算法及关键实验，另复查官方项目或论文入口；发表状态保留原核实记录。",
+      "reading_section": "streaming_video_research.html#paper-longlive"
+    },
+    {
+      "id": "streamdiffusion2",
+      "title": "StreamDiffusionV2: A Streaming System for Dynamic and Interactive Video Generation",
+      "authors": [
+        "Feng, Tianrui",
+        "Li, Zhi",
+        "Yang, Shuo",
+        "Xi, Haocheng",
+        "Li, Muyang",
+        "Li, Xiuyu",
+        "Zhang, Lvmin",
+        "Yang, Keting",
+        "Peng, Kelly",
+        "Han, Song",
+        "Agrawala, Maneesh",
+        "Keutzer, Kurt",
+        "Kodaira, Akio",
+        "Xu, Chenfeng"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2025-11-10",
+      "latest_version_date": "2026-02-22",
+      "paper": "https://arxiv.org/abs/2511.07399",
+      "fulltext": "https://arxiv.org/html/2511.07399v2",
+      "checked": "2026-09-27",
+      "metadata_sha256": "ae21825c3bd525d8fdc51bbcc965de37b0fefec0d8a91fb858320413f00d4347",
+      "affiliations": [
+        "UT Austin",
+        "UC Berkeley",
+        "Nunchaku AI",
+        "Stanford University",
+        "Independent Researcher",
+        "First Intelligence",
+        "MIT",
+        "Shizuku AI"
+      ],
+      "publication_status": "MLSys 2026；Best Paper Award（官方项目页声明）",
+      "publication_status_source": "https://streamdiffusionv2.github.io/",
+      "resource_note": "系统论文；training-free 指运行系统不需额外训练，不表示底层模型无需预训练 / 蒸馏。奖项来自作者项目页，本轮未另取大会奖项页。",
+      "resources": {
+        "project": [
+          "https://streamdiffusionv2.github.io/"
+        ],
+        "github": [
+          "https://github.com/chenfengxu714/StreamDiffusionV2"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/jerryfeng/StreamDiffusionV2"
+        ],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统"
+    },
+    {
+      "id": "causal_forcing",
+      "title": "Causal Forcing: Autoregressive Diffusion Distillation Done Right for High-Quality Real-Time Interactive Video Generation",
+      "authors": [
+        "Zhu, Hongzhou",
+        "Zhao, Min",
+        "He, Guande",
+        "Su, Hang",
+        "Li, Chongxuan",
+        "Zhu, Jun"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-02-02",
+      "latest_version_date": "2026-06-01",
+      "paper": "https://arxiv.org/abs/2602.02214",
+      "fulltext": "https://arxiv.org/html/2602.02214v5",
+      "checked": "2026-10-03",
+      "metadata_sha256": "3da48e6c20b5856634e9c073daa462a162fc43835ebea6c90e206832b5c65fb5",
+      "affiliations": [
+        "Tsinghua University",
+        "ShengShu",
+        "UT Austin",
+        "Renmin University of China"
+      ],
+      "publication_status": "ICML 2026（官方仓库与 arXiv Comments 确认）",
+      "publication_status_source": "https://github.com/thu-ml/Causal-Forcing",
+      "resource_note": "原作与 ++ 共用仓库，须固定模型路径；原作录用状态不能自动移植给 ++。 2026-10-03补核官方数据文件，托管于HF model namespace。原文沿用已归档v5；只读核对代码commit da3ddf1a590f30c9edc568e11c2f77170995c31c，未运行模型。",
+      "resources": {
+        "project": [
+          "https://thu-ml.github.io/CausalForcing.github.io/"
+        ],
+        "github": [
+          "https://github.com/thu-ml/Causal-Forcing"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/zhuhz22/Causal-Forcing"
+        ],
+        "datasets": [
+          "https://huggingface.co/zhuhz22/Causal-Forcing-data"
+        ],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-03",
+      "reading_section": "streaming_video_research.html#paper-causal-forcing"
+    },
+    {
+      "id": "diagonal_distillation",
+      "title": "Streaming Autoregressive Video Generation via Diagonal Distillation",
+      "authors": [
+        "Liu, Jinxiu",
+        "Liu, Xuanming",
+        "Mei, Kangfu",
+        "Wen, Yandong",
+        "Yang, Ming-Hsuan",
+        "Liu, Weiyang"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-03-10",
+      "latest_version_date": "2026-03-11",
+      "paper": "https://arxiv.org/abs/2603.09488",
+      "fulltext": "https://arxiv.org/html/2603.09488v2",
+      "checked": "2026-09-27",
+      "metadata_sha256": "93017f5639dff5780b511c2c2954ed3b6d0cf95fb2b7394b7430521fed5b1f79",
+      "affiliations": [
+        "South China University of Technology",
+        "Westlake University",
+        "Johns Hopkins University",
+        "University of California, Merced",
+        "Chinese University of Hong Kong"
+      ],
+      "publication_status": "ICLR 2026（arXiv Comments 与项目页）",
+      "publication_status_source": "https://arxiv.org/abs/2603.09488",
+      "resource_note": "31 FPS 实验使用 tiny VAE；与采用原版 VAE 的结果不构成同配置速度比较。 当前 README 提供训练与依赖模型下载指令；本轮未找到专属已训练 DiagDistill 权重下载入口。",
+      "resources": {
+        "project": [
+          "https://spherelab.ai/diagdistill/"
+        ],
+        "github": [
+          "https://github.com/Sphere-AI-Lab/diagdistill"
+        ],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统"
+    },
+    {
+      "id": "matrix_game3",
+      "title": "Matrix-Game 3.0: Real-Time and Streaming Interactive World Model with Long-Horizon Memory",
+      "authors": [
+        "Wang, Zile",
+        "Liu, Zexiang",
+        "Li, Jiaxing",
+        "Huang, Kaichen",
+        "Xu, Baixin",
+        "Kang, Fei",
+        "An, Mengyin",
+        "Wang, Peiyu",
+        "Jiang, Biao",
+        "Wei, Yichen",
+        "Xietian, Yidan",
+        "Pei, Jiangbo",
+        "Hu, Liang",
+        "Jiang, Boyi",
+        "Xue, Hua",
+        "Wang, Zidong",
+        "Sun, Haofeng",
+        "Li, Wei",
+        "Ouyang, Wanli",
+        "He, Xianglong",
+        "Liu, Yang",
+        "Li, Yangguang",
+        "Zhou, Yahui"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-04-10",
+      "latest_version_date": "2026-04-13",
+      "paper": "https://arxiv.org/abs/2604.08995",
+      "fulltext": "https://arxiv.org/html/2604.08995v2",
+      "checked": "2026-09-27",
+      "metadata_sha256": "438e86542605e09decf4f93bb5dd62701f51383f7bd761ca3ca15342b5a977b1",
+      "affiliations": [
+        "Skywork AI"
+      ],
+      "publication_status": "预印本 / technical report；本轮未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2604.08995",
+      "resource_note": "包含 MG-LightVAE。40 FPS 实验默认 8 GPU DiT + 1 GPU VAE 的异步配置，不是单卡成绩。",
+      "resources": {
+        "project": [
+          "https://matrix-game-v3.github.io/"
+        ],
+        "github": [
+          "https://github.com/SkyworkAI/Matrix-Game/tree/main/Matrix-Game-3"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/Skywork/Matrix-Game-3.0"
+        ],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统"
+    },
+    {
+      "id": "causal_forcing_pp",
+      "title": "Causal Forcing++: Scalable Few-Step Autoregressive Diffusion Distillation for Real-Time Interactive Video Generation",
+      "authors": [
+        "Zhao, Min",
+        "Zhu, Hongzhou",
+        "Zheng, Kaiwen",
+        "Zhou, Zihan",
+        "Yan, Bokai",
+        "Li, Xinyuan",
+        "Yang, Xiao",
+        "Li, Chongxuan",
+        "Zhu, Jun"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-05-14",
+      "latest_version_date": "2026-06-01",
+      "paper": "https://arxiv.org/abs/2605.15141",
+      "fulltext": "https://arxiv.org/html/2605.15141v3",
+      "checked": "2026-09-27",
+      "metadata_sha256": "3d36f56a4539c4b2d55fab67dbe8becb9e823d521159ec7a3cec320a8fbe488a",
+      "affiliations": [
+        "Tsinghua University",
+        "ShengShu",
+        "Renmin University of China"
+      ],
+      "publication_status": "预印本 / technical report；本轮未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2605.15141",
+      "resource_note": "framewise 1 / 2-step 权重在 causal-forcing++ 子目录。world-model 扩展代码：https://github.com/shengshu-ai/minWM；模型：https://huggingface.co/MIN-Lab/minWM。",
+      "resources": {
+        "project": [
+          "https://thu-ml.github.io/CausalForcing.github.io/"
+        ],
+        "github": [
+          "https://github.com/thu-ml/Causal-Forcing"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/zhuhz22/Causal-Forcing"
+        ],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统"
+    },
+    {
+      "id": "longlive2",
+      "title": "LongLive-2.0: An NVFP4 Parallel Infrastructure for Long Video Generation",
+      "authors": [
+        "Chen, Yukang",
+        "Wang, Luozhou",
+        "Huang, Wei",
+        "Yang, Shuai",
+        "Zhang, Bohan",
+        "Xiao, Yicheng",
+        "Chu, Ruihang",
+        "Mao, Weian",
+        "Hu, Qixin",
+        "Liu, Shaoteng",
+        "Zhao, Yuyang",
+        "Mao, Huizi",
+        "Chen, Ying-Cong",
+        "Xie, Enze",
+        "Qi, Xiaojuan",
+        "Han, Song"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-05-18",
+      "latest_version_date": "2026-05-19",
+      "paper": "https://arxiv.org/abs/2605.18739",
+      "fulltext": "https://arxiv.org/html/2605.18739v2",
+      "checked": "2026-09-27",
+      "metadata_sha256": "af08bc06e6110d46584692404e9736d7b3076ba9da1c06fd790473db9dfa221d",
+      "affiliations": [
+        "NVIDIA（原文署名）"
+      ],
+      "publication_status": "预印本 / technical report；本轮未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2605.18739",
+      "resource_note": "另有 LongLive-2.0-5B-NVFP4-S2 / S4 权重；文档：https://nvlabs.github.io/LongLive/LongLive2/docs/。网页由 JS 加载，普通文本抓取不足时依据仓库和原文。 数据链接为官方 toy dataset，不等于完整训练集。",
+      "resources": {
+        "project": [
+          "https://nvlabs.github.io/LongLive/LongLive2/"
+        ],
+        "github": [
+          "https://github.com/NVlabs/LongLive"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/Efficient-Large-Model/LongLive-2.0-5B"
+        ],
+        "datasets": [
+          "https://huggingface.co/datasets/Efficient-Large-Model/LongLive2.0-Toy-Dataset"
+        ],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-03",
+      "method_review_note": "基于已归档全文Markdown重读方法、算法及关键实验，另复查官方项目或论文入口；发表状态保留原核实记录。",
+      "reading_section": "streaming_video_research.html#paper-longlive2"
+    },
+    {
+      "id": "causal_rcm",
+      "title": "Causal-rCM: A Unified Teacher-Forcing and Self-Forcing Open Recipe for Autoregressive Diffusion Distillation in Streaming Video Generation and Interactive World Models",
+      "authors": [
+        "Zheng, Kaiwen",
+        "He, Guande",
+        "Zhao, Min",
+        "Zhang, Jintao",
+        "Chen, Huayu",
+        "Chen, Jianfei",
+        "Lin, Chen-Hsuan",
+        "Liu, Ming-Yu",
+        "Zhu, Jun",
+        "Ma, Qianli"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-06-24",
+      "latest_version_date": "2026-06-24",
+      "paper": "https://arxiv.org/abs/2606.25473",
+      "fulltext": "https://arxiv.org/html/2606.25473v1",
+      "checked": "2026-09-27",
+      "metadata_sha256": "918dd43201fb9f62dcfb8baeeaee24a00fa7e0251acf2d5bbe6ec683c90e7999",
+      "affiliations": [
+        "Tsinghua University",
+        "NVIDIA",
+        "UT Austin"
+      ],
+      "publication_status": "2026 technical report；Causal-rCM 的独立会议录用未确认",
+      "publication_status_source": "https://arxiv.org/abs/2606.25473",
+      "resource_note": "rCM 仓库的 ICLR 2026 标识不自动属于这篇 Causal-rCM。复现入口为 Causal_rCM.md；所列数据为仓库提供的合成训练数据，专属 causal checkpoint 下载入口见核验备注。 已读取官方 Causal_rCM.md，给出本地 checkpoint 命名与运行命令，但本轮未找到专属 causal 权重下载链接。",
+      "resources": {
+        "project": [],
+        "github": [
+          "https://github.com/NVlabs/rcm"
+        ],
+        "huggingface_models": [],
+        "datasets": [
+          "https://huggingface.co/datasets/worstcoder/Wan_datasets"
+        ],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统"
+    },
+    {
+      "id": "flashdecoder",
+      "title": "FlashDecoder: Real-Time Latent-to-Pixel Streaming Decoder with Transformers",
+      "authors": [
+        "Kang, Minguk",
+        "Kwak, Suha"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-07-16",
+      "latest_version_date": "2026-07-16",
+      "paper": "https://arxiv.org/abs/2607.14898",
+      "fulltext": "https://arxiv.org/html/2607.14898v1",
+      "checked": "2026-09-27",
+      "metadata_sha256": "759b34c7358d692a758fe07a59ceda7b52e6730432bb3c32ed110e40e22613f9",
+      "affiliations": [
+        "Pika Labs",
+        "POSTECH"
+      ],
+      "publication_status": "CVPR 2026（arXiv Comments 声明；本轮 CVF 全文访问返回 403）",
+      "publication_status_source": "https://arxiv.org/abs/2607.14898",
+      "resource_note": "官方仓库本轮仅见 README 与 PDF，未找到实现或权重；不应称为已开源可运行 decoder。",
+      "resources": {
+        "project": [],
+        "github": [
+          "https://github.com/mingukkang/FlashDecoder"
+        ],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统"
+    },
+    {
+      "id": "stream_forcing",
+      "title": "Stream Forcing: Constructing Unified Training Trajectory for Robust Streaming Video Generation",
+      "authors": [
+        "Zhu, Yueting",
+        "Song, Yuehao",
+        "Zhang, Kaicheng",
+        "Tang, Bao",
+        "Chen, Shaoyu",
+        "Zhang, Qian",
+        "Liu, Wenyu",
+        "Wang, Xinggang"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-08-11",
+      "latest_version_date": "2026-08-11",
+      "paper": "https://arxiv.org/abs/2608.10439",
+      "fulltext": "https://arxiv.org/html/2608.10439v1",
+      "checked": "2026-09-27",
+      "metadata_sha256": "9973e0dcf85b9d739a489ebeff849352ebfcf3a391893fdcac91e73b69483948",
+      "affiliations": [
+        "Huazhong University of Science and Technology",
+        "Anyverse Dynamics",
+        "Horizon Robotics"
+      ],
+      "publication_status": "预印本 / technical report；本轮未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2608.10439",
+      "resource_note": "较新的训练噪声调度论文；本文选读方法与实验设定，不把 UCF-101 FVD 改进直接解释为开放域高分辨率实时质量提升。",
+      "resources": {
+        "project": [],
+        "github": [],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统"
+    },
+    {
+      "id": "videoseal",
+      "title": "Video Seal: Open and Efficient Video Watermarking",
+      "authors": [
+        "Fernandez, Pierre",
+        "Elsahar, Hady",
+        "Yalniz, I. Zeki",
+        "Mourachko, Alexandre"
+      ],
+      "authors_format": "arXiv metadata 原样；通常为 Family, Given；团体作者保留",
+      "first_submitted": "2024-12-12",
+      "latest_version_date": "2024-12-12",
+      "paper": "https://arxiv.org/abs/2412.09492",
+      "fulltext": "https://arxiv.org/html/2412.09492v1",
+      "checked": "2026-09-27",
+      "metadata_sha256": "768105c088308187001361f2ee5c97ad9a8c28acf127b6e6cdca4d3e6f8cdff9",
+      "affiliations": [
+        "Meta FAIR"
+      ],
+      "role": "通用后处理视频水印；可作流式部署基线",
+      "publication_status": "预印本；本轮未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2412.09492",
+      "resources": {
+        "project": [],
+        "github": [
+          "https://github.com/facebookresearch/videoseal"
+        ],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": [
+          "https://dl.fbaipublicfiles.com/videoseal/y_256b_img.pth"
+        ]
+      },
+      "resource_note": "代码、官方 CDN 权重已提供；未找到独立 HF 模型仓库。仓库现含 Video Seal 1.0、Pixel Seal、ChunkySeal；复现须固定 checkpoint。inference_streaming.py 是分块文件处理，不自动构成生成端在线验证。",
+      "academic_category": "相邻研究：通用水印、音视频防篡改或评测",
+      "direct_focus_targets": [],
+      "scope": "水印与相邻方法"
+    },
+    {
+      "id": "pixelseal",
+      "title": "Pixel Seal: Adversarial-only training for invisible image and video watermarking",
+      "authors": [
+        "Souček, Tomáš",
+        "Fernandez, Pierre",
+        "Elsahar, Hady",
+        "Rebuffi, Sylvestre-Alvise",
+        "Lacatusu, Valeriu",
+        "Tran, Tuan",
+        "Sander, Tom",
+        "Mourachko, Alexandre"
+      ],
+      "authors_format": "arXiv metadata 原样；通常为 Family, Given；团体作者保留",
+      "first_submitted": "2025-12-18",
+      "latest_version_date": "2025-12-18",
+      "paper": "https://arxiv.org/abs/2512.16874",
+      "fulltext": "https://arxiv.org/html/2512.16874v1",
+      "checked": "2026-09-27",
+      "metadata_sha256": "68abf99e8809e7bf69bcea86e0320e3a0163818653ec272ee2ad6d4deacc12cf",
+      "affiliations": [
+        "Meta FAIR"
+      ],
+      "role": "较新的通用图像/视频后处理水印基线",
+      "publication_status": "预印本；本轮未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2512.16874",
+      "resources": {
+        "project": [],
+        "github": [
+          "https://github.com/facebookresearch/videoseal"
+        ],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": [
+          "https://dl.fbaipublicfiles.com/videoseal/pixelseal/checkpoint.pth"
+        ]
+      },
+      "resource_note": "代码与官方 CDN 权重沿用 Video Seal 仓库；HF 专属模型及专属数据集未找到。",
+      "academic_category": "相邻研究：通用水印、音视频防篡改或评测",
+      "direct_focus_targets": [],
+      "scope": "水印与相邻方法"
+    },
+    {
+      "id": "video_signature",
+      "title": "Video Signature: Implicit Watermarking for Video Diffusion Models",
+      "authors": [
+        "Huang, Yu",
+        "Chen, Junhao",
+        "Liu, Shuliang",
+        "Li, Hanqian",
+        "Li, Jungang",
+        "Zheng, Qi",
+        "Liu, Aiwei",
+        "Fung, Yi R.",
+        "Hu, Xuming"
+      ],
+      "authors_format": "arXiv metadata 原样；通常为 Family, Given；团体作者保留",
+      "first_submitted": "2025-05-31",
+      "latest_version_date": "2025-11-16",
+      "paper": "https://arxiv.org/abs/2506.00652",
+      "fulltext": "https://arxiv.org/html/2506.00652v4",
+      "checked": "2026-09-27",
+      "metadata_sha256": "f3733f3c54cafac056a0e657f8313fd1b2d2a26b96a4e16d99716758797b1c08",
+      "affiliations": [
+        "Hong Kong University of Science and Technology (Guangzhou)",
+        "Hong Kong University of Science and Technology",
+        "Tsinghua University"
+      ],
+      "role": "VAE decoder 内生水印，PAS 与 Temporal Alignment",
+      "publication_status": "预印本；本轮未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2506.00652",
+      "resources": {
+        "project": [],
+        "github": [
+          "https://github.com/hardenyu21/Video-Signature"
+        ],
+        "huggingface_models": [],
+        "datasets": [
+          "https://github.com/NJU-PCALab/OpenVid-1M",
+          "https://github.com/Vchitect/VBench"
+        ],
+        "other_official_resources": [
+          "https://drive.google.com/file/d/1XFyzeX6T0iHgcxSN_DxvjLFy1EXZye-Q/view?usp=drive_link"
+        ]
+      },
+      "resource_note": "采用 arXiv v4 标题 Implicit Watermarking for Video Diffusion Models 和作者序列；仓库仍使用较早标题/作者。Drive 为官方仓库给出的 checkpoint 链接，本轮未下载大权重；数据链接为上游数据/评测资源，不是自建数据集。HF 权重仓库未找到。",
+      "academic_category": "相邻研究：通用水印、音视频防篡改或评测",
+      "direct_focus_targets": [],
+      "scope": "水印与相邻方法"
+    },
+    {
+      "id": "lvmark",
+      "title": "LVMark: Robust Watermark for Latent Video Diffusion Models",
+      "authors": [
+        "Jang, Youngdong",
+        "Jang, MinHyuk",
+        "Lee, JaeHyeok",
+        "Yang, Feng",
+        "Oh, Gyeongrok",
+        "Jeong, Jongheon",
+        "Kim, Sangpil"
+      ],
+      "authors_format": "arXiv metadata 原样；通常为 Family, Given；团体作者保留",
+      "first_submitted": "2024-12-12",
+      "latest_version_date": "2026-07-14",
+      "paper": "https://arxiv.org/abs/2412.09122",
+      "fulltext": "https://arxiv.org/html/2412.09122v4",
+      "checked": "2026-09-27",
+      "metadata_sha256": "8c7a74c282a8d9394e85b7a2c752f050d31f1f043cac496cacfb6cf368482a14",
+      "affiliations": [
+        "Korea University",
+        "Google DeepMind"
+      ],
+      "role": "decoder 权重调制与 3D wavelet 提取",
+      "publication_status": "IEEE Transactions on Information Forensics and Security 2026；21:4908–4923；DOI 10.1109/TIFS.2026.3688194",
+      "publication_status_source": "https://pure.korea.ac.kr/en/publications/lvmark-robust-watermark-for-latent-video-diffusion-models/",
+      "resources": {
+        "project": [
+          "https://kuai-lab.github.io/lvmark2024/"
+        ],
+        "github": [],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "resource_note": "最新 v4 作者和机构已更新；项目页仍是旧作者版本，并明确写 Code will be released soon。本轮未找到已发布的官方代码、HF 模型或专属数据。",
+      "academic_category": "相邻研究：通用水印、音视频防篡改或评测",
+      "direct_focus_targets": [],
+      "scope": "水印与相邻方法"
+    },
+    {
+      "id": "spdmark",
+      "title": "SPDMark: Selective Parameter Displacement for Robust Video Watermarking",
+      "authors": [
+        "Fares, Samar",
+        "Tastan, Nurbek",
+        "Nandakumar, Karthik"
+      ],
+      "authors_format": "arXiv metadata 原样；通常为 Family, Given；团体作者保留",
+      "first_submitted": "2025-12-12",
+      "latest_version_date": "2026-04-01",
+      "paper": "https://arxiv.org/abs/2512.12090",
+      "fulltext": "https://arxiv.org/html/2512.12090v2",
+      "checked": "2026-09-27",
+      "metadata_sha256": "c4de0b58a173c11b68acd7285549c405c986712db76f0e8db4db89a4e4a85fff",
+      "affiliations": [
+        "Mohamed bin Zayed University of Artificial Intelligence",
+        "Michigan State University"
+      ],
+      "role": "选择性参数位移；逐帧散列及帧序恢复",
+      "publication_status": "CVPR 2026",
+      "publication_status_source": "https://openaccess.thecvf.com/content/CVPR2026/supplemental/Fares_SPDMark_Selective_Parameter_CVPR_2026_supplemental.pdf",
+      "resources": {
+        "project": [],
+        "github": [
+          "https://github.com/Samar-Fares/SPDMark"
+        ],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": [
+          "https://openaccess.thecvf.com/content/CVPR2026/supplemental/Fares_SPDMark_Selective_Parameter_CVPR_2026_supplemental.pdf"
+        ]
+      },
+      "resource_note": "官方代码含 ModelScope 和 SVD_xt 训练/推理目录；未找到现成 decoder/extractor checkpoint 下载或专属 HF 仓库。",
+      "academic_category": "相邻研究：通用水印、音视频防篡改或评测",
+      "direct_focus_targets": [],
+      "scope": "水印与相邻方法"
+    },
+    {
+      "id": "videoshield",
+      "title": "VideoShield: Regulating Diffusion-based Video Generation Models via Watermarking",
+      "authors": [
+        "Hu, Runyi",
+        "Zhang, Jie",
+        "Li, Yiming",
+        "Li, Jiwei",
+        "Guo, Qing",
+        "Qiu, Han",
+        "Zhang, Tianwei"
+      ],
+      "authors_format": "arXiv metadata 原样；通常为 Family, Given；团体作者保留",
+      "first_submitted": "2025-01-24",
+      "latest_version_date": "2025-02-25",
+      "paper": "https://arxiv.org/abs/2501.14195",
+      "fulltext": "https://arxiv.org/html/2501.14195v2",
+      "checked": "2026-09-27",
+      "metadata_sha256": "d1e4937e6ad08619f4aa07dee2499077bf23b887d6d34fbef60878e16604b5d2",
+      "affiliations": [
+        "Nanyang Technological University",
+        "A*STAR (CFAR / IHPC)",
+        "Zhejiang University",
+        "Tsinghua University"
+      ],
+      "role": "初始噪声水印与时空篡改定位",
+      "publication_status": "ICLR 2025（官方论文集）",
+      "publication_status_source": "https://proceedings.iclr.cc/paper_files/paper/2025/file/8227285e32f70e07fa3a247f3a48006d-Paper-Conference.pdf",
+      "resources": {
+        "project": [],
+        "github": [
+          "https://github.com/hurunyi/VideoShield"
+        ],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "resource_note": "无需另行训练水印生成权重；仍依赖生成 backbone 与 inversion。专属 HF 模型/数据未找到。",
+      "academic_category": "相邻研究：通用水印、音视频防篡改或评测",
+      "direct_focus_targets": [],
+      "scope": "水印与相邻方法"
+    },
+    {
+      "id": "videomark",
+      "title": "VideoMark: A Distortion-Free Robust Watermarking Framework for Video Diffusion Models",
+      "authors": [
+        "Hu, Xuming",
+        "Li, Hanqian",
+        "Li, Jungang",
+        "Huang, Yu",
+        "Liu, Shuliang",
+        "Zheng, Qi",
+        "Chen, Junhao",
+        "Liu, Aiwei"
+      ],
+      "authors_format": "arXiv metadata 原样；通常为 Family, Given；团体作者保留",
+      "first_submitted": "2025-04-23",
+      "latest_version_date": "2025-11-16",
+      "paper": "https://arxiv.org/abs/2504.16359",
+      "fulltext": "https://arxiv.org/html/2504.16359v3",
+      "checked": "2026-09-27",
+      "metadata_sha256": "2dea865ef29c8d4d13d90871a63555e28764e5197b61be779e9656adfae35c37",
+      "affiliations": [
+        "Hong Kong University of Science and Technology (Guangzhou)",
+        "Tsinghua University"
+      ],
+      "role": "PRC 初始噪声水印、时间序列匹配",
+      "publication_status": "预印本；本轮未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2504.16359",
+      "resources": {
+        "project": [],
+        "github": [
+          "https://github.com/KYRIE-LI11/VideoMark"
+        ],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "resource_note": "按 arXiv v3 的最新标题/作者记录；与 2026 年的 VidMark 不是同一篇论文。未找到专属 HF 模型/数据仓库。",
+      "academic_category": "相邻研究：通用水印、音视频防篡改或评测",
+      "direct_focus_targets": [],
+      "scope": "水印与相邻方法"
+    },
+    {
+      "id": "sigmark",
+      "title": "SIGMark: Scalable In-Generation Watermark with Blind Extraction for Video Diffusion",
+      "authors": [
+        "Zhu, Xinjie",
+        "Zhao, Zijing",
+        "Jin, Hui",
+        "Guo, Qingxiao",
+        "Ma, Yilong",
+        "Wang, Yunhao",
+        "Guo, Xiaobing",
+        "Zhang, Weifeng"
+      ],
+      "authors_format": "arXiv metadata 原样；通常为 Family, Given；团体作者保留",
+      "first_submitted": "2026-03-03",
+      "latest_version_date": "2026-03-03",
+      "paper": "https://arxiv.org/abs/2603.02882",
+      "fulltext": "https://arxiv.org/html/2603.02882v1",
+      "checked": "2026-09-27",
+      "metadata_sha256": "f3cd0a136fe5a845c7a382f902f4d7b7cf3b3ca87d53ce208382b879c28be76d",
+      "affiliations": [
+        "Lenovo Research"
+      ],
+      "role": "causal 3D VAE 下的盲水印提取；非流式生成专用水印",
+      "publication_status": "ICLR 2026（官方论文集）",
+      "publication_status_source": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/f3f6f1739b646e0bd20111261ce23adb-Abstract-Conference.html",
+      "resources": {
+        "project": [
+          "https://jeremyzhao1998.github.io/SIGMark-release/"
+        ],
+        "github": [
+          "https://github.com/JeremyZhao1998/SIGMark-release"
+        ],
+        "huggingface_models": [],
+        "datasets": [
+          "https://github.com/Vchitect/VBench/tree/master/VBench-2.0/prompts",
+          "https://github.com/JeremyZhao1998/JeremyZhao1998.github.io/blob/master/images/2026-SIGMark/VBench2_aug_img_prompt.zip"
+        ],
+        "other_official_resources": []
+      },
+      "resource_note": "数据项分别是上游 VBench 2.0 prompts 和作者整理的输入图像/prompt 包；无须另训水印模型，专属 HF 模型未找到。",
+      "academic_category": "相邻研究：通用水印、音视频防篡改或评测",
+      "direct_focus_targets": [],
+      "scope": "水印与相邻方法"
+    },
+    {
+      "id": "mave",
+      "title": "mAVE: A Watermark for Joint Audio-Visual Generation Models",
+      "authors": [
+        "Si, Luyang",
+        "Pan, Leyi",
+        "Wen, Lijie"
+      ],
+      "authors_format": "arXiv metadata 原样；通常为 Family, Given；团体作者保留",
+      "first_submitted": "2026-03-07",
+      "latest_version_date": "2026-03-07",
+      "paper": "https://arxiv.org/abs/2603.07090",
+      "fulltext": "https://arxiv.org/html/2603.07090v1",
+      "checked": "2026-09-27",
+      "metadata_sha256": "a91ced0f8e9d8498de8fa7ce4f6b6eb149ab795a0bc743b43eebe9a370570227",
+      "affiliations": [
+        "School of Software, Tsinghua University"
+      ],
+      "role": "直接针对 joint audio-visual generation 的原生绑定水印",
+      "publication_status": "预印本；本轮未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2603.07090",
+      "resources": {
+        "project": [],
+        "github": [],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "resource_note": "原文称完整 prompts 会在官方代码仓库提供，但本轮未找到可核实的官方仓库入口。项目页、代码、HF 模型及专属数据均记未找到，不据此断言作者从未公开。",
+      "academic_category": "直接工作：联合音视频生成水印",
+      "direct_focus_targets": [
+        "joint_audio_visual_generation"
+      ],
+      "scope": "水印与相邻方法"
+    },
+    {
+      "id": "wmar",
+      "title": "Watermarking Autoregressive Image Generation",
+      "authors": [
+        "Jovanović, Nikola",
+        "Labiad, Ismail",
+        "Souček, Tomáš",
+        "Vechev, Martin",
+        "Fernandez, Pierre"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2025-06-19",
+      "latest_version_date": "2025-10-23",
+      "paper": "https://arxiv.org/abs/2506.16349",
+      "fulltext": "https://arxiv.org/html/2506.16349v2",
+      "checked": "2026-09-27",
+      "metadata_sha256": "d383dc06ccee59834e29fa7bf6e42f5a37c3bd3cd5bb731f48494b64697cf17d",
+      "affiliations": [
+        "Meta FAIR",
+        "ETH Zurich",
+        "Université Paris-Saclay"
+      ],
+      "publication_status": "NeurIPS 2025",
+      "publication_status_source": "https://github.com/facebookresearch/wmar",
+      "resource_note": "相邻研究：离散 token 的 AR 图像水印，不是 continuous-latent AR 视频方法。官方 CDN encoder/decoder delta 权重在仓库；未找到专属 HF 模型。",
+      "resources": {
+        "project": [],
+        "github": [
+          "https://github.com/facebookresearch/wmar"
+        ],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": [
+          "https://dl.fbaipublicfiles.com/wmar/finetunes/chameleon7b_decoder_ft_delta.pth",
+          "https://dl.fbaipublicfiles.com/wmar/finetunes/chameleon7b_encoder_ft_delta.pth"
+        ]
+      },
+      "scope": "水印与相邻方法"
+    },
+    {
+      "id": "foundation_attention",
+      "title": "Attention Is All You Need",
+      "authors": [
+        "Ashish Vaswani",
+        "Noam Shazeer",
+        "Niki Parmar",
+        "Jakob Uszkoreit",
+        "Llion Jones",
+        "Aidan N. Gomez",
+        "Łukasz Kaiser",
+        "Illia Polosukhin"
+      ],
+      "affiliations": [
+        "Google Brain",
+        "Google Research",
+        "University of Toronto"
+      ],
+      "paper": "https://arxiv.org/abs/1706.03762",
+      "fulltext": "https://arxiv.org/html/1706.03762v7",
+      "publication_status": "NIPS 2017；展示类型未核实",
+      "publication_status_source": "https://proceedings.neurips.cc/paper_files/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html",
+      "checked": "2026-10-02",
+      "scope": "基础读物",
+      "authors_format": "论文署名",
+      "resource_note": "原始Transformer基础；Tensor2Tensor为作者团队实现。不是视频生成论文。",
+      "resources": {
+        "project": [],
+        "github": [
+          "https://github.com/tensorflow/tensor2tensor"
+        ],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      }
+    },
+    {
+      "id": "foundation_ddpm",
+      "title": "Denoising Diffusion Probabilistic Models",
+      "authors": [
+        "Jonathan Ho",
+        "Ajay Jain",
+        "Pieter Abbeel"
+      ],
+      "affiliations": [
+        "UC Berkeley"
+      ],
+      "paper": "https://arxiv.org/abs/2006.11239",
+      "fulltext": "https://arxiv.org/html/2006.11239v2",
+      "publication_status": "NeurIPS 2020；展示类型未核实",
+      "publication_status_source": "https://proceedings.neurips.cc/paper/2020/hash/4c5bcfec8584af0d967f1ab10179ca4b-Abstract.html",
+      "checked": "2026-10-02",
+      "scope": "基础读物",
+      "authors_format": "论文署名",
+      "resource_note": "用于理解加噪训练与反向采样；代码README包含作者权重入口。",
+      "resources": {
+        "project": [
+          "https://hojonathanho.github.io/diffusion/"
+        ],
+        "github": [
+          "https://github.com/hojonathanho/diffusion"
+        ],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      }
+    },
+    {
+      "id": "foundation_ldm",
+      "title": "High-Resolution Image Synthesis with Latent Diffusion Models",
+      "authors": [
+        "Robin Rombach",
+        "Andreas Blattmann",
+        "Dominik Lorenz",
+        "Patrick Esser",
+        "Björn Ommer"
+      ],
+      "affiliations": [
+        "LMU Munich",
+        "IWR, Heidelberg University",
+        "Runway"
+      ],
+      "paper": "https://arxiv.org/abs/2112.10752",
+      "fulltext": "https://arxiv.org/html/2112.10752v2",
+      "publication_status": "CVPR 2022 Oral",
+      "publication_status_source": "https://ommer-lab.com/research/latent-diffusion-models/",
+      "checked": "2026-10-02",
+      "scope": "基础读物",
+      "authors_format": "论文署名",
+      "resource_note": "是图像latent diffusion基础，不是视频VAE时间压缩的原始证据；视频尺寸例子在正文中单独标为教学假设。",
+      "resources": {
+        "project": [
+          "https://ommer-lab.com/research/latent-diffusion-models/"
+        ],
+        "github": [
+          "https://github.com/CompVis/latent-diffusion"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/CompVis/ldm-text2im-large-256"
+        ],
+        "datasets": [],
+        "other_official_resources": []
+      }
+    },
+    {
+      "id": "foundation_dit",
+      "title": "Scalable Diffusion Models with Transformers",
+      "authors": [
+        "William Peebles",
+        "Saining Xie"
+      ],
+      "affiliations": [
+        "UC Berkeley",
+        "New York University",
+        "Meta AI FAIR（论文注明实习期间工作）"
+      ],
+      "paper": "https://arxiv.org/abs/2212.09748",
+      "fulltext": "https://arxiv.org/html/2212.09748v2",
+      "publication_status": "ICCV 2023 Oral",
+      "publication_status_source": "https://www.wpeebles.com/DiT",
+      "checked": "2026-10-02",
+      "scope": "基础读物",
+      "authors_format": "论文署名",
+      "resource_note": "原始DiT为图像模型；视频模型进一步扩展时间维，不能把图像性能作为视频证据。",
+      "resources": {
+        "project": [
+          "https://www.wpeebles.com/DiT"
+        ],
+        "github": [
+          "https://github.com/facebookresearch/DiT"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/facebook/DiT-XL-2-256"
+        ],
+        "datasets": [],
+        "other_official_resources": []
+      }
+    },
+    {
+      "id": "foundation_flow_matching",
+      "title": "Flow Matching for Generative Modeling",
+      "authors": [
+        "Yaron Lipman",
+        "Ricky T. Q. Chen",
+        "Heli Ben-Hamu",
+        "Maximilian Nickel",
+        "Matt Le"
+      ],
+      "affiliations": [
+        "Meta AI FAIR",
+        "Weizmann Institute of Science"
+      ],
+      "paper": "https://arxiv.org/abs/2210.02747",
+      "fulltext": "https://arxiv.org/html/2210.02747v2",
+      "publication_status": "ICLR 2023；展示类型本次未进一步确认",
+      "publication_status_source": "https://openreview.net/pdf?id=PqvMRDCJT9t",
+      "checked": "2026-10-02",
+      "scope": "基础读物",
+      "authors_format": "论文署名",
+      "resource_note": "所列代码为作者机构后续维护的官方Flow Matching库，不将它标成2023论文逐项复现包；2024教程是后续官方教学资源。",
+      "resources": {
+        "project": [],
+        "github": [
+          "https://github.com/facebookresearch/flow_matching"
+        ],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": [
+          "https://neurips.cc/virtual/2024/tutorial/99531"
+        ]
+      }
+    },
+    {
+      "id": "rolling_forcing",
+      "title": "Rolling Forcing: Autoregressive Long Video Diffusion in Real Time",
+      "authors": [
+        "Liu, Kunhao",
+        "Hu, Wenbo",
+        "Xu, Jiale",
+        "Shan, Ying",
+        "Lu, Shijian"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "affiliations": [
+        "Nanyang Technological University",
+        "ARC Lab, Tencent PCG"
+      ],
+      "first_submitted": "2025-09-29",
+      "latest_version_date": "2025-09-29",
+      "paper": "https://arxiv.org/abs/2509.25161",
+      "fulltext": "https://arxiv.org/html/2509.25161v1",
+      "publication_status": "ICLR 2026；特殊展示类型未核实",
+      "publication_status_source": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/935151cc6cb5d8b6816133b75233775a-Abstract-Conference.html",
+      "checked": "2026-10-03",
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-03",
+      "reading_section": "streaming_video_research.html#paper-rolling-forcing",
+      "resource_note": "官方演示Space可找到，但本轮页面报告环境配置错误，不将其视为可运行验证。代码只读核对commit a1477d09e85dc759a6a6728f55f77f59342ce388；未运行模型。",
+      "resources": {
+        "project": [
+          "https://kunhao-liu.github.io/Rolling_Forcing_Webpage/"
+        ],
+        "github": [
+          "https://github.com/TencentARC/RollingForcing"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/TencentARC/RollingForcing"
+        ],
+        "datasets": [],
+        "other_official_resources": [
+          "https://huggingface.co/spaces/TencentARC/RollingForcing"
+        ]
+      }
+    },
+    {
+      "id": "dmd",
+      "title": "One-step Diffusion with Distribution Matching Distillation",
+      "authors": [
+        "Yin, Tianwei",
+        "Gharbi, Michaël",
+        "Zhang, Richard",
+        "Shechtman, Eli",
+        "Durand, Fredo",
+        "Freeman, William T.",
+        "Park, Taesung"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "affiliations": [
+        "Massachusetts Institute of Technology",
+        "Adobe Research"
+      ],
+      "first_submitted": "2023-11-30",
+      "latest_version_date": "2024-10-04",
+      "paper": "https://arxiv.org/abs/2311.18828",
+      "fulltext": "https://arxiv.org/html/2311.18828v4",
+      "publication_status": "CVPR 2024；特殊展示类型未核实",
+      "publication_status_source": "https://openaccess.thecvf.com/content/CVPR2024/html/Yin_One-step_Diffusion_with_Distribution_Matching_Distillation_CVPR_2024_paper.html",
+      "checked": "2026-10-03",
+      "scope": "基础读物",
+      "method_reviewed_on": "2026-10-03",
+      "reading_section": "streaming_video_research.html#paper-dmd",
+      "resource_note": "本轮未找到独立的原版官方代码、HF模型及专属数据仓库；DMD2是后续方法，不直接标成DMD原版实现。",
+      "resources": {
+        "project": [
+          "https://tianweiy.github.io/dmd/"
+        ],
+        "github": [],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      }
+    },
+    {
+      "id": "dmd2",
+      "title": "Improved Distribution Matching Distillation for Fast Image Synthesis",
+      "authors": [
+        "Yin, Tianwei",
+        "Gharbi, Michaël",
+        "Park, Taesung",
+        "Zhang, Richard",
+        "Shechtman, Eli",
+        "Durand, Fredo",
+        "Freeman, William T."
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "affiliations": [
+        "Massachusetts Institute of Technology",
+        "Adobe Research"
+      ],
+      "first_submitted": "2024-05-23",
+      "latest_version_date": "2024-05-24",
+      "paper": "https://arxiv.org/abs/2405.14867",
+      "fulltext": "https://arxiv.org/html/2405.14867v2",
+      "publication_status": "NeurIPS 2024 Oral（官方仓库明确标注Oral）",
+      "publication_status_source": "https://proceedings.neurips.cc/paper_files/paper/2024/hash/54dcf25318f9de5a7a01f0a4125c541e-Abstract-Conference.html",
+      "checked": "2026-10-03",
+      "scope": "基础读物",
+      "method_reviewed_on": "2026-10-03",
+      "reading_section": "streaming_video_research.html#paper-dmd2",
+      "resource_note": "Oral来源为官方仓库；论文集确认正式发表。SDXL一步版本附录仍使用小规模配对warm-up，不能将去掉主训练回归误读成全部配置完全不用配对数据。",
+      "resources": {
+        "project": [
+          "https://tianweiy.github.io/dmd2/"
+        ],
+        "github": [
+          "https://github.com/tianweiy/DMD2"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/tianweiy/DMD2"
+        ],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "presentation_status_source": "https://github.com/tianweiy/DMD2"
+    }
+  ],
+  "foundation_checked": "2026-10-02",
+  "forcing_readings_checked": "2026-10-03"
+}

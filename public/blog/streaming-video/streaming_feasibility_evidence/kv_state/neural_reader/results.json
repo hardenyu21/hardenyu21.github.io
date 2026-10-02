@@ -1,0 +1,24 @@
+{
+  "selected_step": 100,
+  "validation_bit_accuracy": 0.5,
+  "reader_parameters": 1657504,
+  "writer_trained": false,
+  "decoder_input": "RGB only; per-frame logits averaged over full observation.",
+  "splits": {
+    "train": {
+      "bit_accuracy": 0.5,
+      "exact_messages": 0,
+      "messages": 96
+    },
+    "validation": {
+      "bit_accuracy": 0.5,
+      "exact_messages": 0,
+      "messages": 24
+    },
+    "test": {
+      "bit_accuracy": 0.5,
+      "exact_messages": 0,
+      "messages": 64
+    }
+  }
+}

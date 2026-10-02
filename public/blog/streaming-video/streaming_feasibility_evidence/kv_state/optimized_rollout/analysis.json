@@ -1,0 +1,683 @@
+{
+  "records": [
+    {
+      "id": "clean_source",
+      "per_chunk": [
+        {
+          "chunk": 0,
+          "full_ba": 0.625,
+          "crop_ba": 0.625,
+          "proxy_ba": 0.625
+        },
+        {
+          "chunk": 1,
+          "full_ba": 0.5625,
+          "crop_ba": 0.375,
+          "proxy_ba": 0.4375
+        },
+        {
+          "chunk": 2,
+          "full_ba": 0.4375,
+          "crop_ba": 0.5,
+          "proxy_ba": 0.5
+        },
+        {
+          "chunk": 3,
+          "full_ba": 0.625,
+          "crop_ba": 0.5625,
+          "proxy_ba": 0.5
+        },
+        {
+          "chunk": 4,
+          "full_ba": 0.4375,
+          "crop_ba": 0.5,
+          "proxy_ba": 0.5625
+        },
+        {
+          "chunk": 5,
+          "full_ba": 0.5,
+          "crop_ba": 0.5625,
+          "proxy_ba": 0.5625
+        },
+        {
+          "chunk": 6,
+          "full_ba": 0.375,
+          "crop_ba": 0.5,
+          "proxy_ba": 0.625
+        },
+        {
+          "chunk": 7,
+          "full_ba": 0.5,
+          "crop_ba": 0.375,
+          "proxy_ba": 0.5
+        }
+      ],
+      "first4_crop_bits": 9,
+      "full_whole_bits": 8,
+      "full_whole_exact": false,
+      "full_suffix_bits": 8,
+      "full_suffix_exact": false,
+      "crop_whole_bits": 9,
+      "crop_whole_exact": false,
+      "crop_suffix_bits": 9,
+      "crop_suffix_exact": false,
+      "scope": "Fixed whole-clip or fixed post-warmup aggregation. Suffix uses known 29-frame warmup for channel diagnosis; it is not unknown-boundary validation. One trained message."
+    },
+    {
+      "id": "layer16_amp02",
+      "per_chunk": [
+        {
+          "chunk": 0,
+          "full_ba": 0.625,
+          "crop_ba": 0.625,
+          "proxy_ba": 0.625
+        },
+        {
+          "chunk": 1,
+          "full_ba": 0.625,
+          "crop_ba": 0.375,
+          "proxy_ba": 0.4375
+        },
+        {
+          "chunk": 2,
+          "full_ba": 0.5,
+          "crop_ba": 0.5,
+          "proxy_ba": 0.5
+        },
+        {
+          "chunk": 3,
+          "full_ba": 0.5625,
+          "crop_ba": 0.6875,
+          "proxy_ba": 0.4375
+        },
+        {
+          "chunk": 4,
+          "full_ba": 0.5,
+          "crop_ba": 0.5625,
+          "proxy_ba": 0.625
+        },
+        {
+          "chunk": 5,
+          "full_ba": 0.5625,
+          "crop_ba": 0.6875,
+          "proxy_ba": 0.5625
+        },
+        {
+          "chunk": 6,
+          "full_ba": 0.5,
+          "crop_ba": 0.75,
+          "proxy_ba": 0.5
+        },
+        {
+          "chunk": 7,
+          "full_ba": 0.4375,
+          "crop_ba": 0.75,
+          "proxy_ba": 0.5625
+        }
+      ],
+      "first4_crop_bits": 9,
+      "full_whole_bits": 9,
+      "full_whole_exact": false,
+      "full_suffix_bits": 9,
+      "full_suffix_exact": false,
+      "crop_whole_bits": 10,
+      "crop_whole_exact": false,
+      "crop_suffix_bits": 10,
+      "crop_suffix_exact": false,
+      "scope": "Fixed whole-clip or fixed post-warmup aggregation. Suffix uses known 29-frame warmup for channel diagnosis; it is not unknown-boundary validation. One trained message."
+    },
+    {
+      "id": "layer29_amp02",
+      "per_chunk": [
+        {
+          "chunk": 0,
+          "full_ba": 0.625,
+          "crop_ba": 0.625,
+          "proxy_ba": 0.625
+        },
+        {
+          "chunk": 1,
+          "full_ba": 0.5625,
+          "crop_ba": 0.375,
+          "proxy_ba": 0.5
+        },
+        {
+          "chunk": 2,
+          "full_ba": 0.5,
+          "crop_ba": 0.5625,
+          "proxy_ba": 0.5625
+        },
+        {
+          "chunk": 3,
+          "full_ba": 0.625,
+          "crop_ba": 0.5625,
+          "proxy_ba": 0.5
+        },
+        {
+          "chunk": 4,
+          "full_ba": 0.5625,
+          "crop_ba": 0.5,
+          "proxy_ba": 0.5
+        },
+        {
+          "chunk": 5,
+          "full_ba": 0.5625,
+          "crop_ba": 0.625,
+          "proxy_ba": 0.625
+        },
+        {
+          "chunk": 6,
+          "full_ba": 0.4375,
+          "crop_ba": 0.75,
+          "proxy_ba": 0.625
+        },
+        {
+          "chunk": 7,
+          "full_ba": 0.4375,
+          "crop_ba": 0.6875,
+          "proxy_ba": 0.5625
+        }
+      ],
+      "first4_crop_bits": 9,
+      "full_whole_bits": 8,
+      "full_whole_exact": false,
+      "full_suffix_bits": 8,
+      "full_suffix_exact": false,
+      "crop_whole_bits": 11,
+      "crop_whole_exact": false,
+      "crop_suffix_bits": 10,
+      "crop_suffix_exact": false,
+      "scope": "Fixed whole-clip or fixed post-warmup aggregation. Suffix uses known 29-frame warmup for channel diagnosis; it is not unknown-boundary validation. One trained message."
+    },
+    {
+      "id": "layer29_amp10",
+      "per_chunk": [
+        {
+          "chunk": 0,
+          "full_ba": 0.625,
+          "crop_ba": 0.625,
+          "proxy_ba": 0.625
+        },
+        {
+          "chunk": 1,
+          "full_ba": 0.5625,
+          "crop_ba": 0.4375,
+          "proxy_ba": 0.8125
+        },
+        {
+          "chunk": 2,
+          "full_ba": 0.5,
+          "crop_ba": 0.5,
+          "proxy_ba": 0.5
+        },
+        {
+          "chunk": 3,
+          "full_ba": 0.625,
+          "crop_ba": 0.6875,
+          "proxy_ba": 0.5625
+        },
+        {
+          "chunk": 4,
+          "full_ba": 0.5625,
+          "crop_ba": 0.625,
+          "proxy_ba": 0.5
+        },
+        {
+          "chunk": 5,
+          "full_ba": 0.5625,
+          "crop_ba": 0.75,
+          "proxy_ba": 0.6875
+        },
+        {
+          "chunk": 6,
+          "full_ba": 0.5625,
+          "crop_ba": 0.75,
+          "proxy_ba": 0.5
+        },
+        {
+          "chunk": 7,
+          "full_ba": 0.375,
+          "crop_ba": 0.75,
+          "proxy_ba": 0.5
+        }
+      ],
+      "first4_crop_bits": 9,
+      "full_whole_bits": 9,
+      "full_whole_exact": false,
+      "full_suffix_bits": 8,
+      "full_suffix_exact": false,
+      "crop_whole_bits": 11,
+      "crop_whole_exact": false,
+      "crop_suffix_bits": 11,
+      "crop_suffix_exact": false,
+      "scope": "Fixed whole-clip or fixed post-warmup aggregation. Suffix uses known 29-frame warmup for channel diagnosis; it is not unknown-boundary validation. One trained message."
+    },
+    {
+      "id": "native_layer29_amp10",
+      "per_chunk": [
+        {
+          "chunk": 0,
+          "full_ba": 0.625,
+          "crop_ba": 0.625,
+          "proxy_ba": 0.625
+        },
+        {
+          "chunk": 1,
+          "full_ba": 0.625,
+          "crop_ba": 0.4375,
+          "proxy_ba": 0.5
+        },
+        {
+          "chunk": 2,
+          "full_ba": 0.5,
+          "crop_ba": 0.5,
+          "proxy_ba": 0.5
+        },
+        {
+          "chunk": 3,
+          "full_ba": 0.625,
+          "crop_ba": 0.5625,
+          "proxy_ba": 0.5625
+        },
+        {
+          "chunk": 4,
+          "full_ba": 0.5625,
+          "crop_ba": 0.5625,
+          "proxy_ba": 0.5625
+        },
+        {
+          "chunk": 5,
+          "full_ba": 0.5,
+          "crop_ba": 0.625,
+          "proxy_ba": 0.5
+        },
+        {
+          "chunk": 6,
+          "full_ba": 0.5,
+          "crop_ba": 0.75,
+          "proxy_ba": 0.4375
+        },
+        {
+          "chunk": 7,
+          "full_ba": 0.4375,
+          "crop_ba": 0.75,
+          "proxy_ba": 0.4375
+        }
+      ],
+      "first4_crop_bits": 11,
+      "full_whole_bits": 9,
+      "full_whole_exact": false,
+      "full_suffix_bits": 8,
+      "full_suffix_exact": false,
+      "crop_whole_bits": 11,
+      "crop_whole_exact": false,
+      "crop_suffix_bits": 11,
+      "crop_suffix_exact": false,
+      "scope": "Fixed whole-clip or fixed post-warmup aggregation. Suffix uses known 29-frame warmup for channel diagnosis; it is not unknown-boundary validation. One trained message."
+    },
+    {
+      "id": "native_new_scene_marked",
+      "per_chunk": [
+        {
+          "chunk": 0,
+          "full_ba": 0.375,
+          "crop_ba": 0.75,
+          "proxy_ba": 0.6875
+        },
+        {
+          "chunk": 1,
+          "full_ba": 0.4375,
+          "crop_ba": 0.75,
+          "proxy_ba": 0.6875
+        },
+        {
+          "chunk": 2,
+          "full_ba": 0.4375,
+          "crop_ba": 0.6875,
+          "proxy_ba": 0.6875
+        },
+        {
+          "chunk": 3,
+          "full_ba": 0.5,
+          "crop_ba": 0.75,
+          "proxy_ba": 0.6875
+        }
+      ],
+      "first4_crop_bits": 13,
+      "full_whole_bits": 6,
+      "full_whole_exact": false,
+      "full_suffix_bits": 7,
+      "full_suffix_exact": false,
+      "crop_whole_bits": 12,
+      "crop_whole_exact": false,
+      "crop_suffix_bits": 12,
+      "crop_suffix_exact": false,
+      "scope": "Fixed whole-clip or fixed post-warmup aggregation. Suffix uses known 29-frame warmup for channel diagnosis; it is not unknown-boundary validation. One trained message."
+    },
+    {
+      "id": "native_new_seed_marked",
+      "per_chunk": [
+        {
+          "chunk": 0,
+          "full_ba": 0.5625,
+          "crop_ba": 0.5625,
+          "proxy_ba": 0.375
+        },
+        {
+          "chunk": 1,
+          "full_ba": 0.5625,
+          "crop_ba": 0.5625,
+          "proxy_ba": 0.6875
+        },
+        {
+          "chunk": 2,
+          "full_ba": 0.4375,
+          "crop_ba": 0.4375,
+          "proxy_ba": 0.4375
+        },
+        {
+          "chunk": 3,
+          "full_ba": 0.4375,
+          "crop_ba": 0.5,
+          "proxy_ba": 0.6875
+        }
+      ],
+      "first4_crop_bits": 8,
+      "full_whole_bits": 9,
+      "full_whole_exact": false,
+      "full_suffix_bits": 8,
+      "full_suffix_exact": false,
+      "crop_whole_bits": 7,
+      "crop_whole_exact": false,
+      "crop_suffix_bits": 8,
+      "crop_suffix_exact": false,
+      "scope": "Fixed whole-clip or fixed post-warmup aggregation. Suffix uses known 29-frame warmup for channel diagnosis; it is not unknown-boundary validation. One trained message."
+    },
+    {
+      "id": "new_scene_clean",
+      "per_chunk": [
+        {
+          "chunk": 0,
+          "full_ba": 0.375,
+          "crop_ba": 0.75,
+          "proxy_ba": 0.6875
+        },
+        {
+          "chunk": 1,
+          "full_ba": 0.4375,
+          "crop_ba": 0.75,
+          "proxy_ba": 0.6875
+        },
+        {
+          "chunk": 2,
+          "full_ba": 0.4375,
+          "crop_ba": 0.75,
+          "proxy_ba": 0.6875
+        },
+        {
+          "chunk": 3,
+          "full_ba": 0.5,
+          "crop_ba": 0.75,
+          "proxy_ba": 0.625
+        }
+      ],
+      "first4_crop_bits": 14,
+      "full_whole_bits": 7,
+      "full_whole_exact": false,
+      "full_suffix_bits": 7,
+      "full_suffix_exact": false,
+      "crop_whole_bits": 12,
+      "crop_whole_exact": false,
+      "crop_suffix_bits": 13,
+      "crop_suffix_exact": false,
+      "scope": "Fixed whole-clip or fixed post-warmup aggregation. Suffix uses known 29-frame warmup for channel diagnosis; it is not unknown-boundary validation. One trained message."
+    },
+    {
+      "id": "new_scene_marked",
+      "per_chunk": [
+        {
+          "chunk": 0,
+          "full_ba": 0.375,
+          "crop_ba": 0.75,
+          "proxy_ba": 0.6875
+        },
+        {
+          "chunk": 1,
+          "full_ba": 0.5,
+          "crop_ba": 0.75,
+          "proxy_ba": 0.625
+        },
+        {
+          "chunk": 2,
+          "full_ba": 0.4375,
+          "crop_ba": 0.6875,
+          "proxy_ba": 0.75
+        },
+        {
+          "chunk": 3,
+          "full_ba": 0.5,
+          "crop_ba": 0.75,
+          "proxy_ba": 0.6875
+        }
+      ],
+      "first4_crop_bits": 12,
+      "full_whole_bits": 7,
+      "full_whole_exact": false,
+      "full_suffix_bits": 7,
+      "full_suffix_exact": false,
+      "crop_whole_bits": 12,
+      "crop_whole_exact": false,
+      "crop_suffix_bits": 11,
+      "crop_suffix_exact": false,
+      "scope": "Fixed whole-clip or fixed post-warmup aggregation. Suffix uses known 29-frame warmup for channel diagnosis; it is not unknown-boundary validation. One trained message."
+    },
+    {
+      "id": "new_seed_clean",
+      "per_chunk": [
+        {
+          "chunk": 0,
+          "full_ba": 0.5625,
+          "crop_ba": 0.5625,
+          "proxy_ba": 0.375
+        },
+        {
+          "chunk": 1,
+          "full_ba": 0.5625,
+          "crop_ba": 0.5625,
+          "proxy_ba": 0.6875
+        },
+        {
+          "chunk": 2,
+          "full_ba": 0.5,
+          "crop_ba": 0.5,
+          "proxy_ba": 0.5
+        },
+        {
+          "chunk": 3,
+          "full_ba": 0.4375,
+          "crop_ba": 0.5,
+          "proxy_ba": 0.625
+        }
+      ],
+      "first4_crop_bits": 8,
+      "full_whole_bits": 9,
+      "full_whole_exact": false,
+      "full_suffix_bits": 8,
+      "full_suffix_exact": false,
+      "crop_whole_bits": 7,
+      "crop_whole_exact": false,
+      "crop_suffix_bits": 8,
+      "crop_suffix_exact": false,
+      "scope": "Fixed whole-clip or fixed post-warmup aggregation. Suffix uses known 29-frame warmup for channel diagnosis; it is not unknown-boundary validation. One trained message."
+    },
+    {
+      "id": "new_seed_marked",
+      "per_chunk": [
+        {
+          "chunk": 0,
+          "full_ba": 0.5625,
+          "crop_ba": 0.5625,
+          "proxy_ba": 0.375
+        },
+        {
+          "chunk": 1,
+          "full_ba": 0.5625,
+          "crop_ba": 0.5,
+          "proxy_ba": 0.6875
+        },
+        {
+          "chunk": 2,
+          "full_ba": 0.5,
+          "crop_ba": 0.375,
+          "proxy_ba": 0.5
+        },
+        {
+          "chunk": 3,
+          "full_ba": 0.4375,
+          "crop_ba": 0.5,
+          "proxy_ba": 0.6875
+        }
+      ],
+      "first4_crop_bits": 8,
+      "full_whole_bits": 9,
+      "full_whole_exact": false,
+      "full_suffix_bits": 8,
+      "full_suffix_exact": false,
+      "crop_whole_bits": 8,
+      "crop_whole_exact": false,
+      "crop_suffix_bits": 8,
+      "crop_suffix_exact": false,
+      "scope": "Fixed whole-clip or fixed post-warmup aggregation. Suffix uses known 29-frame warmup for channel diagnosis; it is not unknown-boundary validation. One trained message."
+    }
+  ],
+  "paired_checks": [
+    {
+      "marked": "layer16_amp02",
+      "clean": "clean_source",
+      "same_message": true,
+      "same_noise": true,
+      "same_prompt": true,
+      "warmup_exact": true,
+      "chunk_rmse_255": [
+        0.0,
+        2.320338487625122,
+        4.650174140930176,
+        9.56563663482666,
+        13.581855773925781,
+        19.524635314941406,
+        27.210535049438477,
+        34.24986267089844
+      ]
+    },
+    {
+      "marked": "layer29_amp02",
+      "clean": "clean_source",
+      "same_message": true,
+      "same_noise": true,
+      "same_prompt": true,
+      "warmup_exact": true,
+      "chunk_rmse_255": [
+        0.0,
+        0.6954158544540405,
+        1.612809419631958,
+        3.103649377822876,
+        4.804629802703857,
+        15.637178421020508,
+        27.74990463256836,
+        39.908851623535156
+      ]
+    },
+    {
+      "marked": "layer29_amp10",
+      "clean": "clean_source",
+      "same_message": true,
+      "same_noise": true,
+      "same_prompt": true,
+      "warmup_exact": true,
+      "chunk_rmse_255": [
+        0.0,
+        0.8919171094894409,
+        2.1647093296051025,
+        4.594571113586426,
+        6.2851243019104,
+        16.93205451965332,
+        27.587980270385742,
+        38.752838134765625
+      ]
+    },
+    {
+      "marked": "native_layer29_amp10",
+      "clean": "clean_source",
+      "same_message": true,
+      "same_noise": true,
+      "same_prompt": true,
+      "warmup_exact": true,
+      "chunk_rmse_255": [
+        0.0,
+        0.8892319798469543,
+        1.4619972705841064,
+        2.4651060104370117,
+        3.56488299369812,
+        14.58151912689209,
+        26.587919235229492,
+        39.55405807495117
+      ]
+    },
+    {
+      "marked": "native_new_scene_marked",
+      "clean": "new_scene_clean",
+      "same_message": true,
+      "same_noise": true,
+      "same_prompt": true,
+      "warmup_exact": true,
+      "chunk_rmse_255": [
+        0.0,
+        1.206101655960083,
+        3.7289958000183105,
+        6.426230430603027
+      ]
+    },
+    {
+      "marked": "native_new_seed_marked",
+      "clean": "new_seed_clean",
+      "same_message": true,
+      "same_noise": true,
+      "same_prompt": true,
+      "warmup_exact": true,
+      "chunk_rmse_255": [
+        0.0,
+        1.0046024322509766,
+        2.0293681621551514,
+        3.2188475131988525
+      ]
+    },
+    {
+      "marked": "new_scene_marked",
+      "clean": "new_scene_clean",
+      "same_message": true,
+      "same_noise": true,
+      "same_prompt": true,
+      "warmup_exact": true,
+      "chunk_rmse_255": [
+        0.0,
+        1.4436705112457275,
+        5.867911338806152,
+        8.887530326843262
+      ]
+    },
+    {
+      "marked": "new_seed_marked",
+      "clean": "new_seed_clean",
+      "same_message": true,
+      "same_noise": true,
+      "same_prompt": true,
+      "warmup_exact": true,
+      "chunk_rmse_255": [
+        0.0,
+        0.9858214855194092,
+        2.106217861175537,
+        4.306763172149658
+      ]
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="550" viewBox="0 0 1120 550" role="img" aria-labelledby="title desc">
+  <title id="title">流式视频生成的两个循环与两套状态</title>
+  <desc id="desc">条件和当前块噪声进入DiT与采样器，完成latent后经VAE解码产生RGB，再编码输出。生成器KV与VAE状态分别参与后续块。</desc>
+  <defs>
+    <style>
+      text{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Noto Sans CJK SC',sans-serif;fill:#23384c}
+      .title{font-size:25px;font-weight:650}.label{font-size:20px;font-weight:600}.note{font-size:16px;fill:#526a80}
+      .box{fill:#eef5fb;stroke:#adc5d9;stroke-width:1.5;rx:12}.state{fill:#edf7f2;stroke:#a9cdb9;stroke-width:1.5;rx:12}
+      .line{fill:none;stroke:#52738e;stroke-width:2}.arrow{fill:#52738e}
+    </style>
+  </defs>
+  <rect width="1120" height="550" rx="14" fill="#fbfcfe"/>
+  <text x="30" y="43" class="title">先完成当前 chunk，再带着状态继续下一块</text>
+  <text x="30" y="77" class="note">外层沿视频时间推进；内层沿去噪时间反复更新。同一块中的 token 通常并行计算。</text>
+  <rect x="290" y="104" width="310" height="67" class="box"/>
+  <text x="445" y="133" text-anchor="middle" class="label">当前 chunk 的初始噪声</text>
+  <text x="445" y="156" text-anchor="middle" class="note">一个带噪 latent 张量</text>
+  <path d="M445 171 V214" class="line"/>
+  <path d="M439 204 L445 214 L451 204 Z" class="arrow"/>
+  <rect x="30" y="217" width="200" height="100" class="box"/>
+  <text x="130" y="250" text-anchor="middle" class="label">条件向量</text>
+  <text x="130" y="279" text-anchor="middle" class="note">文本 / 图像 / 动作等</text>
+  <path d="M230 267 H285" class="line"/>
+  <path d="M275 261 L285 267 L275 273 Z" class="arrow"/>
+  <rect x="290" y="217" width="310" height="100" class="box"/>
+  <text x="445" y="250" text-anchor="middle" class="label">DiT 预测 + sampler 更新</text>
+  <text x="445" y="279" text-anchor="middle" class="note">内层：重复若干步，完成本块 latent</text>
+  <path d="M600 267 H669" class="line"/>
+  <path d="M659 261 L669 267 L659 273 Z" class="arrow"/>
+  <text x="635" y="244" text-anchor="middle" class="note">latent</text>
+  <rect x="675" y="217" width="180" height="100" class="box"/>
+  <text x="765" y="250" text-anchor="middle" class="label">VAE decoder</text>
+  <text x="765" y="279" text-anchor="middle" class="note">连续解码成 RGB</text>
+  <path d="M855 267 H919" class="line"/>
+  <path d="M909 261 L919 267 L909 273 Z" class="arrow"/>
+  <rect x="925" y="217" width="165" height="100" class="box"/>
+  <text x="1007" y="250" text-anchor="middle" class="label">提交新帧</text>
+  <text x="1007" y="279" text-anchor="middle" class="note">编码 / 传输 / 播放</text>
+  <rect x="290" y="403" width="310" height="82" class="state"/>
+  <text x="445" y="437" text-anchor="middle" class="label">生成器历史 KV</text>
+  <text x="445" y="465" text-anchor="middle" class="note">窗口 / sink / recache 管理</text>
+  <path d="M325 403 V321" class="line"/>
+  <path d="M319 331 L325 321 L331 331 Z" class="arrow"/>
+  <text x="338" y="363" class="note">读取历史</text>
+  <path d="M575 317 V398" class="line"/>
+  <path d="M569 388 L575 398 L581 388 Z" class="arrow"/>
+  <text x="559" y="363" text-anchor="end" class="note">完成后更新</text>
+  <rect x="675" y="403" width="180" height="82" class="state"/>
+  <text x="765" y="437" text-anchor="middle" class="label">VAE 历史状态</text>
+  <text x="765" y="465" text-anchor="middle" class="note">卷积特征或缓存</text>
+  <path d="M705 403 V321" class="line"/>
+  <path d="M699 331 L705 321 L711 331 Z" class="arrow"/>
+  <path d="M825 317 V398" class="line"/>
+  <path d="M819 388 L825 398 L831 388 Z" class="arrow"/>
+  <text x="765" y="363" text-anchor="middle" class="note">独立读写</text>
+  <text x="30" y="435" class="label">进入下一块时</text>
+  <text x="30" y="465" class="note">新噪声 + 可更新的条件</text>
+  <text x="30" y="491" class="note">+ 已保留的两套状态</text>
+  <text x="30" y="528" class="note">教学示意：状态更新与解码可按依赖异步安排；已提交的前缀不再回改。</text>
+</svg>

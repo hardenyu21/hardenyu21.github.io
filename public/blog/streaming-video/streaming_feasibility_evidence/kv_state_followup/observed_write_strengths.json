@@ -1,0 +1,45 @@
+{
+  "rows": [
+    {
+      "model": "feature_l29",
+      "strength": 0.25,
+      "write_events": 72,
+      "min": 0.00538180535659194,
+      "median": 0.008803075179457664,
+      "max": 0.013361500576138496
+    },
+    {
+      "model": "feature_l29",
+      "strength": 1.0,
+      "write_events": 128,
+      "min": 0.031790848821401596,
+      "median": 0.037221936509013176,
+      "max": 0.042654506862163544
+    },
+    {
+      "model": "kv_l16",
+      "strength": 1.0,
+      "write_events": 36,
+      "min": 0.02865341491997242,
+      "median": 0.03718541655689478,
+      "max": 0.045717447996139526
+    },
+    {
+      "model": "kv_l29",
+      "strength": 1.0,
+      "write_events": 36,
+      "min": 0.029087118804454803,
+      "median": 0.03693779744207859,
+      "max": 0.044789254665374756
+    },
+    {
+      "model": "kv_l29_dc",
+      "strength": 1.0,
+      "write_events": 36,
+      "min": 0.025331400334835052,
+      "median": 0.03049791231751442,
+      "max": 0.03566478565335274
+    }
+  ],
+  "scope": "Actual post-BF16-cast perturbation RMS / local tensor RMS, from completed generation write events; strength is a multiplier on the learned pattern, not this ratio."
+}
