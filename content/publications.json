@@ -25,7 +25,7 @@
     "links": [
       { "label": "Paper", "href": "https://arxiv.org/pdf/2610.01499" },
       { "label": "Code", "href": "https://github.com/hardenyu21/VTR-Bench" },
-      { "label": "Hugging Face", "href": "https://huggingface.co/datasets/hardenyu/VTR-Bench" }
+      { "label": "Dataset", "href": "https://huggingface.co/datasets/hardenyu/VTR-Bench" }
     ]
   },
   {
@@ -52,7 +52,6 @@
     "year": "2026",
     "links": [
       { "label": "Paper", "href": "https://arxiv.org/pdf/2601.21262" },
-      { "label": "OpenReview", "href": "https://openreview.net/forum?id=mZXoOgBxX2" },
       { "label": "Code", "href": "https://github.com/Z1zs/Causal-Embed" }
     ]
   },
