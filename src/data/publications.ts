@@ -11,6 +11,13 @@ export type PublicationAuthor = {
   highlight?: boolean;
 };
 
+export type PublicationVideo = {
+  title: string;
+  duration: string;
+  src: string;
+  poster: string;
+};
+
 export type Publication = {
   title: string;
   badge: string;
@@ -23,6 +30,7 @@ export type Publication = {
   venue: string;
   year: string;
   links: PublicationLink[];
+  videos?: PublicationVideo[];
 };
 
 export const publications: Publication[] = publicationContent;

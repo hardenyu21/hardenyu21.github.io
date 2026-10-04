@@ -1,9 +1,46 @@
-import { Fragment } from 'react';
-import type { Publication } from '../data/publications';
+import { Fragment, useRef } from 'react';
+import type { Publication, PublicationVideo } from '../data/publications';
 
 type PublicationListProps = {
   publications: Publication[];
 };
+
+function PublicationVideos({ videos }: { videos: PublicationVideo[] }) {
+  const videoGridRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <section className="publication-media" aria-label="Video introductions">
+      <h4>Video introductions</h4>
+      <div className="publication-videos" ref={videoGridRef}>
+        {videos.map((video) => (
+          <figure className="publication-video" key={video.src}>
+            <video
+              src={video.src}
+              poster={video.poster}
+              controls
+              playsInline
+              preload="none"
+              aria-label={video.title}
+              onPlay={(event) => {
+                videoGridRef.current?.querySelectorAll('video').forEach((otherVideo) => {
+                  if (otherVideo !== event.currentTarget) {
+                    otherVideo.pause();
+                  }
+                });
+              }}
+            >
+              Your browser does not support embedded video. <a href={video.src}>Watch the video</a>.
+            </video>
+            <figcaption>
+              <span className="publication-video-title">{video.title}</span>
+              <span className="publication-video-duration">{video.duration}</span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
+  );
+}
 
 export function PublicationList({ publications }: PublicationListProps) {
   return (
@@ -43,6 +80,10 @@ export function PublicationList({ publications }: PublicationListProps) {
                 ))}
               </div>
             </div>
+
+            {publication.videos?.length ? (
+              <PublicationVideos videos={publication.videos} />
+            ) : null}
           </article>
         ))}
       </div>

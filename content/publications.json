@@ -26,6 +26,20 @@
       { "label": "Paper", "href": "https://arxiv.org/pdf/2610.01499" },
       { "label": "Code", "href": "https://github.com/hardenyu21/VTR-Bench" },
       { "label": "Dataset", "href": "https://huggingface.co/datasets/hardenyu/VTR-Bench" }
+    ],
+    "videos": [
+      {
+        "title": "Introduction",
+        "duration": "1:55",
+        "src": "/publications/vtr-bench/introduction.mp4",
+        "poster": "/publications/vtr-bench/introduction-poster.jpg"
+      },
+      {
+        "title": "Research overview",
+        "duration": "3:14",
+        "src": "/publications/vtr-bench/research-overview.mp4",
+        "poster": "/publications/vtr-bench/research-overview-poster.jpg"
+      }
     ]
   },
   {
