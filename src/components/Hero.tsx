@@ -48,12 +48,6 @@ export function Hero({ profile }: HeroProps) {
           <span className="poster-outline">{coverWords[frame]}</span>
           <span className="poster-cross">+</span>
         </div>
-        <img
-          className="poster-sticker"
-          src="/profile/site-mark-hero.png"
-          alt=""
-          aria-hidden="true"
-        />
         <div className="poster-caption" aria-hidden="true">
           <span>{String(frame + 1).padStart(2, '0')} / 04</span>
           <span>SEE. CREATE. INTERACT. TRUST.</span>

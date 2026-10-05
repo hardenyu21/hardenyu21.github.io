@@ -70,7 +70,7 @@
   margin-left: auto;
 }
 
-/* 可拨动的封面：切换排字、摄影与几何图形的关系。 */
+/* 可拨动的封面：切换排字与几何图形的关系。 */
 .hero {
   padding: 36px 0 72px;
   scroll-margin-top: 90px;
@@ -191,17 +191,6 @@
   line-height: 1;
   transform: rotate(12deg);
   transition: transform 700ms ease;
-}
-.poster-sticker {
-  position: absolute;
-  z-index: 4;
-  right: 29px;
-  bottom: 37px;
-  width: 66px;
-  height: 66px;
-  border: 4px solid var(--paper);
-  border-radius: 50%;
-  transform: rotate(-14deg);
 }
 .poster-caption {
   position: absolute;
@@ -772,6 +761,16 @@
 .site-footer a {
   text-decoration: none;
 }
+.footer-signature {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.footer-signature img {
+  display: block;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
 
 @media (min-width: 1440px) {
   .research-poster {
@@ -882,13 +881,6 @@
   }
   .poster-cross {
     left: 45%;
-  }
-  .poster-sticker {
-    width: 49px;
-    height: 49px;
-    right: 20px;
-    bottom: 43px;
-    border-width: 3px;
   }
   .poster-caption {
     inset-inline: 17px;
@@ -1050,12 +1042,6 @@
     left: 0;
     font-size: 7.3rem;
     opacity: 0.7;
-  }
-  .poster-sticker {
-    right: 10px;
-    bottom: 39px;
-    width: 41px;
-    height: 41px;
   }
   .poster-orbit {
     left: -80px;
@@ -1252,7 +1238,7 @@
   .site-header,
   .cover-control,
   .poster-drawing,
-  .poster-sticker,
+  .footer-signature img,
   .poster-caption,
   .publication-media {
     display: none;
