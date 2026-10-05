@@ -148,7 +148,8 @@
 .poster-outline {
   z-index: 1;
   top: 143px;
-  left: 175px;
+  right: 8%;
+  left: auto;
   color: transparent;
   -webkit-text-stroke: 1px currentColor;
   -webkit-text-stroke-color: #91a394;
@@ -158,7 +159,7 @@
 .poster-orbit {
   position: absolute;
   top: -100px;
-  left: 23%;
+  left: 60%;
   width: 350px;
   height: 560px;
   border: 1px solid #9caa97;
@@ -182,7 +183,7 @@
 .poster-cross {
   position: absolute;
   top: 18px;
-  left: 59%;
+  left: 79%;
   color: #ee714b;
   font-family: var(--mono);
   font-size: 76px;
@@ -190,40 +191,6 @@
   line-height: 1;
   transform: rotate(12deg);
   transition: transform 700ms ease;
-}
-.poster-portrait {
-  position: absolute;
-  z-index: 3;
-  top: 28px;
-  right: 66px;
-  width: 237px;
-  margin: 0;
-  padding: 7px 7px 0;
-  color: var(--text);
-  background: var(--paper);
-  transform: translate(
-      calc(var(--pointer-x) * 20px),
-      calc(var(--pointer-y) * 14px)
-    )
-    rotate(5deg);
-  transition:
-    transform 600ms ease,
-    right 600ms ease,
-    top 600ms ease;
-}
-.poster-portrait img {
-  display: block;
-  width: 100%;
-  height: 255px;
-  object-fit: cover;
-  object-position: center;
-}
-.poster-portrait figcaption {
-  display: flex;
-  justify-content: space-between;
-  padding: 9px 4px;
-  font-family: var(--mono);
-  font-size: 10px;
 }
 .poster-sticker {
   position: absolute;
@@ -258,7 +225,8 @@
 }
 .research-poster[data-frame='1'] .poster-outline {
   top: -15px;
-  left: 50px;
+  right: 8%;
+  left: auto;
   opacity: 0.35;
   -webkit-text-stroke-color: #fff0d6;
 }
@@ -274,11 +242,6 @@
   color: #ffd17a;
   transform: rotate(60deg);
 }
-.research-poster[data-frame='1'] .poster-portrait {
-  right: 49px;
-  top: 22px;
-  transform: rotate(-6deg);
-}
 .research-poster[data-frame='2'] {
   color: #e4ef7b;
   background: #242b42;
@@ -290,17 +253,9 @@
 }
 .research-poster[data-frame='2'] .poster-outline {
   top: -25px;
-  left: 27px;
+  right: 4%;
+  left: auto;
   -webkit-text-stroke-color: #9faac9;
-}
-.research-poster[data-frame='2'] .poster-portrait {
-  top: 19px;
-  right: 34px;
-  transform: translate(
-      calc(var(--pointer-x) * 48px),
-      calc(var(--pointer-y) * 30px)
-    )
-    rotate(9deg);
 }
 .research-poster[data-frame='2'] .poster-orbit {
   transform: rotate(-25deg) scale(1.3);
@@ -320,13 +275,9 @@
 }
 .research-poster[data-frame='3'] .poster-outline {
   top: 150px;
-  left: 42px;
+  right: 8%;
+  left: auto;
   -webkit-text-stroke-color: #88a083;
-}
-.research-poster[data-frame='3'] .poster-portrait {
-  top: 29px;
-  right: 55px;
-  transform: none;
 }
 .research-poster[data-frame='3'] .poster-orbit {
   transform: rotate(0deg);
@@ -830,14 +781,6 @@
   .poster-outline {
     font-size: 15rem;
   }
-  .poster-portrait {
-    top: 33px;
-    right: 80px;
-    width: 255px;
-  }
-  .poster-portrait img {
-    height: 276px;
-  }
 }
 @media (max-width: 1000px) {
   .site-nav {
@@ -879,13 +822,6 @@
   }
   .cv-entry-role {
     grid-row: 2;
-  }
-  .poster-portrait {
-    right: 39px;
-    width: 214px;
-  }
-  .poster-portrait img {
-    height: 235px;
   }
   .poster-word {
     top: 60px;
@@ -944,14 +880,6 @@
     left: 20px;
     font-size: 8rem;
   }
-  .poster-portrait {
-    top: 43px;
-    right: 31px;
-    width: 170px;
-  }
-  .poster-portrait img {
-    height: 190px;
-  }
   .poster-cross {
     left: 45%;
   }
@@ -967,21 +895,9 @@
     font-size: 8px;
     letter-spacing: 0.03em;
   }
-  .research-poster[data-frame='1'] .poster-portrait {
-    top: 50px;
-    right: 31px;
-  }
   .research-poster[data-frame='2'] .poster-word {
     font-size: 7rem;
     top: 114px;
-  }
-  .research-poster[data-frame='2'] .poster-portrait {
-    top: 26px;
-    right: 26px;
-  }
-  .research-poster[data-frame='3'] .poster-portrait {
-    top: 43px;
-    right: 25px;
   }
   .cover-control {
     align-items: start;
@@ -1122,7 +1038,7 @@
     padding-bottom: 0;
   }
   .research-poster {
-    height: 340px;
+    height: 280px;
   }
   .poster-word {
     top: 11px;
@@ -1134,18 +1050,6 @@
     left: 0;
     font-size: 7.3rem;
     opacity: 0.7;
-  }
-  .poster-portrait {
-    top: 105px;
-    right: 29px;
-    width: 150px;
-  }
-  .poster-portrait img {
-    height: 156px;
-  }
-  .poster-portrait figcaption {
-    padding: 6px 2px;
-    font-size: 8px;
   }
   .poster-sticker {
     right: 10px;
@@ -1184,10 +1088,6 @@
     top: 128px;
     left: -12px;
   }
-  .research-poster[data-frame='1'] .poster-portrait {
-    top: 123px;
-    right: 34px;
-  }
   .research-poster[data-frame='2'] .poster-word {
     top: 23px;
     left: 10px;
@@ -1198,10 +1098,6 @@
     left: -40px;
     font-size: 6rem;
   }
-  .research-poster[data-frame='2'] .poster-portrait {
-    top: 120px;
-    right: 31px;
-  }
   .research-poster[data-frame='3'] .poster-word {
     top: 19px;
     left: 17px;
@@ -1210,10 +1106,6 @@
   .research-poster[data-frame='3'] .poster-outline {
     top: 150px;
     left: 10px;
-  }
-  .research-poster[data-frame='3'] .poster-portrait {
-    top: 114px;
-    right: 29px;
   }
   .cover-control {
     gap: 13px;
@@ -1352,7 +1244,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .poster-word,
-  .poster-portrait {
+  .poster-outline {
     transform: none !important;
   }
 }

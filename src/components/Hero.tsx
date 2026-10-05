@@ -1,16 +1,14 @@
 import { useState } from 'react';
-import type { CvProfile } from '../data/cv';
 import type { Profile } from '../data/profile';
 
 type HeroProps = {
   profile: Profile;
-  cv: CvProfile;
 };
 
 const coverWords = ['See.', 'Create.', 'Interact.', 'Trust.'];
 
 /** 四个研究动词驱动封面构图；鼠标、触摸与键盘都可切换。 */
-export function Hero({ profile, cv }: HeroProps) {
+export function Hero({ profile }: HeroProps) {
   const [frame, setFrame] = useState(0);
 
   return (
@@ -50,19 +48,6 @@ export function Hero({ profile, cv }: HeroProps) {
           <span className="poster-outline">{coverWords[frame]}</span>
           <span className="poster-cross">+</span>
         </div>
-        <figure className="poster-portrait">
-          <img
-            src={cv.photo.src}
-            alt={cv.photo.alt}
-            width="480"
-            height="480"
-            fetchPriority="high"
-          />
-          <figcaption>
-            <span>{cv.location}</span>
-            <span aria-hidden="true">↗</span>
-          </figcaption>
-        </figure>
         <img
           className="poster-sticker"
           src="/profile/site-mark-hero.png"

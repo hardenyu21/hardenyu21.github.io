@@ -67,7 +67,7 @@ export default function App() {
     <>
       <Header />
       <main id="main-content">
-        <Hero profile={profile} cv={cv} />
+        <Hero profile={profile} />
 
         <Section id="about" title="About Me" eyebrow="Research agenda">
           <div className="prose">
