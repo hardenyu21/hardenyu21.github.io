@@ -12,9 +12,11 @@ type CvGroupProps = {
 };
 
 function CvGroup({ title, items }: CvGroupProps) {
+  const headingId = `cv-${title.toLowerCase().replace(/[^a-z]+/g, '-')}`;
+
   return (
-    <section className="cv-group" aria-labelledby={`cv-${title}`}>
-      <h3 id={`cv-${title}`}>{title}</h3>
+    <section className="cv-group" aria-labelledby={headingId}>
+      <h3 id={headingId}>{title}</h3>
       <div className="cv-timeline">
         {items.map((item) => {
           const className = ['cv-item', item.logo ? null : 'cv-item-no-logo']
@@ -22,11 +24,18 @@ function CvGroup({ title, items }: CvGroupProps) {
             .join(' ');
 
           return (
-            <article className={className} key={`${title}-${item.period}-${item.role}`}>
+            <article
+              className={className}
+              key={`${title}-${item.period}-${item.role}`}
+            >
               {item.logo ? (
                 <div className="cv-logo" aria-label={item.logo.alt}>
                   {item.logo.src ? (
-                    <img src={item.logo.src} alt={item.logo.alt} loading="lazy" />
+                    <img
+                      src={item.logo.src}
+                      alt={item.logo.alt}
+                      loading="lazy"
+                    />
                   ) : (
                     <span>{item.logo.label}</span>
                   )}
@@ -34,11 +43,11 @@ function CvGroup({ title, items }: CvGroupProps) {
               ) : null}
               {item.institution ? (
                 <div className="cv-copy">
-                  <p className="cv-entry-summary">
-                    {item.period ? <em className="cv-period">{item.period}</em> : null}
-                    {item.period ? ', ' : null}
-                    {item.role}, <span>{item.institution}</span>.
-                  </p>
+                  {item.period ? (
+                    <p className="cv-period">{item.period}</p>
+                  ) : null}
+                  <p className="cv-entry-role">{item.role}</p>
+                  <p className="cv-entry-institution">{item.institution}</p>
                   {item.details.length > 0 ? (
                     <ul>
                       {item.details.map((detail) => (
@@ -85,7 +94,10 @@ export function CvSection({ cv, profile }: CvSectionProps) {
             <dd>{profile.researchInterests.join(' / ')}</dd>
           </div>
         </dl>
-        <nav className="profile-card-links" aria-label="Academic and social profiles">
+        <nav
+          className="profile-card-links"
+          aria-label="Academic and social profiles"
+        >
           {cv.profileLinks.map((link) => (
             <a
               key={link.label}
@@ -96,6 +108,7 @@ export function CvSection({ cv, profile }: CvSectionProps) {
               title={link.label}
             >
               <img src={link.icon} alt="" aria-hidden="true" />
+              <span>{link.label}</span>
             </a>
           ))}
         </nav>

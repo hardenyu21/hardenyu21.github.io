@@ -1,57 +1,130 @@
+import { useState } from 'react';
+import type { CvProfile } from '../data/cv';
 import type { Profile } from '../data/profile';
 
 type HeroProps = {
   profile: Profile;
+  cv: CvProfile;
 };
 
-export function Hero({ profile }: HeroProps) {
+const coverWords = ['See.', 'Create.', 'Interact.', 'Trust.'];
+
+/** 四个研究动词驱动封面构图；鼠标、触摸与键盘都可切换。 */
+export function Hero({ profile, cv }: HeroProps) {
+  const [frame, setFrame] = useState(0);
+
   return (
-    <section className="hero" id="top">
-      <div className="hero-atmosphere" aria-hidden="true">
-        <span className="orbit orbit-one" />
-        <span className="orbit orbit-two" />
-        <span className="signal signal-one" />
-        <span className="signal signal-two" />
-        <span className="signal signal-three" />
-        <span className="trace trace-one" />
-        <span className="trace trace-two" />
+    <section className="hero" id="top" aria-labelledby="hero-name">
+      <div className="hero-heading">
+        <h1 id="hero-name">{profile.name}</h1>
+        <p className="hero-eyebrow">{profile.heroEyebrow}</p>
       </div>
-
-      <div className="hero-brand">
-        <a className="hero-mark" href="#top" aria-label="Back to top">
-          <img src="/profile/site-mark-hero.png" alt="" aria-hidden="true" />
-        </a>
-        <span>{profile.name}</span>
+      <div
+        className="research-poster"
+        data-frame={frame}
+        onPointerMove={(event) => {
+          if (event.pointerType !== 'mouse') return;
+          const rect = event.currentTarget.getBoundingClientRect();
+          event.currentTarget.style.setProperty(
+            '--pointer-x',
+            String((event.clientX - rect.left) / rect.width - 0.5)
+          );
+          event.currentTarget.style.setProperty(
+            '--pointer-y',
+            String((event.clientY - rect.top) / rect.height - 0.5)
+          );
+        }}
+        onPointerLeave={(event) => {
+          event.currentTarget.style.setProperty('--pointer-x', '0');
+          event.currentTarget.style.setProperty('--pointer-y', '0');
+        }}
+      >
+        <div className="poster-registration" aria-hidden="true">
+          <span>+</span>
+          <span>+</span>
+        </div>
+        <div className="poster-drawing" aria-hidden="true">
+          <div className="poster-orbit" />
+          <div className="poster-axis" />
+          <span className="poster-word">{coverWords[frame]}</span>
+          <span className="poster-outline">{coverWords[frame]}</span>
+          <span className="poster-cross">+</span>
+        </div>
+        <figure className="poster-portrait">
+          <img
+            src={cv.photo.src}
+            alt={cv.photo.alt}
+            width="480"
+            height="480"
+            fetchPriority="high"
+          />
+          <figcaption>
+            <span>{cv.location}</span>
+            <span aria-hidden="true">↗</span>
+          </figcaption>
+        </figure>
+        <img
+          className="poster-sticker"
+          src="/profile/site-mark-hero.png"
+          alt=""
+          aria-hidden="true"
+        />
+        <div className="poster-caption" aria-hidden="true">
+          <span>{String(frame + 1).padStart(2, '0')} / 04</span>
+          <span>SEE. CREATE. INTERACT. TRUST.</span>
+        </div>
       </div>
-
-      <div className="hero-main">
-        <p className="kicker">{profile.heroEyebrow}</p>
-        <h1 className="mission-title">
-          <span>See.</span>
-          <span className="mission-accent">Create.</span>
-          <span className="mission-accent">Interact.</span>
-          <span>Trust.</span>
-        </h1>
+      <div className="cover-control">
+        <div
+          className="cover-words"
+          role="group"
+          aria-label="Explore the cover"
+        >
+          {coverWords.map((word, index) => (
+            <button
+              key={word}
+              type="button"
+              aria-pressed={frame === index}
+              onClick={() => setFrame(index)}
+            >
+              <span className="cover-word-index" aria-hidden="true">
+                0{index + 1}
+              </span>
+              {word}
+            </button>
+          ))}
+        </div>
+        <label className="cover-scrubber">
+          <span>
+            Drag to explore <span aria-hidden="true">⟷</span>
+          </span>
+          <input
+            type="range"
+            min="0"
+            max="3"
+            step="1"
+            value={frame}
+            onChange={(event) => setFrame(Number(event.target.value))}
+            aria-label="Cover composition"
+            aria-valuetext={coverWords[frame]}
+          />
+        </label>
+      </div>
+      <div className="hero-footer">
         <p className="hero-subhead">{profile.heroSubhead}</p>
         <div className="hero-actions" aria-label="Primary actions">
-          <a className="button button-primary" href={profile.primaryCta.href}>
-            {profile.primaryCta.label}
+          <a href={profile.primaryCta.href}>
+            {profile.primaryCta.label} <span aria-hidden="true">↘</span>
           </a>
-          <a className="button button-secondary" href={profile.secondaryCta.href}>
-            {profile.secondaryCta.label}
+          <a href={profile.secondaryCta.href}>
+            {profile.secondaryCta.label} <span aria-hidden="true">↘</span>
           </a>
-        </div>
-        <div className="hero-links" aria-label="Profile links">
           {profile.links.map((link) => (
             <a key={link.label} href={link.href}>
-              {link.label}
+              {link.label} <span aria-hidden="true">↗</span>
             </a>
           ))}
         </div>
-      </div>
-
-      <div className="hero-scroll" aria-hidden="true">
-        <span />
       </div>
     </section>
   );

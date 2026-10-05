@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { CvSection } from './components/CvSection';
@@ -13,36 +14,62 @@ import { profile } from './data/profile';
 import { publications } from './data/publications';
 
 function renderInlineMarkdown(text: string) {
-  return text.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g).map((part, index) => {
-    if (part.startsWith('**') && part.endsWith('**')) {
-      return <strong key={`${part}-${index}`}>{part.slice(2, -2)}</strong>;
-    }
+  return text
+    .split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g)
+    .map((part, index) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={`${part}-${index}`}>{part.slice(2, -2)}</strong>;
+      }
 
-    const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
-    if (link) {
-      return (
-        <a key={`${part}-${index}`} href={link[2]}>
-          {link[1]}
-        </a>
-      );
-    }
+      const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+      if (link) {
+        return (
+          <a key={`${part}-${index}`} href={link[2]}>
+            {link[1]}
+          </a>
+        );
+      }
 
-    return part;
-  });
+      return part;
+    });
 }
 
 export default function App() {
+  useEffect(() => {
+    // 从 Blog 返回时，等待 React 挂载锚点后再定位。
+    let targetId;
+    try {
+      targetId = decodeURIComponent(window.location.hash.slice(1));
+    } catch {
+      return;
+    }
+    if (!targetId) return;
+    let frameId = 0;
+    const scrollToHash = () => {
+      frameId = requestAnimationFrame(() => {
+        document
+          .getElementById(targetId)
+          ?.scrollIntoView({ behavior: 'instant' });
+      });
+    };
+    if (document.readyState === 'complete') {
+      scrollToHash();
+    } else {
+      window.addEventListener('load', scrollToHash, { once: true });
+    }
+    return () => {
+      cancelAnimationFrame(frameId);
+      window.removeEventListener('load', scrollToHash);
+    };
+  }, []);
+
   return (
     <>
       <Header />
-      <main>
-        <Hero profile={profile} />
+      <main id="main-content">
+        <Hero profile={profile} cv={cv} />
 
-        <Section
-          id="about"
-          title="About Me"
-          eyebrow="Research agenda"
-        >
+        <Section id="about" title="About Me" eyebrow="Research agenda">
           <div className="prose">
             {profile.bio.map((paragraph) => (
               <p key={paragraph}>{renderInlineMarkdown(paragraph)}</p>
@@ -55,19 +82,11 @@ export default function App() {
           </div>
         </Section>
 
-        <Section
-          id="news"
-          title="Recent News"
-          eyebrow="Updates"
-        >
+        <Section id="news" title="Recent News" eyebrow="Updates">
           <NewsList items={news} />
         </Section>
 
-        <Section
-          id="publications"
-          title="Publications"
-          eyebrow="Selected work"
-        >
+        <Section id="publications" title="Publications" eyebrow="Selected work">
           <PublicationList publications={publications} />
         </Section>
 
@@ -77,11 +96,7 @@ export default function App() {
         </Section>
         */}
 
-        <Section
-          id="profile"
-          title="Academic Profile"
-          eyebrow="CV"
-        >
+        <Section id="profile" title="Academic Profile" eyebrow="CV">
           <CvSection cv={cv} profile={profile} />
         </Section>
       </main>

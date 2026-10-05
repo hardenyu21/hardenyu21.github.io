@@ -22,18 +22,23 @@ function PublicationVideos({ videos }: { videos: PublicationVideo[] }) {
               preload="none"
               aria-label={video.title}
               onPlay={(event) => {
-                videoGridRef.current?.querySelectorAll('video').forEach((otherVideo) => {
-                  if (otherVideo !== event.currentTarget) {
-                    otherVideo.pause();
-                  }
-                });
+                videoGridRef.current
+                  ?.querySelectorAll('video')
+                  .forEach((otherVideo) => {
+                    if (otherVideo !== event.currentTarget) {
+                      otherVideo.pause();
+                    }
+                  });
               }}
             >
-              Your browser does not support embedded video. <a href={video.src}>Watch the video</a>.
+              Your browser does not support embedded video.{' '}
+              <a href={video.src}>Watch the video</a>.
             </video>
             <figcaption>
               <span className="publication-video-title">{video.title}</span>
-              <span className="publication-video-duration">{video.duration}</span>
+              <span className="publication-video-duration">
+                {video.duration}
+              </span>
             </figcaption>
           </figure>
         ))}
@@ -46,11 +51,20 @@ export function PublicationList({ publications }: PublicationListProps) {
   return (
     <div className="publication-list">
       <div className="publication-stack">
-        {publications.map((publication) => (
+        {publications.map((publication, index) => (
           <article className="publication-item" key={publication.title}>
             <div className="publication-visual">
-              <span className="publication-badge">{publication.badge}</span>
-              <img src={publication.image.src} alt={publication.image.alt} loading="lazy" />
+              <div className="publication-caption">
+                <span className="publication-index" aria-hidden="true">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <span className="publication-badge">{publication.badge}</span>
+              </div>
+              <img
+                src={publication.image.src}
+                alt={publication.image.alt}
+                loading="lazy"
+              />
             </div>
 
             <div className="item-content publication-copy">
@@ -59,7 +73,9 @@ export function PublicationList({ publications }: PublicationListProps) {
                 {publication.authors.map((author, index) => (
                   <Fragment key={author.name}>
                     {author.highlight ? (
-                      <strong className="publication-self">{author.name}</strong>
+                      <strong className="publication-self">
+                        {author.name}
+                      </strong>
                     ) : (
                       author.name
                     )}
@@ -71,12 +87,23 @@ export function PublicationList({ publications }: PublicationListProps) {
               <p className="venue">
                 In <em>{publication.venue}</em>, {publication.year}.
               </p>
-              <p className="publication-author-note">{publication.authorNote}</p>
-              <div className="publication-links" aria-label={`${publication.title} links`}>
+              <p className="publication-author-note">
+                {publication.authorNote}
+              </p>
+              <div
+                className="publication-links"
+                aria-label={`${publication.title} links`}
+              >
                 {publication.links.map((link) => (
-                  <span key={link.label}>
-                    [<a href={link.href} target="_blank" rel="noreferrer">{link.label}</a>]
-                  </span>
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {link.label}
+                    <span aria-hidden="true">↗</span>
+                  </a>
                 ))}
               </div>
             </div>
