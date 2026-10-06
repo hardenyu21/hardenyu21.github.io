@@ -1,16 +1,8 @@
 :root {
-  color-scheme: light;
-  --bg: #f6f4ed;
-  --paper: #fffef9;
-  --text: #202920;
-  --muted: #60695f;
-  --line: #d3d7cb;
-  --accent: #bb421f;
-  --forest: #173b30;
   --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
   color: var(--text);
   background: var(--bg);
-  font-family: 'Helvetica Neue', Helvetica, Arial, 'PingFang SC', sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 * {
@@ -24,7 +16,7 @@ body {
   min-width: 320px;
 }
 a {
-  color: var(--forest);
+  color: var(--accent);
   text-underline-offset: 4px;
   overflow-wrap: anywhere;
 }
@@ -37,8 +29,8 @@ summary:focus-visible {
   outline-offset: 5px;
 }
 ::selection {
-  color: var(--paper);
-  background: var(--forest);
+  color: var(--selection-text);
+  background: var(--accent);
 }
 [id] {
   scroll-margin-top: 112px;
@@ -88,13 +80,7 @@ summary:focus-visible {
   text-decoration: none;
   counter-increment: navigation;
 }
-.site-nav a::before {
-  content: '0' counter(navigation);
-  margin-right: 6px;
-  color: var(--muted);
-  font-family: var(--mono);
-  font-size: 9px;
-}
+
 .site-nav a[aria-current='page'],
 .site-nav a:hover {
   color: var(--accent);
@@ -162,7 +148,7 @@ summary:focus-visible {
 }
 .article-heading h1 {
   margin: 0;
-  font-family: 'Songti SC', 'Noto Serif CJK SC', Georgia, serif;
+  font-family: var(--font-sans);
   font-size: clamp(28px, 3.5vw, 44px);
   font-weight: 600;
   line-height: 1.5;
@@ -231,7 +217,7 @@ summary:focus-visible {
 .article-navigation a[aria-current='location'] {
   border-left: 2px solid var(--accent);
   color: var(--accent);
-  background: #eee9db;
+  background: var(--surface);
 }
 .article-body {
   min-width: 0;
@@ -262,7 +248,7 @@ summary:focus-visible {
   padding-top: 28px;
   border-top: 1px solid var(--line);
   color: var(--forest);
-  font-family: 'Songti SC', Georgia, serif;
+  font-family: var(--font-sans);
   font-size: 27px;
   line-height: 1.6;
 }
@@ -301,7 +287,7 @@ summary:focus-visible {
 .article-body code {
   padding: 2px 5px;
   color: var(--forest);
-  background: #e9ede2;
+  background: var(--surface);
   font-size: 0.86em;
   overflow-wrap: anywhere;
 }
@@ -341,7 +327,7 @@ summary:focus-visible {
 }
 .article-body th {
   color: var(--forest);
-  background: #e7ebdf;
+  background: var(--surface);
   font-weight: 600;
 }
 .article-body tr:nth-child(even) td {
@@ -363,7 +349,7 @@ blockquote {
   margin: 26px 0;
   padding: 4px 22px;
   border-left: 3px solid var(--accent);
-  background: #eee9db;
+  background: var(--surface);
 }
 .figure,
 .tutorial-figure {
@@ -374,6 +360,7 @@ blockquote {
   width: 100%;
   height: auto;
   min-width: 760px;
+  background: #fafbfc;
 }
 .tutorial-figure img {
   display: block;
@@ -399,7 +386,7 @@ blockquote {
 .resource-note {
   padding: 16px 20px;
   border-left: 2px solid var(--accent);
-  background: #eee9db;
+  background: var(--surface);
 }
 .article-body details {
   margin-top: 48px;
@@ -465,7 +452,7 @@ blockquote {
   .article-navigation {
     padding: 16px 20px;
     border: 1px solid var(--line);
-    background: #eeeee5;
+    background: var(--surface);
   }
   .article-navigation[open] ul {
     columns: 2;

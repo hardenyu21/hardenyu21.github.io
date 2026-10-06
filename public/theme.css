@@ -1,0 +1,98 @@
+/* 全站共享冷中性色；真实论文图和机构标识保持原色。 */
+:root {
+  color-scheme: light;
+  --bg: #f4f6f9;
+  --surface: #e8ecf2;
+  --paper: #fafbfc;
+  --text: #20242b;
+  --muted: #5a6475;
+  --line: #d3d9e3;
+  --accent: #395b9c;
+  --accent-strong: #28467d;
+  --forest: var(--text);
+  --selection-text: #fafbfc;
+  --font-sans: 'Helvetica Neue', Helvetica, Arial, 'PingFang SC', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #111318;
+    --surface: #1b1e25;
+    --paper: #171a21;
+    --text: #e7ebf3;
+    --muted: #a0aabc;
+    --line: #333a47;
+    --accent: #9aafe1;
+    --accent-strong: #bbcaf0;
+    --selection-text: #111318;
+  }
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #111318;
+  --surface: #1b1e25;
+  --paper: #171a21;
+  --text: #e7ebf3;
+  --muted: #a0aabc;
+  --line: #333a47;
+  --accent: #9aafe1;
+  --accent-strong: #bbcaf0;
+  --selection-text: #111318;
+}
+.site-header:has(.theme-toggle) {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+}
+.theme-toggle {
+  min-width: 52px;
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--muted);
+  background: var(--surface);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+.theme-toggle:hover {
+  color: var(--text);
+  border-color: var(--muted);
+}
+.theme-toggle:active {
+  transform: scale(0.98);
+}
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+@media (max-width: 520px) {
+  .site-header:has(.theme-toggle) {
+    grid-template-columns: 1fr auto;
+  }
+  .site-header .site-nav {
+    grid-row: 2;
+    grid-column: 1 / -1;
+  }
+  .theme-toggle {
+    grid-row: 1;
+    grid-column: 2;
+    min-height: 32px;
+  }
+}
+@media print {
+  :root,
+  :root[data-theme] {
+    color-scheme: light;
+    --bg: #fafbfc;
+    --surface: #e8ecf2;
+    --paper: #fafbfc;
+    --text: #20242b;
+    --muted: #5a6475;
+    --line: #d3d9e3;
+    --accent: #395b9c;
+  }
+  .theme-toggle {
+    display: none;
+  }
+}

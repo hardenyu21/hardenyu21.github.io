@@ -28,7 +28,7 @@ export function Header({ isHome = true }: HeaderProps) {
         </span>
       </a>
       <nav className="site-nav" aria-label="Primary navigation">
-        {navItems.map((item, index) => (
+        {navItems.map((item) => (
           <a
             key={item.href}
             href={
@@ -36,9 +36,6 @@ export function Header({ isHome = true }: HeaderProps) {
             }
             aria-current={!isHome && item.label === 'Blog' ? 'page' : undefined}
           >
-            <span className="nav-index" aria-hidden="true">
-              0{index + 1}
-            </span>
             {item.label}
           </a>
         ))}

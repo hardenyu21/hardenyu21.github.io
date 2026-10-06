@@ -51,13 +51,10 @@ export function PublicationList({ publications }: PublicationListProps) {
   return (
     <div className="publication-list">
       <div className="publication-stack">
-        {publications.map((publication, index) => (
+        {publications.map((publication) => (
           <article className="publication-item" key={publication.title}>
             <div className="publication-visual">
               <div className="publication-caption">
-                <span className="publication-index" aria-hidden="true">
-                  {String(index + 1).padStart(2, '0')}
-                </span>
                 <span className="publication-badge">{publication.badge}</span>
               </div>
               <img

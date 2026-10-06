@@ -22,7 +22,7 @@
   text-transform: uppercase;
 }
 .blog-hero h1 {
-  font-size: clamp(6rem, 12vw, 10rem);
+  font-size: clamp(4rem, 8vw, 6rem);
   line-height: 0.9;
 }
 .blog-hero h1 span {
@@ -81,137 +81,20 @@
 }
 .blog-cover {
   display: flex;
-  color: var(--paper);
-  background: var(--forest);
+  color: var(--text);
+  background: var(--surface);
   text-decoration: none;
 }
 .blog-cover:hover {
-  color: var(--paper);
+  color: var(--text);
 }
-.stream-cover {
-  position: relative;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  justify-content: center;
-  padding: 34px 25px;
-  overflow: hidden;
-}
-.stream-cover-label {
-  font-family: var(--serif);
-  font-size: 42px;
-  line-height: 1;
-  letter-spacing: -0.04em;
-}
-.stream-live {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin-top: 12px;
-  color: #c1cdbb;
-  font-family: var(--mono);
-  font-size: 9px;
-}
-.stream-live i {
-  width: 5px;
-  height: 5px;
-  background: #ed8766;
-}
-.stream-frames {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 11px;
-  margin-top: 34px;
-}
-.stream-frame {
-  position: relative;
-  aspect-ratio: 0.88;
-  overflow: hidden;
-  border: 1px solid #a7ba9c;
-  background: #f1ebd8;
-}
-.stream-frame::before {
-  position: absolute;
-  inset: 55% -20% -30%;
-  border-top: 1px solid #3d5848;
-  background: #648267;
-  transform: rotate(-24deg);
-  content: '';
-}
-.stream-frame::after {
-  position: absolute;
-  top: 26%;
-  left: 14%;
-  width: 40%;
-  aspect-ratio: 1;
-  border: 1px solid var(--forest);
-  border-radius: 50%;
-  background: #c95733;
-  content: '';
-  transition: transform 300ms ease;
-}
-.stream-frame span {
-  position: absolute;
-  z-index: 1;
-  top: 9px;
-  left: 9px;
-  color: var(--forest);
-  font-family: var(--mono);
-  font-size: 9px;
-}
-.stream-past {
-  opacity: 0.7;
-}
-.stream-now {
-  transform: translateY(-7px);
-}
-.stream-now::after {
-  left: 33%;
-}
-.stream-next {
-  border-style: dashed;
-  background: transparent;
-}
-.stream-next::before {
-  background: transparent;
-  border-color: #a7ba9c;
-}
-.stream-next::after {
-  left: 53%;
-  border-color: #e4a38a;
-  background: transparent;
-}
-.stream-next span {
-  color: #d9dfc5;
-}
-.blog-cover:hover .stream-frame::after {
-  transform: translateX(7px);
-}
-.stream-track {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 1px;
-  margin: 26px 3px 15px;
-  background: #97aa90;
-}
-.stream-track span {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: #b7c7a8;
-}
-.stream-track span:nth-child(3) {
-  width: 7px;
-  height: 7px;
-  background: #ed8766;
-}
-.stream-cover-caption {
-  display: flex;
-  justify-content: space-between;
-  color: #c1cdbb;
-  font-family: var(--mono);
-  font-size: 8px;
+.blog-cover-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  align-self: center;
+  padding: 16px;
+  background: #fafbfc;
 }
 .blog-post-copy {
   display: grid;
@@ -232,7 +115,7 @@
   color: var(--accent);
 }
 .blog-post h3 {
-  font-family: 'Songti SC', 'Noto Serif CJK SC', var(--serif);
+  font-family: var(--font-sans);
   font-size: clamp(24px, 2.5vw, 32px);
   font-weight: 600;
   line-height: 1.55;
@@ -282,23 +165,11 @@
     margin-bottom: 32px;
   }
   .blog-hero h1 {
-    font-size: 100px;
+    font-size: 72px;
   }
   .blog-post {
     grid-template-columns: 1fr;
     gap: 25px;
-  }
-  .stream-cover {
-    padding: 30px;
-  }
-  .stream-frames {
-    margin-top: 25px;
-  }
-  .stream-frame {
-    aspect-ratio: 1.5;
-  }
-  .stream-cover-label {
-    font-size: 38px;
   }
   .blog-post h3 {
     font-size: 27px;
@@ -312,7 +183,7 @@
     width: calc(100% - 40px);
   }
   .blog-hero h1 {
-    font-size: 86px;
+    font-size: 64px;
   }
   .blog-intro {
     font-size: 15px;
@@ -323,15 +194,6 @@
   }
   .blog-collection-heading h2 {
     font-size: 29px;
-  }
-  .stream-cover {
-    padding: 27px 22px;
-  }
-  .stream-frame {
-    aspect-ratio: 1;
-  }
-  .stream-cover-label {
-    font-size: 36px;
   }
   .blog-post h3 {
     font-size: 25px;

@@ -13,7 +13,6 @@ export function Blog() {
             <a className="blog-home-link" href="/">
               ← Academic homepage
             </a>
-            <p className="blog-eyebrow">Notes & ideas</p>
             <h1 id="blog-title">
               Blog<span>.</span>
             </h1>
@@ -44,36 +43,14 @@ export function Blog() {
                   href={post.href}
                   aria-label={`阅读：${post.title}`}
                 >
-                  <div className="stream-cover" aria-hidden="true">
-                    <span className="stream-cover-label">Streaming video</span>
-                    <span className="stream-live">
-                      <i />
-                      Continuous generation
-                    </span>
-                    <div className="stream-frames">
-                      <div className="stream-frame stream-past">
-                        <span>k − 1</span>
-                      </div>
-                      <div className="stream-frame stream-now">
-                        <span>k</span>
-                      </div>
-                      <div className="stream-frame stream-next">
-                        <span>k + 1</span>
-                      </div>
-                    </div>
-                    <div className="stream-track">
-                      <span />
-                      <span />
-                      <span />
-                      <span />
-                      <span />
-                    </div>
-                    <div className="stream-cover-caption">
-                      <span>History</span>
-                      <span>Generate</span>
-                      <span>Continue →</span>
-                    </div>
-                  </div>
+                  <img
+                    className="blog-cover-image"
+                    src="/blog/streaming-video/streaming_paper_figures/causvid_method.png"
+                    alt="CausVid training architecture, discussed in the streaming video research notes"
+                    loading="lazy"
+                    width="1242"
+                    height="597"
+                  />
                 </a>
                 <div className="blog-post-copy">
                   <div className="blog-post-meta">

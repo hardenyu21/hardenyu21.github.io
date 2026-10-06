@@ -7,7 +7,7 @@ type SectionProps = {
   children: ReactNode;
 };
 
-export function Section({ id, title, eyebrow, children }: SectionProps) {
+export function Section({ id, title, children }: SectionProps) {
   return (
     <section
       className="content-section"
@@ -15,7 +15,6 @@ export function Section({ id, title, eyebrow, children }: SectionProps) {
       aria-labelledby={`${id}-title`}
     >
       <div className="section-heading">
-        <p className="kicker">{eyebrow}</p>
         <h2 id={`${id}-title`}>{title}</h2>
       </div>
       <div className="section-body">{children}</div>

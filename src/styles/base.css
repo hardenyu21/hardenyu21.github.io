@@ -1,19 +1,7 @@
 :root {
-  color-scheme: light;
-  --bg: #f6f4ed;
-  --surface: #eeeee5;
-  --text: #202920;
-  --muted: #60695f;
-  --line: #d3d7cb;
-  --accent: #bb421f;
-  --accent-strong: #863017;
-  --forest: #173b30;
-  --paper: #fffef9;
   --max-width: 1120px;
-  --serif:
-    'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
   --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
-  font-family: 'Helvetica Neue', Helvetica, Arial, 'PingFang SC', sans-serif;
+  font-family: var(--font-sans);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -62,13 +50,13 @@ p {
 }
 h1,
 h2 {
-  font-family: var(--serif);
-  font-weight: 400;
-  letter-spacing: -0.055em;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  letter-spacing: -0.045em;
 }
 h2 {
-  font-size: clamp(2.35rem, 4.7vw, 4rem);
-  line-height: 1.02;
+  font-size: clamp(1.85rem, 3.5vw, 3rem);
+  line-height: 1.12;
 }
 h3 {
   font-size: 1.1rem;
@@ -87,8 +75,8 @@ img {
   max-width: 100%;
 }
 ::selection {
-  color: var(--paper);
-  background: var(--forest);
+  color: var(--selection-text);
+  background: var(--accent);
 }
 @media (prefers-reduced-motion: reduce) {
   html {
