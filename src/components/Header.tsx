@@ -23,7 +23,7 @@ export function Header({ isHome = true }: HeaderProps) {
     // 只在离开封面时切换底色，不逐帧追踪滚动位置。
     const observer = new IntersectionObserver(
       ([entry]) => setOverFilm(entry.isIntersecting),
-      { rootMargin: '-112px 0px 0px 0px' }
+      { rootMargin: '-112px 0px 0px 0px' },
     );
     observer.observe(hero);
     return () => observer.disconnect();
@@ -42,9 +42,7 @@ export function Header({ isHome = true }: HeaderProps) {
         aria-label={isHome ? 'Back to top' : 'Home'}
       >
         <img src="/profile/site-mark-nav.png" alt="" aria-hidden="true" />
-        <span>
-          Yu Huang<span className="site-mark-dot">.</span>
-        </span>
+        <span>Yu Huang</span>
       </a>
       <nav className="site-nav" aria-label="Primary navigation">
         {navItems.map((item) => (
