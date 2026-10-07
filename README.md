@@ -8,9 +8,11 @@ Actions to GitHub Pages.
 
 ## Background film
 
-The cover uses a six-scene AI-generated film created with MiniMax-H3:
-salt flats, a desert arch, a blue ice cave, an aurora fjord, clouds, and the coast.
-The 25.5-second 1080p loop (about 12.8 MB) is served from
+The cover uses a ten-scene AI-generated film created with MiniMax-H3:
+salt flats, sandstone pillars, a desert arch, a coral reef, a geothermal spring,
+a blue ice cave, waterfalls, lava, baobab trees, and an aurora fjord.
+Short 0.25-second transitions connect the scenes into a forward-playing loop.
+The 47.5-second 1080p film (about 39 MB) is served from
 `public/media/hero/landscape.mp4` with the site on GitHub Pages; no external media
 hosting or environment variable is required. Only the finished film is included
 in this repository. The WebP poster remains visible until playback is ready.
