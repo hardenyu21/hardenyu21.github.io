@@ -6,6 +6,21 @@ Built with Vite, React, and TypeScript. Run `npm run dev` for local development 
 `npm run build` to generate the static site. Pushes to `main` deploy through GitHub
 Actions to GitHub Pages.
 
+## Background film
+
+The cover uses a six-scene AI-generated film created with MiniMax-H3:
+salt flats, a desert arch, a blue ice cave, an aurora fjord, clouds, and the coast.
+The 25.5-second 1080p loop (about 12.8 MB) is served from
+`public/media/hero/landscape.mp4` with the site on GitHub Pages; no external media
+hosting or environment variable is required. Only the finished film is included
+in this repository. The WebP poster remains visible until playback is ready.
+
+Playback pauses off-screen and in background tabs. Visitors who prefer reduced
+motion see the still image until they explicitly choose to play the film.
+Sound is muted on every page load and can be enabled with the sound toggle.
+The translucent background is independent of the foreground content, so text and
+links remain opaque and interactive in both themes.
+
 ## Content
 
 - Profile, publications, and news: `content/`.

@@ -4,3 +4,6 @@ dist/
 .env
 .env.local
 cache/
+# 只发布最终封面影片，其他本地视频不提交。
+public/media/hero/*
+!public/media/hero/landscape.mp4
