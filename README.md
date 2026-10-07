@@ -22,8 +22,9 @@ in this repository. The WebP poster remains visible until playback is ready.
 Playback pauses off-screen and in background tabs. Visitors who prefer reduced
 motion see the still image until they explicitly choose to play the film.
 Sound is muted on every page load and can be enabled with the sound toggle.
-The translucent background is independent of the foreground content, so text and
-controls remain opaque and interactive. The site uses a fixed light theme.
+The film retains its full color, with light navigation over a dark top-edge
+gradient. The navigation returns to the site's light theme below the cover;
+all content sections keep the fixed light theme.
 
 ## Content
 

@@ -17,17 +17,28 @@
   inset-inline: 0;
 }
 .site-header--over-film {
+  --accent: #f5f7fa;
   border-bottom-color: transparent;
   background: transparent;
+  color: #f5f7fa;
 }
 .site-header--over-film::before {
   content: '';
   position: absolute;
   z-index: -1;
-  inset: 0 0 -28px;
-  background: linear-gradient(var(--bg), transparent);
-  opacity: 0.65;
+  inset: 0 0 -88px;
+  background: linear-gradient(
+    rgb(16 20 24 / 80%),
+    rgb(16 20 24 / 62%) 50%,
+    rgb(16 20 24 / 0%)
+  );
   pointer-events: none;
+}
+.site-header--over-film .skip-link {
+  color: var(--text);
+}
+.site-header--over-film .site-nav a:hover {
+  text-decoration: underline;
 }
 .site-mark {
   display: flex;

@@ -1,6 +1,5 @@
 /* 影片铺满视口宽度，操作留在边缘，正文保持现有主题与版心。 */
 .hero {
-  --cover-opacity: 0.42;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -27,13 +26,12 @@
   min-height: 0;
   overflow: hidden;
   isolation: isolate;
-  background: var(--bg);
+  background: #101418;
 }
-/* 仅背景透明，前景文本和控制保持不透明；不拦截点击。 */
+/* 保留影片原色，不再与全站浅色底混合。 */
 .cover-film-media {
   position: absolute;
   inset: 0;
-  opacity: var(--cover-opacity);
   pointer-events: none;
 }
 .cover-film-foreground {
@@ -73,14 +71,14 @@
   padding: 0;
   border: 0;
   border-radius: 4px;
-  background: transparent;
-  color: var(--text);
+  background: rgb(16 20 24 / 62%);
+  color: #f5f7fa;
 }
 .cover-film-toggle:hover {
-  background: color-mix(in srgb, var(--paper) 65%, transparent);
+  background: rgb(16 20 24 / 82%);
 }
 .cover-film-toggle:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid #f5f7fa;
   outline-offset: 4px;
 }
 .cover-film-toggle:disabled {
