@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 const navItems = [
   { label: 'About', href: '#about' },
   { label: 'News', href: '#news' },
@@ -12,8 +14,25 @@ type HeaderProps = {
 };
 
 export function Header({ isHome = true }: HeaderProps) {
+  const [overFilm, setOverFilm] = useState(isHome);
+
+  useEffect(() => {
+    if (!isHome) return;
+    const hero = document.getElementById('top');
+    if (!hero) return;
+    // 只在离开封面时切换底色，不逐帧追踪滚动位置。
+    const observer = new IntersectionObserver(
+      ([entry]) => setOverFilm(entry.isIntersecting),
+      { rootMargin: '-112px 0px 0px 0px' }
+    );
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, [isHome]);
+
   return (
-    <header className="site-header">
+    <header
+      className={`site-header${isHome ? ' site-header--home' : ''}${overFilm ? ' site-header--over-film' : ''}`}
+    >
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>

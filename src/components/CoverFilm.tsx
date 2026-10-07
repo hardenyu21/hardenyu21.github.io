@@ -1,8 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
+import {
+  PlayIcon,
+  SpeakerHighIcon,
+  SpeakerSlashIcon,
+} from '@phosphor-icons/react';
 
 const filmUrl = '/media/hero/landscape.mp4';
 const posterUrl = '/images/landscape-poster.webp';
+const soundIdleDelayMs = 2500;
 
 type CoverFilmProps = {
   children?: ReactNode;
@@ -21,6 +27,34 @@ export function CoverFilm({ children }: CoverFilmProps) {
   const [failed, setFailed] = useState(false);
   const [hasFrame, setHasFrame] = useState(false);
   const [muted, setMuted] = useState(true);
+
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    let idleTimer: number;
+    const hideSoundControl = () => {
+      window.clearTimeout(idleTimer);
+      stage.dataset.soundIdle = 'true';
+    };
+    // 高频指针事件只重置计时器，不触发 React 逐帧渲染。
+    const showSoundControl = () => {
+      window.clearTimeout(idleTimer);
+      stage.dataset.soundIdle = 'false';
+      idleTimer = window.setTimeout(hideSoundControl, soundIdleDelayMs);
+    };
+    showSoundControl();
+    stage.addEventListener('pointerenter', showSoundControl);
+    stage.addEventListener('pointermove', showSoundControl);
+    stage.addEventListener('pointerdown', showSoundControl);
+    stage.addEventListener('pointerleave', hideSoundControl);
+    return () => {
+      window.clearTimeout(idleTimer);
+      stage.removeEventListener('pointerenter', showSoundControl);
+      stage.removeEventListener('pointermove', showSoundControl);
+      stage.removeEventListener('pointerdown', showSoundControl);
+      stage.removeEventListener('pointerleave', hideSoundControl);
+    };
+  }, []);
 
   const toggleSound = () => {
     const video = videoRef.current;
@@ -110,35 +144,37 @@ export function CoverFilm({ children }: CoverFilmProps) {
           role="group"
           aria-label="Background film controls"
         >
+          {!requested && !failed && (
+            <button
+              className="cover-film-toggle"
+              type="button"
+              onClick={() => setRequested(true)}
+              aria-label="Play background film"
+              title="Play background film"
+            >
+              <PlayIcon size={23} weight="regular" aria-hidden="true" />
+            </button>
+          )}
           <button
-            className="cover-film-toggle"
-            type="button"
-            disabled={failed}
-            onClick={() => setRequested((value) => !value)}
-            aria-label={
-              failed
-                ? 'Background film unavailable'
-                : requested
-                  ? 'Pause background film'
-                  : 'Play background film'
-            }
-          >
-            {failed
-              ? 'Film unavailable'
-              : requested
-                ? 'Pause film'
-                : 'Play film'}
-          </button>
-          <button
-            className="cover-film-toggle"
+            className="cover-film-toggle cover-film-sound"
             type="button"
             disabled={failed || !hasFrame}
             onClick={toggleSound}
             aria-label="Background sound"
             aria-pressed={!muted}
-            title={muted ? 'Turn sound on' : 'Mute sound'}
+            title={
+              failed
+                ? 'Background film unavailable'
+                : muted
+                  ? 'Turn sound on'
+                  : 'Mute sound'
+            }
           >
-            Sound {muted ? 'off' : 'on'}
+            {muted ? (
+              <SpeakerSlashIcon size={24} weight="regular" aria-hidden="true" />
+            ) : (
+              <SpeakerHighIcon size={24} weight="regular" aria-hidden="true" />
+            )}
           </button>
         </div>
       )}
