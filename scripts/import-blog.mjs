@@ -106,7 +106,7 @@ async function copyReferences(html, currentDirectory = sourceDirectory) {
 
 await copyReferences(source);
 const article = `<!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">

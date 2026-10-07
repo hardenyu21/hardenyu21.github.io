@@ -285,14 +285,19 @@
 }
 .publication-links a {
   display: flex;
-  gap: 18px;
+  align-items: center;
+  gap: 6px;
   padding-bottom: 5px;
   border-bottom: 1px solid var(--text);
   font-size: 12px;
   text-decoration: none;
 }
-.publication-links a span {
-  color: var(--accent);
+.publication-link-icon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  object-fit: contain;
 }
 .publication-media {
   display: grid;

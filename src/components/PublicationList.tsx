@@ -1,9 +1,40 @@
 import { Fragment, useRef } from 'react';
+import { FileTextIcon, GithubLogoIcon, GlobeIcon } from '@phosphor-icons/react';
 import type { Publication, PublicationVideo } from '../data/publications';
 
 type PublicationListProps = {
   publications: Publication[];
 };
+
+/** 资源图标只作视觉提示，链接名称仍由可见文字提供。 */
+function PublicationLinkIcon({ label }: { label: string }) {
+  if (label === 'Dataset') {
+    return (
+      <img
+        className="publication-link-icon"
+        src="/icons/hugging-face.svg"
+        alt=""
+        aria-hidden="true"
+        width="16"
+        height="16"
+      />
+    );
+  }
+  const Icon =
+    label === 'Paper'
+      ? FileTextIcon
+      : label === 'Code'
+        ? GithubLogoIcon
+        : GlobeIcon;
+  return (
+    <Icon
+      className="publication-link-icon"
+      size={16}
+      weight="regular"
+      aria-hidden="true"
+    />
+  );
+}
 
 function PublicationVideos({ videos }: { videos: PublicationVideo[] }) {
   const videoGridRef = useRef<HTMLDivElement>(null);
@@ -98,8 +129,8 @@ export function PublicationList({ publications }: PublicationListProps) {
                     target="_blank"
                     rel="noreferrer"
                   >
+                    <PublicationLinkIcon label={link.label} />
                     {link.label}
-                    <span aria-hidden="true">↗</span>
                   </a>
                 ))}
               </div>

@@ -1,6 +1,6 @@
 /* 全站共享冷中性色；真实论文图和机构标识保持原色。 */
 :root {
-  color-scheme: light;
+  color-scheme: only light;
   --bg: #f4f6f9;
   --surface: #e8ecf2;
   --paper: #fafbfc;
@@ -12,32 +12,6 @@
   --forest: var(--text);
   --selection-text: #fafbfc;
   --font-sans: 'Helvetica Neue', Helvetica, Arial, 'PingFang SC', sans-serif;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    color-scheme: dark;
-    --bg: #111318;
-    --surface: #1b1e25;
-    --paper: #171a21;
-    --text: #e7ebf3;
-    --muted: #a0aabc;
-    --line: #333a47;
-    --accent: #9aafe1;
-    --accent-strong: #bbcaf0;
-    --selection-text: #111318;
-  }
-}
-:root[data-theme='dark'] {
-  color-scheme: dark;
-  --bg: #111318;
-  --surface: #1b1e25;
-  --paper: #171a21;
-  --text: #e7ebf3;
-  --muted: #a0aabc;
-  --line: #333a47;
-  --accent: #9aafe1;
-  --accent-strong: #bbcaf0;
-  --selection-text: #111318;
 }
 @media print {
   :root,
