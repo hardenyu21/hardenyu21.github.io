@@ -294,10 +294,17 @@
 }
 .publication-link-icon {
   display: block;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   flex: none;
   object-fit: contain;
+}
+.publication-link-icon--paper {
+  color: #b54235;
+  filter: drop-shadow(0 1px 0 rgb(92 37 30 / 12%));
+}
+.publication-link-icon--project {
+  color: #2474ce;
 }
 .publication-media {
   display: grid;

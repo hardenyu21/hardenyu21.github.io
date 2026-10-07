@@ -1,5 +1,5 @@
 import { Fragment, useRef } from 'react';
-import { FileTextIcon, GithubLogoIcon, GlobeIcon } from '@phosphor-icons/react';
+import { FileTextIcon, GlobeHemisphereWestIcon } from '@phosphor-icons/react';
 import type { Publication, PublicationVideo } from '../data/publications';
 
 type PublicationListProps = {
@@ -8,29 +8,25 @@ type PublicationListProps = {
 
 /** 资源图标只作视觉提示，链接名称仍由可见文字提供。 */
 function PublicationLinkIcon({ label }: { label: string }) {
-  if (label === 'Dataset') {
+  if (label === 'Dataset' || label === 'Code') {
     return (
       <img
         className="publication-link-icon"
-        src="/icons/hugging-face.svg"
+        src={label === 'Code' ? '/icons/github.svg' : '/icons/hugging-face.svg'}
         alt=""
         aria-hidden="true"
-        width="16"
-        height="16"
+        width="18"
+        height="18"
       />
     );
   }
-  const Icon =
-    label === 'Paper'
-      ? FileTextIcon
-      : label === 'Code'
-        ? GithubLogoIcon
-        : GlobeIcon;
+  const isPaper = label === 'Paper';
+  const Icon = isPaper ? FileTextIcon : GlobeHemisphereWestIcon;
   return (
     <Icon
-      className="publication-link-icon"
-      size={16}
-      weight="regular"
+      className={`publication-link-icon publication-link-icon--${isPaper ? 'paper' : 'project'}`}
+      size={18}
+      weight="fill"
       aria-hidden="true"
     />
   );

@@ -9,10 +9,12 @@ Actions to GitHub Pages.
 ## Background film
 
 The cover uses a ten-scene AI-generated film created with MiniMax-H3:
-salt flats, sandstone pillars, a desert arch, a coral reef, a geothermal spring,
-a blue ice cave, waterfalls, lava, baobab trees, and an aurora fjord.
-Short 0.25-second transitions connect the scenes into a forward-playing loop.
-The 47.5-second 1080p film (about 39 MB) is served from
+salt flats, baobab trees, a desert arch, lava, an aurora fjord, a blue ice cave,
+a coral reef, a geothermal spring, waterfalls, and sandstone pillars.
+Color-matched sequencing and eased 0.5–0.83-second dissolves connect the scenes
+into a forward-playing loop. Ambient sound bridges extend slightly before and
+after each picture transition.
+The 42.83-second 1080p film (about 35 MB) is served from
 `public/media/hero/landscape.mp4` with the site on GitHub Pages; no external media
 hosting or environment variable is required. Only the finished film is included
 in this repository. The WebP poster remains visible until playback is ready.
@@ -21,7 +23,7 @@ Playback pauses off-screen and in background tabs. Visitors who prefer reduced
 motion see the still image until they explicitly choose to play the film.
 Sound is muted on every page load and can be enabled with the sound toggle.
 The translucent background is independent of the foreground content, so text and
-links remain opaque and interactive in both themes.
+controls remain opaque and interactive. The site uses a fixed light theme.
 
 ## Content
 
