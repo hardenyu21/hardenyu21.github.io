@@ -91,7 +91,9 @@
       "period": "",
       "title": "Conference Program Committee",
       "role": "AAAI Conference on Artificial Intelligence (AAAI): 2027, 2026",
-      "details": []
+      "details": [
+        "International Conference on Learning Representations (ICLR): 2027"
+      ]
     }
   ]
 }

@@ -61,6 +61,9 @@ function CvGroup({ title, items }: CvGroupProps) {
                   <strong>{item.title}:</strong>
                   <ul>
                     <li>{item.role}</li>
+                    {item.details.map((detail) => (
+                      <li key={detail}>{detail}</li>
+                    ))}
                   </ul>
                 </div>
               )}
