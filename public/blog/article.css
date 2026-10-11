@@ -56,7 +56,7 @@ summary:focus-visible {
   text-decoration: none;
 }
 .site-mark::after {
-  content: 'Yu Huang.';
+  content: 'Yu Huang';
   color: var(--text);
   font-size: 17px;
   font-weight: 600;
@@ -76,7 +76,7 @@ summary:focus-visible {
 }
 .site-nav a {
   color: var(--text);
-  font-size: 13px;
+  font-size: 15px;
   text-decoration: none;
   counter-increment: navigation;
 }
@@ -120,7 +120,7 @@ summary:focus-visible {
   gap: 22px;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 13px;
 }
 .article-breadcrumb a {
   color: var(--muted);
@@ -141,7 +141,7 @@ summary:focus-visible {
   margin-bottom: 19px;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 13px;
 }
 .article-meta > span:first-child {
   color: var(--accent);
@@ -149,7 +149,7 @@ summary:focus-visible {
 .article-heading h1 {
   margin: 0;
   font-family: var(--font-sans);
-  font-size: clamp(28px, 3.5vw, 44px);
+  font-size: clamp(26px, 2.8vw, 34px);
   font-weight: 600;
   line-height: 1.5;
   letter-spacing: -0.025em;
@@ -171,7 +171,7 @@ summary:focus-visible {
   border-bottom: 1px solid var(--line);
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 12px;
 }
 .article-layout {
   display: grid;
@@ -190,7 +190,7 @@ summary:focus-visible {
 }
 .article-navigation summary {
   color: var(--forest);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
 }
@@ -207,7 +207,7 @@ summary:focus-visible {
   padding: 6px 12px;
   border-left: 1px solid var(--line);
   color: var(--muted);
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1.8;
   text-decoration: none;
 }
@@ -225,8 +225,8 @@ summary:focus-visible {
 }
 .article-body p,
 .article-body li {
-  font-size: 16px;
-  line-height: 2;
+  font-size: 18px;
+  line-height: 1.9;
   overflow-wrap: anywhere;
 }
 .article-body p {
@@ -249,7 +249,7 @@ summary:focus-visible {
   border-top: 1px solid var(--line);
   color: var(--forest);
   font-family: var(--font-sans);
-  font-size: 27px;
+  font-size: 25px;
   line-height: 1.6;
 }
 .article-body h3 {
@@ -280,7 +280,7 @@ summary:focus-visible {
   border-bottom: 1px solid var(--line);
 }
 .toolbar a {
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1.8;
   text-decoration: none;
 }
@@ -380,7 +380,7 @@ blockquote {
 }
 .article-body .figure-note {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.8;
 }
 .resource-note {
@@ -412,7 +412,7 @@ blockquote {
   border-top: 1px solid var(--text);
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 12px;
 }
 .article-footer a {
   color: var(--muted);
@@ -482,7 +482,7 @@ blockquote {
     gap: 16px;
   }
   .site-nav a {
-    font-size: 11px;
+    font-size: 13px;
   }
   .reading-progress {
     top: 68px;
@@ -502,7 +502,7 @@ blockquote {
   .site-nav {
     justify-content: space-between;
     width: 100%;
-    gap: 12px;
+    gap: 8px;
     padding: 4px 0;
   }
   .reading-progress {
@@ -516,12 +516,12 @@ blockquote {
     padding: 30px 0;
   }
   .article-heading h1 {
-    font-size: 28px;
+    font-size: 26px;
     line-height: 1.6;
   }
   .article-meta {
     gap: 8px 15px;
-    font-size: 9px;
+    font-size: 12px;
   }
   .article-layout {
     padding-top: 22px;
@@ -531,8 +531,8 @@ blockquote {
   }
   .article-body p,
   .article-body li {
-    font-size: 15px;
-    line-height: 1.95;
+    font-size: 17px;
+    line-height: 1.9;
   }
   .article-body h2 {
     font-size: 23px;

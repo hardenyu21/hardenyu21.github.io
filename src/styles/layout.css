@@ -65,7 +65,7 @@
   align-items: baseline;
   gap: 6px;
   padding: 7px 0;
-  font-size: 13px;
+  font-size: 15px;
   text-decoration: none;
 }
 .nav-index {
@@ -127,8 +127,8 @@
   max-width: 770px;
 }
 .prose p {
-  font-size: 17px;
-  line-height: 1.85;
+  font-size: 18px;
+  line-height: 1.8;
 }
 .prose p + p {
   margin-top: 20px;
@@ -149,7 +149,7 @@
   padding: 11px 0;
   border-top: 1px solid var(--line);
   color: var(--muted);
-  font-size: 12px;
+  font-size: 15px;
 }
 .interest-grid span::before {
   content: '+';
@@ -174,13 +174,13 @@
   padding-top: 5px;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 13px;
   white-space: nowrap;
 }
 .news-copy {
   display: flex;
   gap: 11px;
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1.65;
 }
 .news-emoji {
@@ -204,7 +204,7 @@
 #profile > .section-heading h2 {
   order: -1;
   margin: 0;
-  font-size: clamp(2.5rem, 4.5vw, 3.75rem);
+  font-size: var(--section-title-size);
 }
 .publication-stack {
   display: grid;
@@ -238,7 +238,7 @@
 .publication-badge {
   color: var(--accent);
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 13px;
 }
 .publication-visual > img {
   display: block;
@@ -257,14 +257,14 @@
 }
 .publication-copy h3 {
   max-width: 650px;
-  font-size: 21px;
+  font-size: 20px;
   font-weight: 550;
   line-height: 1.4;
   letter-spacing: -0.025em;
 }
 .authors {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 16px;
   line-height: 1.8;
 }
 .publication-self {
@@ -274,15 +274,15 @@
   text-underline-offset: 3px;
 }
 .authors sup {
-  font-size: 9px;
+  font-size: 11px;
 }
 .venue {
-  font-size: 13px;
+  font-size: 16px;
   line-height: 1.6;
 }
 .publication-author-note {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.6;
 }
 .publication-links {
@@ -297,7 +297,7 @@
   gap: 6px;
   padding-bottom: 5px;
   border-bottom: 1px solid var(--text);
-  font-size: 12px;
+  font-size: 15px;
   text-decoration: none;
 }
 .publication-link-icon {
@@ -379,13 +379,13 @@
 .profile-card > strong {
   margin-top: 4px;
   font-family: var(--font-sans);
-  font-size: 35px;
+  font-size: 28px;
   font-weight: 400;
   letter-spacing: -0.05em;
 }
 .profile-card > p {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 16px;
 }
 .profile-card dl {
   margin: 9px 0 0;
@@ -396,14 +396,14 @@
 .profile-card dt {
   margin-bottom: 5px;
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--muted);
 }
 .profile-card dd {
   margin: 0;
-  font-size: 12px;
+  font-size: 15px;
   line-height: 1.8;
 }
 .profile-card-links {
@@ -417,7 +417,7 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 11px;
+  font-size: 13px;
   text-decoration: none;
 }
 .profile-card-links img {
@@ -437,7 +437,7 @@
   padding-bottom: 16px;
   border-bottom: 1px solid var(--text);
   font-family: var(--font-sans);
-  font-size: 29px;
+  font-size: 23px;
   font-weight: 400;
   letter-spacing: -0.035em;
 }
@@ -476,26 +476,26 @@
   grid-column: 2;
   grid-row: 1;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   white-space: nowrap;
 }
 .cv-entry-role {
   grid-column: 1;
   grid-row: 1;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.5;
 }
 .cv-entry-institution {
   grid-column: 1 / -1;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 16px;
   line-height: 1.65;
 }
 .cv-copy ul {
   grid-column: 1 / -1;
   padding-left: 18px;
-  font-size: 13px;
+  font-size: 16px;
   line-height: 1.8;
   color: var(--muted);
 }
@@ -503,7 +503,7 @@
   grid-template-columns: 1fr;
 }
 .cv-service-copy strong {
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 500;
 }
 .site-footer {
@@ -514,7 +514,7 @@
   padding: 28px 0 34px;
   border-top: 1px solid var(--text);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
 }
 .site-footer a {
@@ -577,7 +577,7 @@
     gap: 16px;
   }
   .site-nav a {
-    font-size: 11px;
+    font-size: 13px;
   }
   .hero,
   .content-section,
@@ -597,16 +597,12 @@
     margin-top: 8px;
   }
   .prose p {
-    font-size: 16px;
-    line-height: 1.85;
+    font-size: 17px;
+    line-height: 1.8;
   }
   #publications > .section-heading,
   #profile > .section-heading {
     margin-bottom: 32px;
-  }
-  #publications > .section-heading h2,
-  #profile > .section-heading h2 {
-    font-size: 43px;
   }
   .publication-item {
     grid-template-columns: 1fr;
@@ -641,7 +637,7 @@
     grid-template-columns: 1fr;
   }
   .cv-group h3 {
-    font-size: 25px;
+    font-size: 22px;
   }
   .cv-item {
     gap: 12px;
@@ -664,11 +660,11 @@
   .site-nav {
     justify-content: space-between;
     width: 100%;
-    gap: 12px;
+    gap: 8px;
   }
   .site-nav a {
     padding: 4px 0;
-    font-size: 11px;
+    font-size: 13px;
   }
   .hero,
   .content-section,
@@ -682,18 +678,18 @@
     gap: 0 16px;
   }
   .interest-grid span {
-    font-size: 11px;
+    font-size: 14px;
   }
   .news-list li {
-    grid-template-columns: 57px minmax(0, 1fr);
+    grid-template-columns: 68px minmax(0, 1fr);
     gap: 13px;
   }
   .news-list time {
-    font-size: 9px;
+    font-size: 12px;
   }
   .news-copy {
     gap: 7px;
-    font-size: 13px;
+    font-size: 16px;
   }
   .news-emoji {
     font-size: 12px;
@@ -701,13 +697,6 @@
   #publications > .section-heading,
   #profile > .section-heading {
     align-items: start;
-  }
-  #publications > .section-heading h2,
-  #profile > .section-heading h2 {
-    font-size: 38px;
-  }
-  #profile > .section-heading h2 {
-    max-width: 230px;
   }
   #publications > .section-heading .kicker,
   #profile > .section-heading .kicker {
@@ -720,8 +709,9 @@
   .publication-visual > img {
     min-height: 125px;
   }
-  .authors {
-    font-size: 12px;
+  .authors,
+  .venue {
+    font-size: 15px;
   }
   .publication-videos {
     grid-template-columns: 1fr;
@@ -738,11 +728,11 @@
     grid-row: 1 / 4;
   }
   .profile-card > strong {
-    font-size: 30px;
+    font-size: 26px;
     align-self: end;
   }
   .profile-card > p {
-    font-size: 12px;
+    font-size: 15px;
   }
   .profile-card dl {
     grid-column: 1 / -1;
@@ -759,17 +749,20 @@
     padding-top: 15px;
   }
   .profile-card-links a {
-    font-size: 10px;
+    font-size: 13px;
   }
   .profile-card-links img {
     width: 13px;
     height: 13px;
   }
-  .cv-entry-role {
-    font-size: 14px;
+  .cv-entry-role,
+  .cv-entry-institution,
+  .cv-copy ul,
+  .cv-service-copy strong {
+    font-size: 15px;
   }
   .site-footer {
-    font-size: 9px;
+    font-size: 12px;
     padding-bottom: 25px;
   }
 }
