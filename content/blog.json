@@ -1,12 +1,12 @@
 [
   {
     "slug": "streaming-video",
-    "title": "流式视频生成：从基础原理到模型架构与水印研究",
-    "titleChunks": ["流式视频生成：", "从基础原理", "到模型架构", "与水印研究"],
-    "summary": "从 latent、diffusion 与 KV cache 出发，梳理流式视频生成的模型架构、训练与推理机制，串联 Forcing 系列论文，并讨论它们与视频水印的联系。",
-    "date": "2026-10-03",
+    "title": "流式视频生成：基础原理、模型架构与论文精读",
+    "titleChunks": ["流式视频生成：", "基础原理、", "模型架构", "与论文精读"],
+    "summary": "从基础表示、diffusion 与 flow matching 出发，梳理因果架构、训练与推理、长期状态及实时交互，精读核心生成论文与 Forcing 系列，收录 20 篇生成／解码／系统研究和 7 篇基础读物。",
+    "date": "2026-10-12",
     "category": "Research notes",
-    "tags": ["Streaming Video", "Literature Review", "Watermarking"],
+    "tags": ["Streaming Video", "Literature Review", "Video Generation"],
     "href": "/blog/streaming-video/"
   }
 ]

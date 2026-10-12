@@ -1,10 +1,10 @@
-# 流式视频生成：从基础原理到模型架构与水印研究
+# 流式视频生成：基础原理、模型架构与论文精读
 
-基础文献核实日期：2026-09-27；研究方向与LongLive状态路径更新：2026-10-02（第13节）。范围为学术论文、预印本及有方法细节的 technical report。本文整理 20 篇生成、解码或系统研究，并分析 10 篇水印及相邻方法；作者、单位、发表状态、项目、代码、模型和数据入口见 [文献资源附录](streaming_literature_resources.md)，机器可读版本见 [资源目录](streaming_literature_catalog.json)。
+本文聚焦流式视频生成，覆盖基础表示、diffusion与flow matching、因果架构、训练与推理、长期状态、交互、多镜头及系统性能。共收录20篇生成／解码／系统研究和7篇基础读物；作者、单位、发表状态与官方资源见[文献资源附录](streaming_generation_resources.md)，机器可读版本见[资源目录](streaming_generation_catalog.json)。
 
-入门内容更新于2026-10-02；重点论文精读更新于2026-10-03。本文假设读者了解基本神经网络，但没有视频生成背景：先解释视频在模型中如何表示、生成如何进行，再比较不同流式路线。第0节和第3节适合连续阅读；第4节按研究问题组织论文；第6–13节将这些机制连接到水印。第14节提供术语速查与自测；[第15节](#paper-readings)逐篇讲透7篇重点论文，包含机制、训练与推理、关键实验和对本项目的启发。[第16节](#forcing-reading-path)按照截图串起七篇Forcing相关文献，并新增Rolling Forcing、Causal Forcing及DMD／DMD2精读。目前共30篇专题文献、7篇基础读物，资源见文献附录。
+第0–3节建立基础与架构视角，第4节梳理技术路线，第5节解释性能与质量，第6节提供术语及阅读路径。[第7节](#paper-readings)精读七篇核心生成论文，[第8节](#forcing-reading-path)串起Forcing路线，并展开DMD、DMD2、Rolling Forcing与Causal Forcing。
 
-正文区分原论文证据、代码事实、已测结果和研究假设。项目已有LongLive 2.0基线实验，见[移植报告](accepted_watermark_reproduction.md)与[未知边界拼接报告](splice_insertion_experiment.md)；KV状态写入也已完成两轮探索，但尚未建立可靠的message恢复通道，见[实验报告](kv_state_experiment.html)。本次更新是解释与综述扩充，没有新增模型实验。
+范围整理于2026-10-12；文献方法与资源核实沿用各条目的2026-09-27至2026-10-03日期，不表示已检索到10月12日的新进展。论文报告值、代码事实与教学推导分别标明；本次仅整理综述内容。
 
 ## 0. 入门：一段视频是怎样从噪声生成出来的
 
@@ -24,7 +24,7 @@
 
 ![从条件与噪声到流式视频：两个循环和两套状态](streaming_beginner_pipeline.svg)
 
-图为教学示意，不代表某一论文的精确线程调度。图中“decoder”有两种完全不同的含义：**VAE decoder是神经网络，负责latent到RGB；播放器里的视频解码器负责压缩码流到RGB。** 二者之间还可能有水印嵌入与颜色空间转换。
+图为教学示意，不代表某一论文的精确线程调度。图中“decoder”有两种不同含义：VAE decoder是神经网络，负责latent到RGB；播放器中的视频解码器负责压缩码流到RGB。模型输出还需经过颜色空间转换、视频编码、传输与播放缓冲。
 
 ### 0.2 RGB、latent、token、chunk分别是什么
 
@@ -168,7 +168,7 @@ Autoregressive（AR，自回归）说明时间块之间怎样分解概率：下�
 
 类比写文章：外层按段落继续写，内层不是逐字采样，而是反复修改当前段的草稿。对视频来说，外层推进chunk，内层对连续latent去噪。这个类比只解释两个循环，不意味着已提交的历史还可以任意修改。
 
-因此，Self Forcing、LongLive这类AR diffusion不能直接套用依赖next-token词表概率的LLM水印。它们的“下一项”是一个高维连续视频块，而不是从有限词表中选出的一个词。
+Self Forcing、LongLive这类AR diffusion在视频时间上自回归，但每一步的“下一项”是高维连续视频块。它们通常不从有限词表中选择一个token，而是在块内进行多次连续去噪。
 
 ### 0.10 训练与推理为什么会不一致
 
@@ -186,49 +186,31 @@ Few-step distillation的另一个任务，是让student用较少采样步实现�
 
 **TTFF**通常指首次可用帧的等待时间，**TTFC**指首次可用chunk，但各论文可能使用不同起止点；**FPS**通常是单位真实时间产出的RGB帧数。另一个关键指标是控制到响应的延迟：按下“左转”以后，用户多久看到画面转向。生成器前面若已排队了很多未来帧，FPS再高也可能响应迟缓。
 
-### 0.12 这一套基础与水印的直接联系
+### 0.12 如何阅读后面的内容
 
-我们的目标是：验证者只有可能被压缩、剪辑、删帧的视频，仍能读回嵌入的bit message。这个目标比判断“是不是AI生成”更具体，也不等同于查明用户身份。
-
-| 写入位置 | 信号怎样到达画面 | 验证时的关键问题 |
-| --- | --- | --- |
-| 初始噪声 | 随当前块采样影响latent和RGB | 能否从观测视频恢复足够的原始噪声信息？ |
-| 生成特征或KV状态 | 改变当前输出，也可能改变后继生成状态 | 改变是否承载特定message，是否能在新内容上被像素reader识别？ |
-| VAE decoder | 在latent转RGB时形成水印 | 连续解码的状态、边界与替换decoder会怎样影响恢复？ |
-| RGB后处理 | 对已解码画面施加编码扰动 | 扰动经过压缩、编辑及未知边界拼接以后是否仍可读？ |
-
-**生成端知道的信息不等于验证端可用的信息。** 内部chunk编号、原始prompt、噪声seed、KV cache和真实剪辑边界，除非威胁模型明确允许，都不能偷偷交给reader。只在原位置、原长度、原状态下可恢复的码，不等于适合任意截取的视频。
-
-后面的阅读可以分三次：第一次读第0、2、3节建立模型；第二次读第4、5节理解论文和性能；第三次读第6–13节思考水印。公式先看输入输出与符号含义，不必在第一遍推导训练目标。
+第一次读第0、2、3节，建立生成系统的整体图景；第二次读第4、5节，理解技术路线与性能口径；第三次进入论文精读，沿公式、方法图、算法和消融实验检查具体设计。公式先看输入输出与符号含义，再追踪训练目标和梯度路径。
 
 ## 1. 核心判断
 
-**流式视频生成已经形成清晰的技术体系；专门适配这一生成过程的水印仍有研究空间，但“现有水印都不能用”不成立。** 最重要的变化是：视频从一个整体采样对象，变成依赖历史状态、持续接收控制、逐块提交输出的过程。
+**流式视频生成把视频从一次性整体采样，变成依赖历史状态、接收新条件并逐块提交输出的过程。** 架构中的因果性、少步采样、训练历史分布与运行时状态管理共同决定它能否持续、稳定地输出。
 
 目前最值得关注的是 **causal / block-causal DiT + few-step diffusion / flow matching + KV cache + streaming decoder**。CausVid 打通双向模型到 causal student 的蒸馏；Self Forcing 改善生成历史带来的 exposure bias；LongLive 处理长时间运行和提示切换；Causal Forcing / ++、Causal-rCM 进一步改进初始化和 1–2 步生成。另一条路线使用滚动去噪 buffer，FIFO-Diffusion、MAGI-1、StreamDiT 是理解它的重要入口；这些路线会交叉，不能只按论文名字分类。[CausVid](https://arxiv.org/abs/2412.07772)、[Self Forcing](https://arxiv.org/abs/2506.08009)、[LongLive](https://arxiv.org/abs/2509.22622)、[Causal Forcing++](https://arxiv.org/abs/2605.15141)、[Causal-rCM](https://arxiv.org/abs/2606.25473)
 
-对水印，我的判断按迁移难度排序：
-
-1. **逐帧 / 小窗口后处理水印最容易接入。** Video Seal 已有分块处理代码；真正需要新增的是在线输出、短前缀置信度、持续误报控制和生成系统中的延迟评测。
-2. **Decoder 内嵌水印是可比较的部署路线，但不再作为本项目的新方法主线。** 单纯更换为causal VAE仍不足以建立流式特有的贡献。Video Signature保留为用户已有工作的背景，不纳入本项目复现实验。优先探索生成状态的持续承载与更新，见第13节。
-3. **初始噪声水印最需要重新设计提取端。** 每个新 chunk 仍可嵌入，但旧模型的反演器不等于 few-step causal student 的逆；历史状态、重加噪、未知动作和丢失前缀都会改变恢复条件。
-4. **“autoregressive”不代表可以直接使用 LLM token 水印。** 本文主流模型在时间上自回归，在每个 chunk 内仍生成连续 latent；没有天然的离散词表和 next-token logits。
-
-本轮未找到针对这一 **causal / autoregressive 视频生成过程**提出并评测水印的直接专用公开论文。因此可以称为**学术蓝海候选**。但通用视频水印、传统 streaming watermark 和 AR 图像水印都构成已有基础，不能把“流式视频水印”整个大类说成空白。
+可以沿四个问题组织阅读：当前输出能看到哪些信息；训练时历史从哪里来；去噪如何在视频时间轴上调度；状态、解码和设备如何协同。长时稳定性、低首帧延迟、交互响应和高吞吐需要分别评价，不能由一个指标代替。
 
 ## 2. “流式”究竟指什么
 
 至少要区分以下五种性质。论文标题中的 streaming，可能只满足其中一部分。
 
-| 性质 | 判断问题 | 与水印的关系 |
+| 性质 | 判断问题 | 对生成系统的要求 |
 | --- | --- | --- |
-| 连续输出 | 能否在整段视频结束前提交已经确定的帧？ | 嵌入器不能等完整视频才决定已输出帧的水印 |
-| 时间因果性 | 当前输出是否依赖未来生成块或未来控制？因果粒度是一帧还是一个 chunk？ | 决定水印是否需要未来信息、检测至少要缓存多少帧 |
-| 长时间运行 | 状态是否有界？是否能超出训练时长而不持续退化？ | 需要处理计数器、密钥周期、缓存切换、误差累积 |
-| 实时性 | 生成吞吐是否达到播放帧率，同时延迟足够低？ | 加水印后的整体系统仍须满足播放和交互预算 |
-| 在线交互 | 新 prompt、动作或音频到达后，多久改变输出？ | 生成条件持续变化；检测端未必知道这些条件 |
+| 连续输出 | 能否在整段结束前提交确定的帧？ | 采样、解码与输出接口均支持增量处理 |
+| 时间因果性 | 当前输出依赖哪些未来块或未来控制？ | 明确帧、chunk与活动窗口的可见范围 |
+| 长时间运行 | 能否超出训练时长而不持续退化？ | 有界状态、位置管理与长期分布适配 |
+| 实时性 | 吞吐是否达到播放率，延迟是否足够低？ | 同时满足首块、稳态和尾部延迟预算 |
+| 在线交互 | 新prompt或动作多久改变输出？ | 控制更新、条件刷新与输出队列共同决定响应 |
 
-**长视频不一定实时；高 FPS 不一定低延迟；causal VAE 不一定意味着 causal denoiser；分块文件处理不一定已经实现在线验证。** 例如，原版 CausVid 的 9.4 FPS 是流式输出成绩，但低于其 12 FPS 目标播放率；Self Forcing 的 frame-wise 版本降低首帧延迟，同时吞吐低于 chunk-wise 版本。[CausVid §5](https://arxiv.org/html/2412.07772v4)、[Self Forcing Table 1](https://arxiv.org/html/2506.08009v2)
+**长视频不一定实时；高 FPS 不一定低延迟；causal VAE 不一定意味着 causal denoiser；分块文件处理不一定已经实现在线生成。** 例如，原版 CausVid 的 9.4 FPS 是流式输出成绩，但低于其 12 FPS 目标播放率；Self Forcing 的 frame-wise 版本降低首帧延迟，同时吞吐低于 chunk-wise 版本。[CausVid §5](https://arxiv.org/html/2412.07772v4)、[Self Forcing Table 1](https://arxiv.org/html/2506.08009v2)
 
 还要区分 **从文本/图像持续生成新视频**与**转换实时摄像头输入**。Live2Diff 属于后者：输入帧不断到达，模型进行风格或外观转换，不能将其结果直接当作开放域 T2V 的性能。[Live2Diff](https://arxiv.org/abs/2407.08701)
 
@@ -268,13 +250,13 @@ $$
 
 历史块不会再受未来块影响时，才能复用其特征。但 diffusion 模型的特征还取决于噪声水平、prompt、位置编码和控制输入。
 
-| 缓存方案 | 代表 | 具体含义 | 水印提取为什么受影响 |
+| 缓存方案 | 代表 | 具体含义 | 生成时需要注意 |
 | --- | --- | --- | --- |
-| 每层、每个 denoising step 各一份缓存 | Live2Diff | 不同噪声水平的历史特征分开保存 | 反演只恢复干净历史像素，未必恢复每一步的缓存 |
-| 生成后重新前向，写入历史缓存 | CausVid / Self Forcing | 当前块完成后，在约定 context timestep 下重建其 K/V | 验证端需要匹配历史、context timestep 和状态更新规则 |
-| Rolling window | Self Forcing | 淘汰旧条目，让计算与显存不随总长度增长 | 截断视频的首个可见块没有原始历史状态 |
-| Local window + frame sink / recache | LongLive | 保留少量远期锚点；prompt 切换时刷新语义状态 | 相同局部画面未必对应相同生成条件 |
-| Noisy-context cache | Diagonal Distillation | 后续块利用带噪历史条件 | 干净帧不是全部必要的条件信息 |
+| 每个denoising step各存一份 | Live2Diff | 分别维护不同噪声水平的历史特征 | 缓存容量与采样步骤、噪声日程相关 |
+| 完成当前块后重新前向 | CausVid / Self Forcing | 在指定context timestep下重建K/V | recache带来额外调用，必须计入开销 |
+| Rolling window | Self Forcing | 淘汰旧条目，限制历史规模 | 训练需覆盖旧内容离开窗口后的条件 |
+| Local window + sink / recache | LongLive | 保留少量锚点，切prompt时刷新历史 | 兼顾长期一致性、新条件响应和刷新成本 |
+| Noisy-context cache | Diagonal Distillation | 利用带噪历史条件 | 不能与clean-context cache任意互换 |
 
 Live2Diff 的多噪声缓存见 §3.4；CausVid Algorithm 2 明确在当前块完成后重做前向更新 cache；LongLive 的 recache 是为避免旧 prompt 的语义一直残留在历史特征中。[Live2Diff](https://arxiv.org/html/2407.08701v1)、[CausVid](https://arxiv.org/html/2412.07772v4)、[LongLive](https://arxiv.org/html/2509.22622v2)、[Diagonal Distillation](https://arxiv.org/html/2603.09488v2)
 
@@ -288,11 +270,11 @@ $$
 
 这里 hᴰ 是 decoder 的卷积特征或 attention cache，**不是 denoiser 的 KV cache**。典型 causal 3D VAE 在时间维有压缩：一帧 latent 往往对应多帧像素，而首帧可能单独编码。因此论文的 frame-wise 有时是 latent-frame-wise，不能自动解释成每次只输出一帧 RGB。
 
-三个常见部署选择是：原版 causal VAE 分块解码、tiny / pruned VAE 加速、专门训练的 streaming decoder。FlashDecoder 用纯 Transformer、固定窗口 rolling KV、时间上采样和 PixelShuffle；第一帧 latent 的处理与后续帧不同。它说明 decoder 可以成为实时生成瓶颈，也说明“把水印写在 decoder 里”必须考虑部署时 decoder 被替换的情况。[FlashDecoder §3](https://arxiv.org/html/2607.14898v1)
+三个常见部署选择是：原版causal VAE分块解码、tiny／pruned VAE加速，以及专门训练的streaming decoder。FlashDecoder使用纯Transformer、固定窗口rolling KV、时间上采样和PixelShuffle；第一帧latent的处理与后续帧不同。它说明，生成latent足够快并不保证RGB输出足够快，decoder必须单独计入系统预算。[FlashDecoder §3](https://arxiv.org/html/2607.14898v1)
 
 ### 3.5 架构差异汇总
 
-![离线与流式架构，以及三处水印插入位置](streaming_architecture.svg)
+![离线与流式生成架构及两套状态](streaming_architecture.svg)
 
 | 维度 | 典型离线全片段 diffusion | Causal AR diffusion |
 | --- | --- | --- |
@@ -303,7 +285,6 @@ $$
 | 长视频状态 | 片段长度受显存 / 训练窗口约束 | 缓存、窗口、sink 或检索记忆管理 |
 | 误差模式 | 整段联合协调，但成本高 | 自生成历史引起 exposure bias 与长期漂移 |
 | 控制输入 | 通常在一次调用中预先给定 | 可在块边界不断更新 |
-| 水印机会 | 一次性全片段编码、聚合检测 | 分块编码、状态同步、前缀检测和持续决策 |
 
 ### 3.6 沿着一个chunk走一遍：什么时候读cache，什么时候写cache
 
@@ -314,7 +295,7 @@ $$
 3. 对更新后的C继续去噪。C的内容改变，当前特征通常需要重算；历史A、B在约定的cache方案下可复用。**不能把C第一步的noisy K/V直接当作它最终的历史表示。**
 4. C采样完成，运行一次历史构建前向，在约定的context noise level下生成准备供未来读取的K/V。这就是这里的clean-context cache update；它有计算成本。
 5. 将C送入有历史状态的VAE decoder，得到新RGB帧；把C的K/V并入历史缓存，按容量策略淘汰旧项。
-6. 已完成RGB可以交给水印后处理、编码与播放；下一块D开始。解码和生成D可并行，但需要保证各自状态依赖正确。
+6. 已完成RGB可以交给编码、传输与播放；下一块D开始。解码和生成D可并行，但需要保证各自状态依赖正确。
 
 ```text
 生成器状态 G = 空；解码器状态 D = 空
@@ -339,7 +320,7 @@ $$
 
 **Recache决定如何重建历史特征。** 一种使用场景是prompt改变之后，对保留的历史latent按新条件重新前向。像素本身没有重写，历史特征却可能改变。因此“原来写入KV的扰动”可能被重建覆盖，而“已经通过latent形成的影响”是否留下是另一个问题。不同论文对recache的命名和时机并不完全一致，必须看实际调用。
 
-对水印来说，可以把生命周期写成：写入→被读取→进入输出→构建新历史→窗口淘汰或recache→再次读取。在哪一步信号消失，就对应哪一个研究问题；不能将所有失败统称为“流式不鲁棒”。
+历史状态的生命周期可以写成：生成当前块→建立历史特征→后续块读取→窗口淘汰或recache→再次读取。研究长时退化时，应分别检查信息被遗忘、位置超出训练范围和条件更新不及时等原因。
 
 ### 3.8 为什么有KV cache仍会缺显存
 
@@ -353,7 +334,7 @@ $$
 
 历史长度每增加一倍，这一部分通常也增加一倍。Rolling window限制Nₕ；GQA减少KV head数；量化减少每个数的存储成本；它们作用于不同因子。若按多个denoising step分别保留历史，缓存还会成倍增加。上式是容量估计，不是某个LongLive实测显存值。
 
-同样，水印开销要分开统计：writer/reader参数、额外常驻生成状态、每条视频的密钥或模板档案，以及训练时反传激活。服务器磁盘中档案随视频数量增长，与单次推理GPU显存增长，是两种不同的“线性增长”。
+内存统计应区分模型参数、常驻KV、VAE状态、活动latent、累计输出和训练反传激活。固定KV容量只约束其中一项；若程序仍保存整段latent或像素，总内存仍可随视频长度增长。
 
 ## 4. 论文与 technical report 的技术路线
 
@@ -361,7 +342,7 @@ $$
 
 ### 4.1 滚动去噪：FIFO、Diffusion Forcing、MAGI-1、StreamDiT
 
-**FIFO-Diffusion — NeurIPS 2024。** 使用已有短视频 diffusion model，维护噪声从低到高排列的队列；队首完成去噪后弹出，队尾补入新噪声。Latent partitioning 缓解使用异质噪声时的训练推理差异，lookahead denoising 改善上下文利用。它证明了无需重训也能连续扩展，但其队列内有尚未输出的未来帧，不能据此宣称严格逐帧即时响应新控制。对于初始噪声水印，验证对象可能是当时整个活动队列，而非单个已输出帧。[论文](https://arxiv.org/abs/2405.11473)
+**FIFO-Diffusion — NeurIPS 2024。** 使用已有短视频 diffusion model，维护噪声从低到高排列的队列；队首完成去噪后弹出，队尾补入新噪声。Latent partitioning 缓解使用异质噪声时的训练推理差异，lookahead denoising 改善上下文利用。它证明了无需重训也能连续扩展，但其队列内有尚未输出的未来帧，不能据此宣称严格逐帧即时响应新控制。[论文](https://arxiv.org/abs/2405.11473)
 
 **Diffusion Forcing — NeurIPS 2024。** 核心是对序列不同位置独立抽取噪声水平，从而统一已知过去、部分带噪上下文和待生成未来。它是一种训练范式，不等同于某个固定 DiT 架构或固定推理日程。原论文采用 causal next-token 模型；后续 DF / DFoT 系统可以采用不同 attention 和 history conditioning。因而“DF 一定双向”与“DF 一定能用同一种 KV cache”都不准确。[论文](https://arxiv.org/abs/2407.01392)、[官方实现的分支说明](https://github.com/buoyancy99/diffusion-forcing)
 
@@ -377,27 +358,27 @@ $$
 
 **Self Forcing — NeurIPS 2025 Spotlight。** 关键贡献在训练分布：训练时也按推理方式进行 autoregressive rollout，后面的块真正接收模型自己生成的前缀，而不是始终接收 ground truth。Few-step sampler、随机截断反向传播和 KV cache 控制训练开销，再用视频级分布损失提供监督。它不是简单把 attention mask 改成三角形；真正修复的是“训练时历史很干净，推理时历史有误差”的差异。[论文](https://arxiv.org/abs/2506.08009)、[官方仓库](https://github.com/guandeh17/Self-Forcing)
 
-**Causal Forcing — ICML 2026；Causal Forcing++ — 2026 technical report。** 原作研究 ODE 初始化的条件错配：双向 teacher 对同一当前 noisy frame 的输出还依赖未来，而 AR student 看不到未来；直接回归可能学到条件平均，无法恢复所要求的 AR conditional flow map。它先得到 AR teacher，再做 causal ODE initialization。++ 将离线整条 ODE 轨迹监督改为 causal consistency distillation 的在线邻近步监督，降低轨迹收集和存储负担，并推进到 frame-wise 1–2-step。**这是蒸馏学习目标的分析，不是“少步模型不可能反演”的定理。** 水印是否可恢复仍要分析实际 sampler。[原作](https://arxiv.org/abs/2602.02214)、[++](https://arxiv.org/abs/2605.15141)、[共享代码与模型](https://github.com/thu-ml/Causal-Forcing)
+**Causal Forcing — ICML 2026；Causal Forcing++ — 2026 technical report。** 原作研究 ODE 初始化的条件错配：双向 teacher 对同一当前 noisy frame 的输出还依赖未来，而 AR student 看不到未来；直接回归可能学到条件平均，无法恢复所要求的 AR conditional flow map。它先得到 AR teacher，再做 causal ODE initialization。++ 将离线整条 ODE 轨迹监督改为 causal consistency distillation 的在线邻近步监督，降低轨迹收集和存储负担，并推进到 frame-wise 1–2-step。**这是蒸馏学习目标的分析，不是“少步模型不可能反演”的定理。** [原作](https://arxiv.org/abs/2602.02214)、[++](https://arxiv.org/abs/2605.15141)、[共享代码与模型](https://github.com/thu-ml/Causal-Forcing)
 
 **Causal-rCM — 2026 technical report。** 将 teacher-forcing consistency model 初始化与 self-forcing DMD refinement 结合：前者强调离线条件覆盖，后者使用自身 rollout 进行分布修正；配套 causal attention mask 的 FlashAttention-2 JVP kernel 支持连续时间 consistency training。它值得关注的原因是把 1–2-step causal generation 做成可复用训练配方。仓库包含更早的 rCM 工作，不能把 rCM 的 ICLR 2026 标识直接赋给 Causal-rCM 这篇新报告。[论文](https://arxiv.org/abs/2606.25473)、[代码](https://github.com/NVlabs/rcm)
 
 ### 4.3 长期运行、交互记忆与系统：LongLive、Matrix-Game、StreamDiffusionV2
 
-**LongLive — ICLR 2026。** 基于 causal AR 模型，解决三件事：streaming long tuning 让模型训练时见到长时间的自生成历史；短窗口加 frame sink 保留必要锚点；KV recache 在 prompt 变化时用新语义刷新历史特征。对水印最有价值的是，它提供了真实的“状态切换”事件：prompt 边界、recache、窗口淘汰和 sink 存续。[论文](https://arxiv.org/abs/2509.22622)
+**LongLive — ICLR 2026。** 基于 causal AR 模型，解决三件事：streaming long tuning 让模型训练时见到长时间的自生成历史；短窗口加 frame sink 保留必要锚点；KV recache 在 prompt 变化时用新语义刷新历史特征。[论文](https://arxiv.org/abs/2509.22622)
 
-**LongLive-2.0 — 2026 technical report。** 基于 Wan2.2-TI2V-5B，联合设计 teacher-forcing 的 sequence parallelism、NVFP4 训练/推理、KV 量化、异步 streaming VAE，以及多镜头的全局 / 局部 sink。其直接 AR tuning 流程不依赖原来复杂的 ODE initialization + short tuning + long tuning 链，但公开仓库仍有 DMD LoRA 蒸馏阶段，用于 few-step 加速；不能解读成“完全不用 DMD”。对水印而言，量化、轻量 VAE 和异步任务调度均应成为部署实验条件。[论文](https://arxiv.org/abs/2605.18739)、[训练流程](https://github.com/NVlabs/LongLive)
+**LongLive-2.0 — 2026 technical report。** 基于 Wan2.2-TI2V-5B，联合设计 teacher-forcing 的 sequence parallelism、NVFP4 训练/推理、KV 量化、异步 streaming VAE，以及多镜头的全局 / 局部 sink。其直接 AR tuning 流程不依赖原来复杂的 ODE initialization + short tuning + long tuning 链，但公开仓库仍有 DMD LoRA 蒸馏阶段，用于 few-step 加速；不能解读成“完全不用 DMD”。[论文](https://arxiv.org/abs/2605.18739)、[训练流程](https://github.com/NVlabs/LongLive)
 
-**Matrix-Game 2.0 / 3.0 — 2025 / 2026 technical reports。** 2.0 将键盘与鼠标动作注入 Wan 系 DiT，以 causal distillation 和 self-forcing rollout 支持交互；动作条件进入生成状态，检测端可能拿不到。3.0 增加基于 camera pose / 视野重叠的历史记忆检索，把 memory latent、近期历史和当前 noisy latent 一起建模，并加入 error buffer、分段蒸馏和 MG-LightVAE。此时“条件”不再只是最近几帧：旧记忆可能被再次检索，因此水印不能只按最近窗口假定可重建全部状态。[2.0](https://arxiv.org/abs/2508.13009)、[3.0](https://arxiv.org/abs/2604.08995)
+**Matrix-Game 2.0 / 3.0 — 2025 / 2026 technical reports。** 2.0 将键盘与鼠标动作注入 Wan 系 DiT，以 causal distillation 和 self-forcing rollout 支持交互；3.0 增加基于 camera pose / 视野重叠的历史记忆检索，把 memory latent、近期历史和当前 noisy latent 一起建模，并加入 error buffer、分段蒸馏和 MG-LightVAE。此时“条件”不再只是最近几帧，旧记忆可能被再次检索。[2.0](https://arxiv.org/abs/2508.13009)、[3.0](https://arxiv.org/abs/2604.08995)
 
-**StreamDiffusionV2 — MLSys 2026。** 重点是系统：SLO-aware batching、按 denoising steps / network stages 分配流水线、rolling cache 与 sink / RoPE 刷新、motion-aware noise control。它说明一个 streaming model 到稳定直播系统之间，还有调度、抖动、队列积压和多 GPU 服务的问题。水印额外耗时必须放进这条完整路径评估，单独报告 watermark network 的 FPS 不足以证明能上线实时运行。[论文](https://arxiv.org/abs/2511.07399)、[官方项目页](https://streamdiffusionv2.github.io/)
+**StreamDiffusionV2 — MLSys 2026。** 重点是系统：SLO-aware batching、按 denoising steps / network stages 分配流水线、rolling cache 与 sink / RoPE 刷新、motion-aware noise control。它说明一个 streaming model 到稳定直播系统之间，还有调度、抖动、队列积压和多 GPU 服务的问题。[论文](https://arxiv.org/abs/2511.07399)、[官方项目页](https://streamdiffusionv2.github.io/)
 
 ### 4.4 近期补充：不是所有新“forcing”都在解决同一问题
 
-**Diagonal Distillation — ICLR 2026。** 前面块分配更多步骤，后面块利用已经建立的外观上下文减少步骤；训练和推理同时使用带噪历史条件，并加入 flow distribution matching。其 noisy cache 与 Self Forcing 的 clean-context cache 不同；水印的反演需要匹配实际噪声状态，而非只匹配视频内容。[论文](https://arxiv.org/abs/2603.09488)
+**Diagonal Distillation — ICLR 2026。** 前面块分配更多步骤，后面块利用已经建立的外观上下文减少步骤；训练和推理同时使用带噪历史条件，并加入 flow distribution matching。其noisy cache与Self Forcing的clean-context cache不同。[论文](https://arxiv.org/abs/2603.09488)
 
 **Stream Forcing — 2026-08 预印本。** 将逐帧噪声水平建模为随机过程，让训练分布从独立采样逐渐过渡到符合推理时序结构的配置；研究的是训练覆盖与推理一致性的折中。论文在 UCF-101 上的 FVD 改进是该设定的证据，不是所有开放域流式大模型都已受益的证明。[论文](https://arxiv.org/abs/2608.10439)
 
-**Live2Diff 和 FlashDecoder 分别补足输入侧、输出侧。** 前者帮助理解带真实在线输入的多噪声缓存；后者帮助理解 latent 已经生成、像素仍没来得及输出的瓶颈。做 watermark pipeline 时这两端都不能忽略。
+**Live2Diff 和 FlashDecoder 分别补足输入侧、输出侧。** 前者帮助理解带真实在线输入的多噪声缓存；后者帮助理解 latent 已经生成、像素仍没来得及输出的瓶颈。
 
 ### 4.5 把几个“forcing”和蒸馏名词彻底分开
 
@@ -431,9 +412,9 @@ $$
 | 1–2步为什么还能生成？ | Causal Forcing / ++；Causal-rCM | teacher提供什么目标，student看得到对应条件吗？ |
 | 模型很快但播放仍卡在哪里？ | StreamDiffusionV2；FlashDecoder | 瓶颈在生成、解码、队列还是传输？ |
 
-技术报告尤其值得看完整配置表：主干、VAE、精度、GPU数量、步数和异步方式共同决定结果。把其中一个模块的速度当作整个系统的性能，会误判水印还有多少预算。
+技术报告尤其值得看完整配置表：主干、VAE、精度、GPU数量、采样步数和异步方式共同决定结果。单个模块加速后，系统瓶颈可能转移到解码、传输或同步。
 
-以上是技术路线地图。若想真正理解一篇论文为什么这样设计，请继续阅读[第15节的七篇论文精读](#paper-readings)：每篇都从具体失败场景出发，解释方法如何改变生成过程，再用原文实验判断它实际解决到哪一步。
+以上是技术路线地图。若想真正理解一篇论文为什么这样设计，请继续阅读[第7节的七篇论文精读](#paper-readings)：每篇都从具体失败场景出发，解释方法如何改变生成过程，再用原文实验判断它实际解决到哪一步。
 
 ## 5. 性能数字：必须带上测量条件
 
@@ -452,13 +433,13 @@ $$
 
 表中数据分别来自 [CausVid](https://arxiv.org/html/2412.07772v4)、[Self Forcing](https://arxiv.org/html/2506.08009v2)、[LongLive](https://arxiv.org/html/2509.22622v2)、[DiagDistill](https://arxiv.org/html/2603.09488v2)、[StreamDiT](https://arxiv.org/html/2507.03745v4)、[LongLive-2.0](https://arxiv.org/html/2605.18739v2)、[Matrix-Game 3.0](https://arxiv.org/html/2604.08995v2)。
 
-水印实验至少应该同时报告：TTFF、每块输出间隔的 p50/p95/p99、持续吞吐、峰值显存、播放卡顿比例、首次可靠检出时间。串行阶段耗时相加；充分异步时稳态吞吐由最慢阶段主导，但还要考虑 GPU 争用和数据传输。因此“水印自身只用几毫秒”并不能直接证明端到端额外延迟只有几毫秒。
+生成系统至少应报告TTFF、每块输出间隔的p50／p95／p99、持续吞吐、峰值显存、播放卡顿比例和控制响应延迟。串行阶段耗时相加；充分异步时稳态吞吐主要由最慢阶段决定，但仍受设备争用、同步和数据传输影响。
 
 ### 5.1 用一次延迟预算算例理解“实时”
 
-仍用每块16帧、24 FPS播放的教学例子。假设一个串行系统每块DiT采样450 ms、recache 80 ms、VAE 60 ms、水印10 ms、编码20 ms，总计620 ms；其理想稳态吞吐约16/0.62＝25.8 FPS。每块播放时长约667 ms，因此平均预算只剩约47 ms。这里所有耗时都是假设，不是本项目实测。
+仍用每块16帧、24 FPS播放的教学例子。假设串行系统每块DiT采样450 ms、recache 80 ms、VAE 60 ms、编码20 ms，总计610 ms；理想稳态吞吐约16/0.61＝26.2 FPS。每块播放时长约667 ms，因此平均预算只剩约57 ms。所有耗时都是教学假设。
 
-如果VAE及输出阶段能在独立资源上与下一块生成充分重叠，理想输出间隔可能由较慢的阶段决定，例如max(530,90)＝530 ms；实际还受GPU争用、拷贝、排队影响。**首块依然要走完依赖链，不能用稳态间隔替代首块延迟。**
+如果VAE及输出阶段能在独立资源上与下一块生成充分重叠，理想输出间隔可能由较慢的阶段决定，例如max(530,80)＝530 ms；实际还受GPU争用、拷贝、排队影响。**首块依然要走完依赖链，不能用稳态间隔替代首块延迟。**
 
 交互响应还要看新条件在哪一步被读取：如果只在chunk开始时锁定prompt，新指令可能要等当前块结束，之后再等新块生成和播放队列。更小chunk或更短队列可能改善响应，却不一定提高吞吐。
 
@@ -466,291 +447,11 @@ $$
 
 FVD是比较生成视频与真实视频特征分布的集合级指标，通常越低越好，但对样本数、特征提取器和视频长度敏感；它不能单独定位某一次镜头切换是否失败。VBench是多维度视频评测，身份、运动、画面质量和条件一致性等应分开观察，不能让一个平均分掩盖具体退化。
 
-PSNR、MSE、LPIPS等配对指标回答“处理视频与参照差多少”；对生成内水印，同一seed下微小状态变化也可能导致后续运动轨迹分叉。因此较大的配对误差既可能来自明显失真，也可能来自另一条看起来合理的生成轨迹。需要同时看独立质量、条件遵循、跨块闪烁和message恢复。对确定像素上的后处理，则配对失真通常更直接。[VBench官方评测说明](https://github.com/Vchitect/VBench)
+PSNR、MSE、LPIPS等配对指标衡量输出与参照的差异，但同一seed下不同采样器或状态设置也可能产生不同的合理运动轨迹。因此，评估生成模型时应结合独立感知质量、条件遵循、运动合理性、跨块闪烁与长时漂移，不能只用配对误差判定优劣。[VBench官方评测说明](https://github.com/Vchitect/VBench)
 
-水印的bit accuracy（BA）与完整message恢复率也不同：16 bit里恢复15 bit的BA是93.75%，但这条message仍然没有完整恢复。只有在独立、同分布的bit错误假设下，整条正确率才可近似写成单bit正确率的16次方；实际错误经常相关，应直接统计整条恢复。
+## 6. 术语速查、常见疑问与入门阅读路径
 
-## 6. 现有水印能否迁移：逐方法判断
-
-下表“可行”均指机制判断，除明确注明外，不表示原论文已在 streaming generator 上完成验证。
-
-| 方法 | 原始嵌入 / 提取机制 | 在流式范式下哪里能用 | 原方法直接迁移的主要障碍 |
-| --- | --- | --- | --- |
-| Video Seal / Pixel Seal | 像素后处理；帧级提取后聚合 | 已解码帧到达即可嵌入，小窗口处理自然成立 | 文件级汇总要改为 prefix decision；传播模式、编码和缓存批次影响延迟 |
-| Video Signature | 选择性微调 VAE decoder；图像消息解码器；temporal alignment | 可在 causal decoder 输出路径植入水印，无需 denoiser 反演 | 需重新适配 decoder；覆盖缓存状态和跨块损失；旧权重不能直接换架构 |
-| LVMark | latent-video decoder 水印；频率 / 时空特征提取 | 可以对有限窗口解码和提取做适配 | 原有时空窗口、边界处理和聚合未必零 lookahead；需显式给出缓冲延迟 |
-| SPDMark | 选择性低秩参数位移；帧级信息与时序恢复 | 生成模块的参数水印可沿用思路 | 新架构参数位置、动态消息、帧组映射需重做；全片段匹配不等于在线匹配 |
-| VideoShield | 初始噪声模板；反演恢复；时空篡改定位 | 每个新 chunk 有 fresh noise，可按块编码 | few-step sampler、历史条件和时序对齐改变反演；不能直接用旧 pipeline |
-| VideoMark | PRC 噪声水印；Temporal Matching Module | 可生成无限扩展的分块码序列 | 正确恢复 noise 才有可匹配码；还需处理未知偏移、随机切入和会话误报 |
-| SIGMark | Global Framewise PRC；SGO 修复 causal VAE 帧组 | 帧组对齐思想与 modern VAE 很相关 | causal VAE 解决的是编解码结构，不代表 denoiser 为 causal；公开提取是有限视频反演 |
-| mAVE | 音视频初始噪声绑定；反演后验证跨模态关系 | 可考虑同一时间块联合绑定音视频 | 需要分块对齐、不同模态步数/时钟和历史条件；整段绑定不能直接视为在线协议 |
-| Watermarking Autoregressive Image Generation | 改离散 token 采样；重分词后检出；RCC 与同步修复 | 可借鉴于真正离散 token 的视频 AR 模型 | continuous-latent AR diffusion 没有对应 logits；图像 token 的复原问题还会扩展到时序 |
-
-方法原文：[Video Seal](https://arxiv.org/abs/2412.09492)、[Pixel Seal](https://arxiv.org/abs/2512.16874)、[Video Signature](https://arxiv.org/abs/2506.00652)、[LVMark](https://arxiv.org/abs/2412.09122)、[SPDMark](https://arxiv.org/abs/2512.12090)、[VideoShield](https://arxiv.org/abs/2501.14195)、[VideoMark](https://arxiv.org/abs/2504.16359)、[SIGMark](https://arxiv.org/abs/2603.02882)、[mAVE](https://arxiv.org/abs/2603.07090)、[AR image watermark](https://arxiv.org/abs/2506.16349)。
-
-## 7. 为什么初始噪声水印最难直接迁移
-
-### 7.1 嵌入端仍然存在，不应直接判死刑
-
-设每块初始噪声为 εₖ，可由密钥、会话 ID、块序号和消息生成。只要保留 sampler 所要求的噪声统计，**每块独立嵌入原则上可行**，而且不必事先知道最终视频长度。
-
-但“每一维边缘分布是 Gaussian”并不充分：还要考虑整个张量的联合分布，以及与历史块、控制输入的相关性。每块重复同一 noise / code、跨会话复用相同图案，都可能引入生成分布原本没有的结构。动态 payload 与加密设计需要按实际条件分布检查；不能只展示单维 histogram 就宣称完全无损。
-
-### 7.2 旧反演器可能对应的是另一个生成映射
-
-更完整地表示 causal sampler：
-
-$$
-z_k=G_\theta(\epsilon_k,\eta_{k,1:S-1};h_{k-1}^G,c_k),
-$$
-
-其中 η 表示采样步骤之间可能新加入的随机噪声，hᴳ 是生成器状态。验证端只拿到经过编码、编辑或裁剪的视频，既没有原始 noise，也不一定知道动作、prompt 和 cache。
-
-**代码事实：** Self Forcing 的 `causal_inference.py` 在中间采样步调用 `scheduler.add_noise(..., torch.randn_like(...), ...)`，最后还要重新前向更新历史 cache。因此其输出并非只由“最初那一个 noise tensor + 旧版确定性 DDIM 路径”决定。[固定版本代码，L185–234](https://github.com/guandeh17/Self-Forcing/blob/33593df3e81fa3ec10239271dd2c100facac6de1/pipeline/causal_inference.py#L185)
-
-由此能够推出的是：**直接把原 bidirectional teacher 的 DDIM / ODE inversion 放上去，没有正确性保证。** 不能推出任何水印都必然失效：初始码的部分信号可能仍被保留，也可能训练专门的噪声预测器、使用确定性 sampler，或设计不依赖反演的 detector。应该分别实验。
-
-对于可逆的确定性 conditional flow，已知正确历史和条件时，逐块反演原则上仍可研究。Few-step consistency student 往往是有限步映射，原训练目标通常不保证它保留可精确求逆的结构；**步数少只是风险因素，真正需要检查的是映射、随机性和条件是否匹配。**
-
-### 7.3 历史可以重建，但其误差会进入当前块
-
-Verifier 可能从已观察像素重新 VAE encode，尝试重建历史 cache。然而其输入经历了 VAE 重建、压缩和攻击，重建出的历史 latent 与生成端不同；prompt / action 缺失、KV 量化、sink、recache、记忆检索还会引入其他差异。
-
-可以把误差分成三项：当前块像素到 latent 的误差、生成条件 / cache 重建误差、sampler 反演误差。这样比把所有下降都称为“流式 error accumulation”更可解释，也更容易设计实验。
-
-**不要把所有方法都说成需要原始 prompt。** 例如 SIGMark 的公开提取代码使用空 prompt。它已表明特定离线模型可以在不提供原 prompt 时近似恢复水印；但这并不证明在有动作、长期 cache 和 few-step 重加噪的新模型上同样成立。[SIGMark 提取代码，L350 起](https://github.com/JeremyZhao1998/SIGMark-release/blob/3713243f2e002cb21bbc3da896094d39b2b528c9/main.py#L350)
-
-### 7.4 看不见开头：随机切入比顺序播放更难
-
-观看者可能在直播中途加入，研究数据也可能只保存第 30–35 秒。对逐帧后处理水印，这通常仍是一个普通图像序列；对 conditional inversion，缺失前缀可能意味着丢失整个生成状态。若使用 history window，可尝试缓冲一段 warmup 近似重建；若保留初始 sink 或检索远期 memory，单靠最近窗口未必足够。
-
-另外，VAE 时间压缩的首帧特殊处理、帧率变化和帧丢失会破坏 latent 分组。SIGMark 的 **Segment Group-Ordering（SGO）** 对此提供重要基础，但其原设定的有限帧组恢复，不自动解决无限 stream 的块编号与会话同步。[SIGMark](https://arxiv.org/abs/2603.02882)
-
-### 7.5 公平验证路径
-
-建议把反演型水印至少拆成四种条件测量：正确模型 + 完整条件的 oracle；正确模型 + 重建 cache；未知 prompt/action；缺失前缀 / 随机切入。若 oracle 已失败，应先修 sampler / watermark channel；若只有未知状态失败，研究问题才主要是同步或条件恢复。
-
-## 8. Decoder 内嵌水印：如何接入，以及状态带来的限制
-
-Video Signature 通过选择性微调 decoder，并用 temporal alignment 控制水印引起的运动变化。公开实现先冻结 VAE，再开放 decoder 参数，最后冻结指定敏感模块；训练中的时间项比较水印与无水印视频的帧差。它为流式扩展提供了很直接的起点。[论文](https://arxiv.org/abs/2506.00652)、[参数选择代码](https://github.com/hardenyu21/Video-Signature/blob/9d219c47670c30fdaaccd17b24e7783c976a8c66/src/finetune/train.py#L130)、[时间损失代码](https://github.com/hardenyu21/Video-Signature/blob/9d219c47670c30fdaaccd17b24e7783c976a8c66/src/finetune/train.py#L287)
-
-**为什么它相对容易迁移？** 嵌入发生在 latent 已生成之后，不需要知道 denoiser 用了多少步，也无需对 sampler 求逆。将 decoder 写成带状态的水印映射即可：
-
-$$
-(\widetilde{x}_k,\widetilde{h}_k^D)=D_{\phi,m_k}(z_k,\widetilde{h}_{k-1}^D).
-$$
-
-但这同时暴露出四个新问题：
-
-- **因果结构必须保留。** 不能为了水印鲁棒性加入依赖未来 chunk 的卷积、attention 或归一化，再仍称其零 lookahead。
-- **训练必须覆盖 cache。** 只在独立短 clip 上训练、每段清空 decoder cache，无法证明长时连续解码中的提取率和视觉质量。需要区分 reset state、carry state、随机截断历史以及不同 chunk size。
-- **边界也需要 temporal loss。** 在 chunk 内算时间约束会漏掉上一块末帧与当前块首帧。可携带少量过去帧/特征构造跨块损失，不必读取未来。
-- **消息变更会改变状态。** 若不同用户/时间块使用不同 payload 或参数 adapter，过去 cache 可能由旧消息生成；切换水印后可能出现污染、延迟或视觉跳变。固定来源 ID 比每块动态 provenance 简单得多。
-
-还应区分两条反馈路径。**若生成器继续使用原始 latent 和自己的 KV cache，decoder 水印不会自动反向污染 denoiser 历史。** 若系统将已经加水印的像素重新编码为下一轮视觉条件，或者保存为以后检索的记忆，水印才进入生成反馈回路。应该检查实际实现，而不是看到“自回归”就断言会放大水印扰动。
-
-Decoder 替换是另一项实际风险。将原始 marked VAE 换成 tiny VAE / MG-LightVAE / FlashDecoder 可能直接绕开水印；服务端受控时可固定部署链路，开放权重场景则需要把替换攻击纳入威胁模型。FlashDecoder 官方仓库本轮仅有论文与说明，**不能直接把它列为已可运行的实验基线**。[FlashDecoder 仓库](https://github.com/mingukkang/FlashDecoder)、[Matrix-Game 3.0](https://arxiv.org/abs/2604.08995)
-
-在本项目中，decoder路线作为机制分析与比较基线；Video Signature是用户已有工作，不纳入待复现实验。当前新方法主线是生成状态中的message承载，目标是鲁棒提取消息，尚不扩展到用户或会话溯源。若将来研究动态payload，仍需单独处理decoder状态切换和同步，不能只靠换一个训练message解决。
-
-## 9. 后处理、token 水印与在线检测
-
-### 9.1 后处理水印是必须击败的强基线
-
-Video Seal 的帧级 embedder 不依赖生成器内部状态。代码支持 repeat、alternate、interpolate 等 temporal propagation：repeat 将某个 key frame 的扰动复用到之后的帧，可以按因果方式执行；interpolate 使用相邻 key frame 的扰动，若其中一个尚未到达，就需要等待或改策略。不能把所有传播模式都视为零未来依赖。[传播实现](https://github.com/facebookresearch/videoseal/blob/870ca7fb33578b90f14c602016b6c2788096226e/videoseal/models/videoseal.py#L81)
-
-其 `inference_streaming.py` 读取小批帧、逐块嵌入并写出，证明分块嵌入路线已有实现；但 detector 将各块结果收集后，在文件结束时求均值返回。把它改成运行中的累计统计并不困难，**改完以后是否能在短前缀保持足够低的误报率，才是需要证据的问题**。[分块代码](https://github.com/facebookresearch/videoseal/blob/870ca7fb33578b90f14c602016b6c2788096226e/inference_streaming.py#L124)
-
-因此，若新论文仅声称“我们把视频切块，然后加水印”，贡献很弱。更有价值的是在同样延迟、画质和总计算预算下，得到更快的可信检出、更稳的随机切入、更好的动态身份切换，或生成过程特有的完整性证据。
-
-### 9.2 Prefix verification：时间越长，不代表阈值可以不变
-
-若每个窗口使用固定误报率 α，并不断重试，即便窗口独立，M 次检测中至少一次误报的概率也为：
-
-$$
-P(\text{至少一次误报})=1-(1-\alpha)^M.
-$$
-
-例如 α=10⁻⁴，每秒判断一次，持续一小时，在独立近似下约有 30.2% 的概率至少误报一次。这是数学示例，不是任何论文的实测。真实视频窗口高度相关，独立公式不再精确，但仍不能把“单窗口 FPR”冒充“整场会话 FPR”。
-
-可选方案包括：预先定义检查时刻与总时长；使用满足总和约束的 alpha spending；或者构造满足条件有效性的 sequential test / e-process。后两者需要重新论证统计假设，不能仅把相关帧的 detector scores 相乘。重复检测、多个候选密钥、多个时间偏移的搜索都应计入总误报预算。
-
-还应分开报告三个事件：检测到来源水印、正确解码消息、确认顺序/完整性。**每帧都能检出固定水印，不等于能发现删除、重排或跨会话拼接。** 将 session ID、块序号和认证信息绑定到动态 payload 是候选设计，但需解决带宽与重新同步；哈希链在发生丢帧后如何恢复，也是额外协议问题。
-
-### 9.3 Token 水印的迁移边界
-
-Watermarking Autoregressive Image Generation 已把 token-level watermark 引入 AR 图像模型，并发现 reverse cycle-consistency（生成 token 解码后再编码，不能稳定恢复原 token）是核心障碍，通过 tokenizer/decoder 微调和同步层改善。它是重要相邻工作。[论文](https://arxiv.org/abs/2506.16349)、[代码与权重](https://github.com/facebookresearch/wmar)
-
-若视频模型确实生成离散视觉 token，这一路线可以扩展，但还要处理 temporal tokenizer、视频压缩和时序删除。对 Self Forcing / LongLive 这类连续 latent 的 AR diffusion，则没有直接可偏置的离散 token softmax；必须新建连续分布采样水印或使用 noise / decoder 路线。
-
-## 10. 建议如何做一个有判断力的最小实验
-
-### 10.1 先回答四个可证伪的问题
-
-| 问题 | 最小实验 | 什么结果会改变选题判断 |
-| --- | --- | --- |
-| 后处理是否已经足够？ | 在同一 causal generator 上接 Video Seal / Pixel Seal，测前缀曲线与端到端延迟 | 若满足延迟、画质、检测要求，不能以“现成方法不适用”立题 |
-| 噪声水印究竟坏在哪里？ | 先使用正确条件的 oracle，再依次替换为重建 cache、未知条件和截断前缀 | 分离 sampler mismatch、history mismatch 与同步错误 |
-| Decoder 水印是否受长状态影响？ | 同一 marked decoder 比较逐块 reset、连续 cache、不同块长、prompt switch | 若退化只在 cache carry 出现，就有明确的训练分布问题 |
-| 前缀检测是否有独立贡献？ | 在固定会话级 FPR 下比较累计、滑窗与预设检查点 | 若相同检测质量下显著降低检出时间，才构成在线检测改进 |
-
-### 10.2 Backbones 与基线选择
-
-**当前主基座为用户已选定的LongLive 2.0 5B。** 已有初始噪声、decoder及VideoSeal基线结果；后续先保持现有BF16配置，研究KV写入、sink保留与滚动更新。Self Forcing可作为后续跨模型验证，不重新替换主基座。资源依赖与版本见 [附录](streaming_literature_resources.md)。
-
-基线至少包含后处理方法、decoder 方法和 noise 方法各一类。对迁移后重新训练或更换 sampler 的版本，应清楚标注 adapted baseline；不能让基线使用错误反演器，再据其失败宣称新范式使已有方法失效。
-
-### 10.3 数据、攻击和指标
-
-建议先用 100–200 个 prompt 做 pilot、每个 2 个 seed，分别生成 5 s、30 s、120 s；交互子集加入多次 prompt / action switch。这里是建议预算，**不是现有实验结果**。同时保留独立无水印负样本会话，用于校准误报；很低的 FPR 需要足够多的独立负样本，不能用大量重叠窗口充当独立样本数量。
-
-攻击包括常规重编码、resize / crop，加上流式特有的随机切入、前缀截断、短时 burst frame drop、重复 / 乱序、变帧率、跨会话 splice、sink 丢失、key / payload rotation。若研究传输，明确区分 packet loss 与解码后 frame drop：前者还受 codec 错误隐藏和参考帧传播影响，不能用删 PNG 完全代替。
-
-质量与效率至少记录：VBench 子项或合适的画质指标、跨块闪烁/运动变化、长序列漂移、TTFF 与 p95/p99 block latency、持续 FPS、显存，以及水印检出的 time-to-detection / frames-to-detection、payload accuracy、会话级 FPR、随机切入恢复时间。鲁棒来源识别和篡改定位分别评价。
-
-建议按实际依赖逐步做 ablation：context 长度、chunk size、sampler steps；decoder cache reset / carry；原版 / tiny decoder；固定 / 动态 payload；oracle / 重建生成状态；统一阈值 / 会话级校准。无需一开始跑所有因素的全笛卡尔积。
-
-### 10.4 最值得推进的研究问题
-
-**更新后的优先方向：生成状态承载水印 + 未知边界的局部message恢复。** 首先验证KV/sink中的消息能否跨chunk保留、经历史更新继续传播，以及在随机切入和增删帧后能否从像素直接读出。初始噪声和VAE方法作为比较基线；不以内容检测或用户溯源替代当前message提取目标。具体机制和判据见第13节。
-
-**更高风险方向：state-robust noise watermark。** 设计在 few-step / stochastic causal sampler 下仍可恢复、且不要求完整生成历史的水印。若 oracle 实验已发现信道很弱，需要改变采样器或检测器；如果只在未知历史下失败，则同步、短期状态恢复或条件边缘化更有针对性。
-
-**独立方向：交互会话 provenance。** 除模型来源外，绑定 session、控制阶段和生成顺序，并能在中途加入、丢帧后重新验证。固定水印无法直接提供这种证据，但密码协议也不能代替稳健的视觉传输信道，两部分必须分开验证。
-
-## 11. 代码核对记录与证据边界
-
-2026-09-27基础调研静态阅读了五个官方仓库，固定提交记录见 [code sources](streaming_code_sources.json)。之后已进行模型运行、水印基线和KV写入训练，结果分别保存在独立实验报告；下表只列最初静态代码核对确认的事实，不代表后续工作仍停留在源码分析阶段。
-
-| 仓库与路径 | 实际确认的事实 | 对结论的约束 |
-| --- | --- | --- |
-| Self-Forcing：`pipeline/causal_inference.py` | 按块去噪；中间步重加噪；完成后更新 cache；此入口在循环结束后统一 `decode_to_pixel(..., use_cache=False)` | 模型的 AR 能力不代表每个脚本都已做到像素实时输出 |
-| LongLive 2.0：`pipeline/causal_diffusion_inference.py` | 存在 streaming / async VAE 路径，使用 `cached_decode` 和线程/队列组织解码；此入口也收集输出块 | 能确认分块解码，不能仅凭它证明完整网络服务的实时性 |
-| Video-Signature：`src/finetune/train.py` | decoder 参数选择、消息损失、图像损失、时间帧差损失 | 提供迁移起点；未发现本轮代码已完成 modern causal VAE streaming 实验 |
-| SIGMark：`main.py` | SGO 处理后 VAE encode，逆 scheduler 反演，再提取；使用有限 `num_frames` 和空 prompt | causal VAE 的适配不能当作 causal generator / prefix verification 的实验证明 |
-| videoseal：`inference_streaming.py` | 分块读写与嵌入；检测最后拼接 scores 再均值 | 可做分块基线，但当前脚本不是持续输出显著性判断的 verifier |
-
-对应固定代码：[Self Forcing](https://github.com/guandeh17/Self-Forcing/blob/33593df3e81fa3ec10239271dd2c100facac6de1/pipeline/causal_inference.py)、[LongLive](https://github.com/NVlabs/LongLive/blob/6b36d20ec6f7958d29d11a704dfa64611a9f2572/pipeline/causal_diffusion_inference.py)、[Video Signature](https://github.com/hardenyu21/Video-Signature/blob/9d219c47670c30fdaaccd17b24e7783c976a8c66/src/finetune/train.py)、[SIGMark](https://github.com/JeremyZhao1998/SIGMark-release/blob/3713243f2e002cb21bbc3da896094d39b2b528c9/main.py)、[Video Seal](https://github.com/facebookresearch/videoseal/blob/870ca7fb33578b90f14c602016b6c2788096226e/inference_streaming.py)。
-
-## 12. 学术空白的准确表述与阅读顺序
-
-建议在 proposal 中使用下面的边界表述：
-
-> 现有视频水印已覆盖后处理、生成器参数/decoder 与初始噪声等路线。面向具有持久生成状态、少步随机采样、动态控制和逐块提交输出的 causal autoregressive 视频生成，仍缺少充分验证的专用水印设计与统一评测，尤其是短前缀检出、未知历史条件和长会话误报控制。
-
-这是本轮公开资料检索支持的判断，**不是不存在相关工作的证明**。直接工作认定不要求同时满足上面所有难点：只要针对 causal / autoregressive 视频生成提出并评测水印，就应计入竞争文献。
-
-本轮检索组合包括 streaming / causal / autoregressive video generation 与 watermark / watermarking，以及 Self Forcing / Diffusion Forcing 的交叉检索。排除了仅在社会影响段建议未来加水印、CVF PDF 页眉 watermark、产品可见 logo 和纯生成内容检测。另有成熟的传统 streaming-video watermark 文献，例如 Lin、Podilchuk、Kalker、Delp 关于可伸缩码流与网络传输的研究（Journal of Electronic Imaging，2004；Purdue / Bell Labs / Philips）。它说明“直播传输中的水印”早有历史，不能借新生成模型的出现抹去这些基础。[Purdue 官方记录](https://www.cerias.purdue.edu/apps/reports_and_papers/view/3289)
-
-阅读顺序建议：
-
-1. **Self Forcing → CausVid**：先建立外层 AR、内层 diffusion、缓存和训练推理差异的基本模型。
-2. **MAGI-1 → StreamDiT**：理解并发 chunk / rolling buffer 为什么与严格即时因果生成不同。
-3. **LongLive → LongLive-2.0 → Matrix-Game 3.0**：理解长期状态、prompt / action 切换、记忆和部署链路。
-4. **Causal Forcing / ++ → Causal-rCM**：理解 few-step 初始化为何重要，以及原反演路径为何不能默认沿用。
-5. **VideoSeal → VideoShield / SIGMark → LongLive状态更新路径**：结合已完成的基线实验，研究状态承载和局部恢复；Video Signature不列入待测基线。
-
-完整题名、作者、单位、发表状态及官方资源见 [文献资源附录](streaming_literature_resources.md)，含30篇专题文献及7篇基础读物（帖子相关精读补充于2026-10-03）。原文HTML已解析为保留公式和表格的Markdown；基础文献本次重新核对。速度表保留原核实日期和配置，不视为2026-10-02重新复测。已完成的LongLive短视频移植不构成长流或任意切入保证；第13节的状态通道已有负结果，跨backbone与可靠的长期消息保持仍待验证。
-
-
-## 13. 从流式状态出发的水印方向（2026-10-02）
-
-### 13.1 核心问题：把跨chunk状态当作通信通道
-
-当前目标保持为**攻击后的message提取**，不扩展到用户溯源。相比“在新的位置加水印”，更有研究价值的问题是：能否利用生成器反复读取、更新和淘汰历史的过程，让消息在有界状态内持续表达，并允许验证者从未知起点的短视频恢复？
-
-KV cache不是流式模型独有：它也用于其他自回归推理，离线一次生成的程序也可以内部使用cache。因此不能以“使用KV”本身建立独占性。这里的特殊要求来自持续输出、不能回改已提交帧、有限历史、多镜头状态切换，以及验证者缺失前缀。本文以下为**待验证设计**，不是文献已有结论或新实验结果。
-
-将一个chunk的过程抽象为：
-
-$$
-z_t=G_\theta(\epsilon_t,p_t,h_{t-1}),\qquad x_t=D(z_t),\qquad h_t=U(h_{t-1},z_t,p_t).
-$$
-
-其中h表示生成器历史状态，而非VAE decoder状态。候选方法学习写入器E，将消息m写入状态更新；读出器R只看受攻击的视频片段，不接收生成KV、原始prompt、真实chunk位置或消息真值。固定部署参数/系统密钥可以预注册。
-
-$$
-\widetilde h_t=E_\phi\bigl(U(\widetilde h_{t-1},z_t,p_t),m\bigr),\qquad
-\widehat m=R_\psi\bigl(\mathcal A(x_{a:b})\bigr).
-$$
-
-这个公式允许每次更新重新写入；它**本身不证明水印依靠记忆传播**。必须再做停止外部消息输入的消融：只在t=0写入，之后由已有状态演化；或每隔若干chunk刷新一次。持续重注入、固定保留同一sink、向新历史传递信息，是三种不同机制。
-
-### 13.2 首选：受约束的KV状态写入与历史传播
-
-LongLive固定代码commit `6b36d20ec6f7958d29d11a704dfa64611a9f2572`中，pipeline第629–656行对生成latent做timestep=0的额外前向，更新clean-context cache；随后第659–664行可把新镜头chunk设为shot sink。模型的`_apply_cache_updates`负责真正的滚动/写入；attention第693–784行组合sink与局部窗口并计算输出。这些是可追踪的介入位置。[pipeline源码](https://github.com/NVlabs/LongLive/blob/6b36d20ec6f7958d29d11a704dfa64611a9f2572/pipeline/causal_diffusion_inference.py#L629-L664)、[attention与状态写入源码](https://github.com/NVlabs/LongLive/blob/6b36d20ec6f7958d29d11a704dfa64611a9f2572/wan_5b/modules/causal_model.py#L693-L784)。
-
-**第一步只改少量层/头的历史V，保留K与位置编码作为对照。** 单层、固定Q/K时，attention输出对V的扰动是：
-
-$$
-A_t=\left[\operatorname{softmax}(Q_tK_{\mathrm{all}}^\top/\sqrt d)\right]_{\mathrm{hist}},\qquad
-\Delta O_t=A_t\Delta V_{\mathrm{hist}}.
-$$
-
-K_all包含历史与当前chunk的key，A_t只取历史列。公式省略当前chunk的未改动项与输出投影；表示局部作用，不代表整个深网线性。V控制读出的内容，K还会改变attention路由和位置关系，因此V-only是较容易解释的起点，不是已证明的最优位置。写入器可用消息条件的低秩映射与门控，在选定历史token上施加范数受限扰动。若对所有token加相同向量，attention权重求和后可能退化为普通输出偏置；不能把这种结果包装为利用了记忆。
-
-**两类载体需要分开：**
-
-- global/shot sink提供保留较久的载体，但占用语义锚点，可能改变身份和场景；独立新增message KV tokens更可控，却类似持续soft prompt，还会增加attention成本。两者都可以做基线，不能凭名称认定创新。
-- rolling history里的水印会被淘汰。更强的假设是：它先影响后续latent，再由clean recache把可读的信息写进新历史，让消息在原载体移出后仍然存续。这才需要验证“状态传播”。传播失败时，周期性刷新是可行备选，但必须报告刷新频率与代价。
-
-实现时在每次clean recache完成后，对目标新槽位或状态读出施加幂等变换，避免每个denoising step重复累加扰动；不能只在临时attention张量里修改一次却声称改了持久cache。第一chunk尚无历史时，需明确选择一个未标记的warmup chunk，或初始化专用消息状态。保留原VAE和初始噪声；冻结主模型，仅训练小型写入器及像素message读出器。若截断反向传播，只能证明该训练跨度内的性质，仍需更长rollout验证。
-
-LongLive 2.0的global sink与shot sink、局部窗口组成有限上下文；镜头切换重新绑定shot sink，配置还可能启用clean recache和量化。因此模型提供了适合研究的状态生命周期，但不自动提供鲁棒水印。FP4会抹掉部分小扰动，应在BF16通道成立后单独测试；H20上的实验不能冒充Blackwell原生FP4速度。[技术报告§4.2](https://arxiv.org/html/2605.18739v1#S4.SS2)、[官方部署配置](https://nvlabs.github.io/LongLive/LongLive2/docs/index.html)。
-
-### 13.3 还应考虑哪些角度
-
-| 方向 | 要解决的流式问题 | 具体候选机制 | 主要风险/与KV的关系 |
-| --- | --- | --- | --- |
-| 局部自同步与流式纠错 | 验证端随机切入、burst drop、插入、多消息拼接 | 短局部单元包含同步线索与message冗余；读出器搜索有限相位，局部解码后做一致性聚合；长payload可探索带可读局部标识的流式纠错 | 同步标识本身也会出错；不能只用生成端chunk计数；同样适用于后处理，应作为公平组件比较 |
-| 因果转移/运动残差 | 每块输出依赖上一状态，单帧水印未使用这一关系 | 对历史条件下的运动/特征变化施加消息条件的小偏置，由短序列读出器恢复 | 重采样和video edit可能破坏；时间水印已有长期研究，不能因使用运动就宣称新颖；质量成本可能较高 |
-| 在线自适应刷新 | 视频无限延长且不能重写已提交帧，信号强度随内容与状态变化 | 依据已生成片段的提取置信度、运动和cache淘汰事件，调整下一chunk写入强度或刷新周期 | 生成端只看到未受未知攻击的输出，不能保证攻击后可靠；读出探测本身增加延迟，不能隐去计算预算 |
-
-首选组合是**状态通道 + 局部自同步恢复**。前者回答信息如何经生成状态持续写入，后者回答验证者如何在不知道时间轴的情况下读出。只改KV而保留固定长度/绝对位置解码，很可能仍遇到VideoShield的对齐问题。
-
-纠错和同步本身不是流式生成独有贡献：应让VideoSeal/其他载体使用同样的局部编码、同样payload与解码窗口，以判断增益来自新通道还是公共协议。运动方向先作为备选；在线刷新在基本通道成立后再做。
-
-### 13.4 先做什么实验，什么结果才值得继续
-
-先做小payload（例如16/32 bit）的通道可行性实验，消息与prompt独立随机分配，训练/验证/测试在prompt、视频与消息组合上隔离。短clip BCE成功不能代替跨chunk验证。训练读出器使用不同长度、随机起点和不同temporal phase的像素窗口，并逐步加入压缩、插删帧；监督为完整message，不能只优化watermark存在性分类。
-
-| 实验 | 控制方式 | 能回答什么 |
-| --- | --- | --- |
-| 写一次、持续读 | 固定未来随机数与prompt，比较无写入、单次写入、周期刷新、逐chunk写入；记录后续每块BA与完整message率 | 是否存在可读状态通道，收益是否必须依赖不断外部重注入 |
-| 载体退出后追踪 | 分开测试常驻sink和rolling-history注入，生成长度超过实际cache窗口若干轮；跟踪写入位置是否真的被淘汰 | 是反复读原始载体，还是信息进入了新生成历史 |
-| 断开状态路径 | 对照有/无cache扰动、清除原载体、仅保留后续历史；同时测clean模型在相同状态操作下的质量 | 避免把普通画质破坏或内容漂移误当成水印传播证据 |
-| 随机切入和插删帧 | 读出器只接收观测像素，不按真实边界裁窗；插入位置覆盖开头/中间/多个位置；去除完整对齐前缀 | 避免此前插入成功仅由保留前缀支撑的问题 |
-| 跨镜头与消息变更 | 初期以同message跨prompt切换为主，再测mA→mB切换，分别记录旧消息残留与新消息建立时间 | 长期保留既可能有利，也会造成消息串扰 |
-| 等预算比较 | 对照无cache carry的同规模逐块特征adapter；VideoSeal共享相同局部编码/接受规则；匹配payload、质量与窗口 | 贡献究竟来自状态机制、模型容量、额外冗余，还是搜索预算 |
-
-主要指标为完整message恢复率、bit accuracy、从任意切入点收集多少观测帧可恢复、错误输出/拒绝率，以及跨块闪烁、内容保持、TTFF、p95 chunk延迟与新增常驻显存。最短可恢复长度是分布上的测量，不承诺任意1帧恢复任意payload。独立负样本标定接受规则，不能用真值挑候选或以纠错成功本身证明低误报。
-
-**继续条件：** 在固定质量/容量预算下，保留历史状态比逐块独立注入带来可重复的局部恢复或刷新成本收益；或能解释并处理cache淘汰、recache后明显出现的失效。若只有不断注入才成功且与普通feature adapter相当，应调整主张，不能仅靠“KV watermark”命名支撑论文。
-
-接收端在成片上删帧不会回溯修改生成端已发生的状态传播；“后续还有水印副本”不等于“被删除信息自动修复”。真正在线生成时的cache删除/重建属于另外一类运行条件，需与发布后视频攻击分别报告。潜在优势是有界状态、短片段可读和低成本刷新，不是天然抗video edit或天然优于后处理。
-
-### 13.5 检索边界与当前状态
-
-2026-10-02补充检索了“video generation watermark KV cache”“watermark autoregressive video”“watermark attention sink”以及arXiv/OpenReview限定查询，并复查已整理的LongLive、LongLive 2.0、Self Forcing、VideoShield、SIGMark机制。此次有限检索没有确认直接以生成KV状态传播为核心、并评测视频message恢复的对应工作；不能由此宣称首个或不存在。attention模块水印、传统时域同步、soft-prompt/feature调制与其他自回归模态均需在正式立题时继续排查。LongLive 2.0是technical report，其方法与资源沿用本报告文献附录，不将其当成已录用水印论文。
-
-本节提出的是可证伪设计。后续已实现KV写入器，并完成机制与独立读出实验：跨chunk因果影响成立，但固定编码的像素ridge测试BA仅51.76%、完整消息0/64；单样本可学习代理的收益也未稳定迁移到原生全图读出。不能把输出轨迹变化当成水印继承。详见下方实验报告。
-
-
-实验接续（2026-10-02）：KV状态通道的两轮探索已完成，[机制探针与消息读出报告](kv_state_experiment.md)记录配置、结果和待验证方向；本节假设不能当成已验证的优势。
-
-### 13.6 根据首轮结果开展的第二轮探索
-
-已完成四组共享写入器训练：最后层V、中间层V、含DC空间模式的最后层V，以及同参数量的逐块feature对照。冻结LongLive/VAE与Stable Signature图像读出器，使用真实四步UniPC和带历史的VAE；每组48次互补消息pair更新，测试prompt/seed与训练分离。已排除prompt编码批量与fused/eager算子造成的零写入前向差异，但训练跨度仍只有固定prefix后的下一chunk，不能视为已训练跨cache消息继承。
-
-136个自由生成条件及其配对、写入时机、缓存载体检查已完成。64条短视频主测试均没有完整恢复消息：三个KV变体在validation约束下选中了零写入；feature选中0.25强度，未压缩8-bit全段BA50.78%、写入后片段50.0%。另外，68个非零写入条件（包含长流、状态切换与feature条件）在整段聚合与固定局部候选中也均没有完整恢复16-bit消息。不能把载体保留、梯度非零或内容轨迹分叉当成有效水印通道。
-
-feature的16条实际H.264视频在两档压缩、压缩后删帧和截断下均0/16完整恢复；测试集写入后RGB MSE均值1.40×10⁻⁴，9/16超过validation设定的1e-4限值。单帧像素优化正对照在±2/255下却能恢复4/4条消息，8-bit量化后仍成立。这支持继续检查生成状态写入的参数化与冻结读出目标是否匹配，不支持直接认定KV水印不可能。全部122个处理条件的原生质量、64条短视频的实际编码/时序处理读出与总汇总现已完成；三个KV组的编码测试为校准后的零写入对照，不能当非零水印性能。完整数值见[实验报告](kv_state_experiment.html)。
-
-下一步优先验证内容条件化writer与联合训练的像素reader，在局部真实采样链路上先建立独立内容的完整恢复，再训练和检验跨cache更新的消息保持。原生shot-sink切换也应与独立镜头拼接分开：抽检中clean与处理视频都出现过上一场景残留。本轮没有验证自同步接受规则、不同message交接或优于VideoSeal的结论。
-
-## 14. 术语速查、常见疑问与入门阅读路径
-
-### 14.1 读论文时可以随时返回的术语表
+### 6.1 读论文时可以随时返回的术语表
 
 | 术语 | 本文中的含义 | 最容易混淆的地方 |
 | --- | --- | --- |
@@ -779,11 +480,10 @@ feature的16条实际H.264视频在两档压缩、压缩后删帧和截断下均
 | TTFF / TTFC | 首次可用帧 / 块的延迟 | 要核对是否包括编码、加载和预热 |
 | Throughput / FPS | 持续产出速率 | 不等于首帧延迟或交互响应 |
 | Lookahead | 处理当前输出时使用的未来范围 | 需要等待的未来输入会引入延迟 |
-| Payload / message | 水印携带的实际bit内容 | 与检测“水印是否存在”不同 |
 | Inversion | 从观测结果近似恢复生成轨迹或噪声 | 不是直接调用VAE encoder就完成 |
-| Oracle | 实验中提供实际验证者拿不到的理想信息 | 用于诊断上限，不能冒充真实部署结果 |
+| Oracle | 实验中提供部署时拿不到的理想信息 | 用于诊断上限，不能冒充真实部署结果 |
 
-### 14.2 八个自测问题
+### 6.2 八个自测问题
 
 **一段视频逐帧写入MP4，就叫流式生成吗？** 不一定。若模型先生成完整视频，再逐帧写文件，只是输出文件的方式改变。要看第一帧提交时，未来视频是否已经全部生成。
 
@@ -797,25 +497,25 @@ feature的16条实际H.264视频在两档压缩、压缩后删帧和截断下均
 
 **换prompt就等于拼接一个新镜头吗？** 不等于。模型可能延续旧场景，且cache仍带旧语义。原生prompt切换、显式shot-sink切换和独立视频硬拼接，是不同实验。
 
-**视频删帧会不会把生成器的KV也删掉？** 对已经生成的成片删帧，不会回溯改变当时生成状态。删帧攻击影响验证端的可见信息；在线重置生成器cache则是另一类干预。
+**固定KV cache是否意味着整个程序恒定内存？** 不一定。还需检查活动latent、VAE状态、累计输出及编码队列；如果普通推理入口攒齐整段后才解码，输出缓冲仍会随总时长增长。
 
-**KV扰动影响到很远的帧，能不能说明水印成功？** 不能。应在未见过的内容与随机message上，从像素正确恢复message；画面轨迹改变只说明存在因果影响。已有实验正好体现了这个区别。
+**长期画面连续是否意味着完整记住了历史？** 不意味着。模型可能保持色调与主体外观，却遗忘较早的事件或空间布局；应分别评估身份、事件、场景记忆和交互条件的保持。
 
-### 14.3 三遍阅读，每遍有一个具体目标
+### 6.3 三遍阅读，每遍有一个具体目标
 
 **第一遍：能画出系统。** 阅读第0节、第2节与第3.1–3.4节；不要求理解每篇论文。自己画出条件、noise、DiT、sampler、VAE、RGB六个模块，并标明生成KV与VAE状态分别在哪里、两个循环沿哪个时间轴推进。
 
-**第二遍：能解释方法差异。** 先读CausVid的推理算法，再读Self Forcing的训练示意和rollout算法，随后读LongLive的窗口、sink和recache。对每篇只回答：它改变了哪个模块，解决哪个失败模式，为此新增了什么成本？之后再读MAGI-1 / StreamDiT，理解重叠去噪；不必一开始把19篇生成相关工作全部读完。
+**第二遍：能解释方法差异。** 先读CausVid的推理算法，再读Self Forcing的训练示意和rollout算法，随后读LongLive的窗口、sink和recache。对每篇只回答：它改变了哪个模块，解决哪个失败模式，为此新增了什么成本？之后再读MAGI-1 / StreamDiT，理解重叠去噪；不必一开始把20篇生成相关工作全部读完。
 
-**第三遍：能设计公平实验。** 阅读第5节性能条件、第7节反演困难和第13节状态水印。明确生成者与验证者各知道什么，哪些数据是oracle，哪些实验只证明代码路径，哪些真正证明消息恢复。结合[已完成的KV实验](kv_state_experiment.html)，尝试解释“改变了输出”和“建立了通信通道”为何不同。
+**第三遍：能设计公平实验。** 阅读第5节与论文消融，固定硬件、分辨率、生成长度及解码配置，分别测量首块、稳态和控制响应。把短视频质量、长时漂移和系统吞吐拆开，判断改进来自训练、采样、缓存还是工程实现。
 
 基础读物按缺口选择：不懂Q/K/V读Transformer；不懂加噪与采样读DDPM；不懂latent读LDM；不懂patch与生成主干读DiT；不懂速度场读Flow Matching。它们都是基础来源，不能用其图像实验替代流式视频上的实证。作者、单位、发表状态与官方资源统一放在下方文献附录。
 
 <a id="paper-readings"></a>
 
-## 15. 重要论文精读：从生成下一块，到维护长期状态
+## 7. 重要论文精读：从生成下一块，到维护长期状态
 
-本节于2026-10-03基于已转换的原文Markdown重读方法、算法和实验，并复查官方项目或论文入口。选这7篇，是因为它们分别回答几个不同的基础问题；不是按排行榜或发表时间排先后。数值均为指定原文版本的作者报告，不是本次复现；发表状态和完整作者名单、代码、模型、数据入口见[资源附录](streaming_literature_resources.md)。以下“对水印的启发”是我们的机制分析，并非这些生成论文已经验证了水印。
+本节于2026-10-03基于已转换的原文Markdown重读方法、算法和实验，并复查官方项目或论文入口。选这7篇，是因为它们分别回答几个不同的基础问题；不是按排行榜或发表时间排先后。数值均为指定原文版本的作者报告，不是本次复现；发表状态和完整作者名单、代码、模型、数据入口见[资源附录](streaming_generation_resources.md)。
 
 **本节读法。** 每篇先给整体问题与结论，随后进入编号精读小节：沿方法图辨认数据来源，拆解公式与符号，用小例子执行算法，再回到消融表检查证据。教学算例、简化伪代码与原文实测数值分别标明；先读CausVid和Self Forcing，再读LongLive两代，最后比较DF、MAGI-1与StreamDiT，可以逐步建立完整的运行图景。
 
@@ -831,7 +531,7 @@ feature的16条实际H.264视频在两档压缩、压缩后删帧和截断下均
 
 <a id="paper-causvid"></a>
 
-### 15.1 CausVid：让强大的双向teacher教会因果student
+### 7.1 CausVid：让强大的双向teacher教会因果student
 
 **论文身份。** *From Slow Bidirectional to Fast Autoregressive Video Diffusion Models*；Tianwei Yin、Qiang Zhang等，MIT与Adobe，CVPR 2025。本文精读arXiv v4，重点是§4、Algorithms 1–2和Table 4。[原文](https://arxiv.org/html/2412.07772v4) · [项目](https://causvid.github.io/) · [代码](https://github.com/tianweiy/CausVid)
 
@@ -847,9 +547,7 @@ feature的16条实际H.264视频在两档压缩、压缩后删帧和截断下均
 
 **什么实验证据最有说服力？** Table 4中，仅ODE初始化时frame quality为48.1；加入双向teacher的DMD后为64.4。相同ODE初始化下，使用因果teacher为61.7。它支持“强双向teacher和后续分布匹配有实际作用”，而不仅是改mask加速。单H100、640×352的原文报告为首次输出1.3秒、9.4 FPS；这说明可以提前输出，但吞吐低于其12 FPS播放设定。原文也指出部分闪烁和多样性不如teacher，不能解释成所有维度全面获益。[原文§5.1–5.2](https://arxiv.org/html/2412.07772v4#S5)
 
-**对我们有什么用？** 它提供了“当前块采样完成→建立历史KV”的明确接口。水印若放入持久历史，必须在这个实际更新点检查；写在临时noisy特征里，可能下一步就被覆盖。其重加噪和新的causal student也解释了：旧双向模型的反演器不是自然匹配的提取器。这是需要验证的兼容性问题，不是无法反演的定理。
-
-#### 15.1.1 对照Figure 6：两个训练阶段的输入从哪里来
+#### 7.1.1 对照Figure 6：两个训练阶段的输入从哪里来
 
 ![CausVid原文Figure 6：ODE初始化与非对称DMD蒸馏](streaming_paper_figures/causvid_method.png)
 
@@ -861,7 +559,7 @@ feature的16条实际H.264视频在两档压缩、压缩后删帧和截断下均
 
 两次加噪的目的不同。**Student输入的逐chunk加噪**训练因果生成器处理不一样的条件状态；**score输入的共同加噪**使两个score在同一个噪声层级上比较生成分布与数据分布。混淆这两步，就会误以为DMD的teacher直接在点评每个chunk各自不同噪声的输入。
 
-#### 15.1.2 拆开DMD：它为什么不是一个“画质打分器”
+#### 7.1.2 拆开DMD：它为什么不是一个“画质打分器”
 
 令生成预测为x̂，给它加噪得到y；φ是student参数，ξ是fake-score参数。略去时间权重，原文Eq. 4的梯度方向可写成下面的教学形式，J表示student输出对参数的Jacobian：
 
@@ -877,7 +575,7 @@ $$
 
 为什么teacher可以双向？它看到的是student已经预测出的完整样本，用来提供训练梯度；student产生这些预测时仍受因果mask限制。类似训练一个在线决策器时，可以在训练结束后评价整段轨迹，而部署时不必携带评价器。原文Table 4的causal-teacher对照正是在检验：强teacher是否比与student结构对称的弱teacher更有用。
 
-#### 15.1.3 用A、B、C三个chunk手动执行Algorithm 2
+#### 7.1.3 用A、B、C三个chunk手动执行Algorithm 2
 
 下面每个字母代表一块视频latent，块内仍有多个帧和空间token；不是一个LLM token。
 
@@ -893,7 +591,7 @@ $$
 
 另一个容易误读的点是“推理不需要causal mask”。当前前向只放入B，加上已经缓存的A；C根本不在输入里，因此即使使用高效的全attention kernel，也没有未来可读。这是**通过输入组织实现因果性**，不是推理时撤销因果约束。
 
-#### 15.1.4 实验到底排除了哪些替代解释
+#### 7.1.4 实验到底排除了哪些替代解释
 
 原文Table 4的三项分别是temporal quality、frame quality、text alignment；摘录几个最有解释力的组合：
 
@@ -910,7 +608,7 @@ $$
 
 <a id="paper-self-forcing"></a>
 
-### 15.2 Self Forcing：监督真正由模型自己接续生成的视频
+### 7.2 Self Forcing：监督真正由模型自己接续生成的视频
 
 **论文身份。** *Self Forcing: Bridging the Train-Test Gap in Autoregressive Video Diffusion*；Xun Huang、Zhengqi Li、Guande He、Mingyuan Zhou、Eli Shechtman；Adobe Research与UT Austin，NeurIPS 2025 Spotlight。精读v2的Figure 2、Algorithm 1、§3.4及Table 2。[原文](https://arxiv.org/html/2506.08009v2) · [项目](https://self-forcing.github.io/) · [代码](https://github.com/guandeh17/Self-Forcing)
 
@@ -937,9 +635,7 @@ $$
 
 这组证据支持“监督部署时真正出现的输出分布”有价值。它不证明teacher forcing在所有数据规模和模型上都不合适。Table 1中chunk-wise为17.0 FPS、首帧0.69秒，frame-wise为8.9 FPS、0.45秒，均为单H100、Wan1.3B、832×480：更小生成单元可以降低首帧等待，却降低吞吐。[原文§4](https://arxiv.org/html/2506.08009v2#S4)
 
-**对水印最直接的启发。** 水印writer改变输出以后，后面的历史也会改变；训练若只接干净的预存prefix，就可能与自由生成不一致。应让reader见到真实生成并被攻击的输出，让writer经历自身修改过的历史。但若要证明跨cache传递message，还需额外的后续消息监督或专门训练设计；Self Forcing的生成质量目标不会自动替我们学习这个任务。
-
-#### 15.2.1 先读Figure 2：三种forcing究竟改变了哪条依赖
+#### 7.2.1 先读Figure 2：三种forcing究竟改变了哪条依赖
 
 设训练数据是A、B、C，正在学习生成C。TF让C读真实A、B的clean特征；DF让C读真实A、B在随机噪声水平下的特征；SF让C读模型已经生成的Â、B̂。三者都能有causal结构，区别首先在**历史来源和历史状态**。
 
@@ -947,7 +643,7 @@ $$
 
 这也解释为何SF并非一定比并行TF慢到不可用：它牺牲了时间chunk之间的训练并行，却复用历史KV，同时不必为当前块重复计算整条历史，也不必依赖复杂稀疏mask kernel。总成本由这些因素共同决定，不能只数循环层数。
 
-#### 15.2.2 逐行走Algorithm 1：随机截断的是哪条链
+#### 7.2.2 逐行走Algorithm 1：随机截断的是哪条链
 
 为便于阅读，假设采样时刻为t₄＞t₃＞t₂＞t₁，本轮抽到s＝2。原文在进入时间块循环之前抽一次s，本轮各chunk都使用这个停止位置。以下伪代码保留关键依赖，但省略batch、text和损失权重：
 
@@ -979,7 +675,7 @@ $$
 
 这是对训练图的解释，不是论文另一个新loss。SF保留了正确的前向历史分布，同时采用有偏但更省资源的梯度估计。它主要教模型“面对自己生成的历史怎样接续”，没有完整优化“早期决策怎样影响遥远未来”的全部梯度路径。
 
-#### 15.2.3 Figure 3里为什么会出现L²和L
+#### 7.2.3 Figure 3里为什么会出现L²和L
 
 ![Self Forcing原文Figure 3：重算滑窗与rolling cache](streaming_paper_figures/self_forcing_cache.png)
 
@@ -991,17 +687,15 @@ $$
 
 原文针对特殊首帧latent离开窗口的问题，在训练中让最后部分不能访问初始帧，减少依赖；相关消融关注的是窗口外推中的闪烁与效率。它与LongLive以后选择保留sink的路线不同，不宜把“永久保留第一块”写成Self Forcing此处的机制。
 
-#### 15.2.4 把消融结果读成因果链
+#### 7.2.4 把消融结果读成因果链
 
 Table 2同时替换forcing方式与分布损失。固定DMD、比较TF／DF／SF，可以较直接检验历史来源；固定SF、比较DMD／SiD／GAN，则说明self-rollout思想不只依赖单一散度。它们在同一实验中的表现相近，并不表示三类损失数学等价。DMD通常对应reverse-KL方向的分布匹配，SiD强调score差异，GAN使用判别器提供分布监督。
 
 另一个有解释力的对照是frame-wise：DMD下DF为80.56、TF为78.12、SF为84.26。相对chunk-wise，frame-wise会经历更多次历史接续，原文结果与“更细自回归更容易暴露累积误差”的解释一致。不过不能只凭这一张表断言所有分差都来自累计次数，粒度同时也改变了上下文建模。
 
-对于水印，可借鉴的是训练分布组织：让后面的writer面对自己改过的历史，让reader面对真正生成的视频。若目的变成“只在A写一次，C仍读出message”，就需要显式设置C的message loss，并决定是否允许其梯度穿回写入处。直接使用原版SF的detach策略，有可能使这个跨块信用分配路径根本没有被优化。
-
 <a id="paper-diffusion-forcing"></a>
 
-### 15.3 Diffusion Forcing：把“已知多少”变成每个位置的噪声水平
+### 7.3 Diffusion Forcing：把“已知多少”变成每个位置的噪声水平
 
 **论文身份。** *Diffusion Forcing: Next-token Prediction Meets Full-Sequence Diffusion*；Boyuan Chen等，MIT CSAIL与TU Munich，NeurIPS 2024。精读v4的Figure 2、§3.1–3.3及§4.1。[原文](https://arxiv.org/html/2407.01392v4) · [项目](https://boyuan.space/diffusion-forcing/) · [代码](https://github.com/buoyancy99/diffusion-forcing)
 
@@ -1023,9 +717,7 @@ DF与SF的差别因此很清楚：DF主要扩展“真实序列经过怎样的�
 
 **原文验证了什么？** §4.1在Minecraft和DMLab视频预测中，使用同一RNN架构对比teacher forcing、全序列diffusion与DF，展示超出训练长度、例如1000帧的rollout；另有规划与机器人等任务。它支持这种训练范式在相应序列任务中的稳定性和灵活性，但不是现代720p开放域T2V的实时性能证明。复现时还要注意官方仓库main的v1.5实现与保留原论文的paper分支不同。
 
-**对水印的启发。** 若载体在带噪历史中反复参与更新，训练时只在clean cache里写入会漏掉实际运行条件；噪声水印的提取也可能要面对二维调度而非一条全片段共享轨迹。可以将不同历史噪声水平作为通道实验变量，但DF本身没有提供水印鲁棒性的结论。
-
-#### 15.3.1 从原文Algorithm 1推导出训练目标
+#### 7.3.1 从原文Algorithm 1推导出训练目标
 
 为避免时间轴重名，这里用i表示视频位置，kᵢ表示该位置的diffusion噪声等级，hᵢ表示RNN的历史隐状态。原文的hidden latent记作z；本节改成h，是为了不与视频VAE latent混淆。
 
@@ -1046,7 +738,7 @@ $$
 
 为什么必须把kᵢ显式传入？同样模糊的图像可能来自数据本身，也可能来自人工加噪。噪声等级给网络一个可靠性条件，使它知道应主要依赖当前观测，还是更多依赖历史先验。这里的“可靠性”是设计解释，原文并没有额外标注一套视觉置信度标签。
 
-#### 15.3.2 把二维sampling schedule实际走一遍
+#### 7.3.2 把二维sampling schedule实际走一遍
 
 下面是便于理解的3位置教学日程，数字是离散噪声等级，3最吵、0干净；不是论文实验所用的完整步数。每一行表示一轮调度之后希望达到的状态。
 
@@ -1063,23 +755,21 @@ $$
 
 同样的噪声表如果交给双向Transformer，信息通路就会变成另一种模型；所以不能由“对角线式去噪”推断一定用了causal attention或KV cache。DF首先给出训练与采样范式，网络决定依赖结构。
 
-#### 15.3.3 为什么稍微加噪的历史有时更稳
+#### 7.3.3 为什么稍微加噪的历史有时更稳
 
 假设模型刚生成一只脚形状略有偏差。若后续状态把这个结果视作绝对正确的clean观测，偏差可能被坚固地传播。让状态估计对应略有噪声的观测，给下一步保留不确定性，可以减少对错误细节的过度承诺。附录还解释了一个实现选择：采样后不一定再用更干净的新观测重算hidden state，而是复用本步较高噪声条件下计算的状态，既减少一次计算，也形成上述稳定化效果。
 
 这条解释不意味着“历史越吵越好”。噪声太大也会损失身份、动作和布局信息。原文视频预测结果支持在其任务与设置中的稳定化价值；合理噪声量及开放域T2V是否受益，需要对应模型实验。
 
-#### 15.3.4 理论与长视频实验分别回答什么
+#### 7.3.4 理论与长视频实验分别回答什么
 
 论文附录A建立不同噪声组合下的likelihood下界联系：训练目标在适当加权和模型条件下，可以作为这些部分加噪序列分布的有效ELBO。这里ELBO是一个优化概率模型的下界；“覆盖不同noise pattern”提供了允许多样采样日程的理论依据。
 
 但ELBO不是一份“生成1000帧必不漂移”的保证。有限模型、有限数据、近似采样以及自身输出引起的分布偏移都没有因此消失。长rollout的稳定性来自另外的实验，而实验主要在Minecraft、DMLab等受控视频预测任务上。理解这一点，就不会把DF的理论和Self Forcing的动机看成互相否定：前者允许大量噪声条件，后者进一步关注部署时的历史内容分布。
 
-**与水印的具体联系：** 若一个message只在完全clean的状态中可读，DF风格的运行就可能使其在“略吵历史→状态更新”中衰减。一个有区分力的实验是固定同一视频和message，扫描历史噪声等级，并分别测当前chunk与后继chunk的恢复率。它能检查通道对历史可信度变化是否敏感，比只给最终视频加高斯噪声更贴近此类模型的内部机制。
-
 <a id="paper-longlive"></a>
 
-### 15.4 LongLive：长时间运行，需要训练长期出现的历史状态
+### 7.4 LongLive：长时间运行，需要训练长期出现的历史状态
 
 **论文身份。** *LongLive: Real-time Interactive Long Video Generation*；Shuai Yang等，NVIDIA、MIT、HKUST(GZ)、HKU、THU，ICLR 2026。精读v2的Figures 3–5、§3及Tables 3–4。[原文](https://arxiv.org/html/2509.22622v2) · [项目](https://nvlabs.github.io/LongLive/) · [原版代码](https://github.com/NVlabs/LongLive/tree/v1.0)
 
@@ -1101,9 +791,7 @@ $$
 
 正确解读是：recache保留较好连续性，同时相对直接保留KV改善新prompt语义；**它的CLIP score并没有超过清空KV**，所以应描述成较好的折中，不能照抄表注笼统说所有指标最好。原文还比较9个local latent帧＋3个sink latent帧与更长窗口，支持sink在其训练方案下缓解短窗口退化。30秒VBench-Long评测、60秒交互评测和240秒展示应分别理解，展示长度不是所有质量指标的统一评测长度。[原文§4](https://arxiv.org/html/2509.22622v2#S4)
 
-**对状态水印尤其重要。** Sink保留、水印经新latent进入新cache、每次重写message，是三种机制。LongLive告诉我们，状态会被保留、淘汰和重新构建；因此水印不能只在普通块内测一次。可以沿用其长历史、短监督的训练组织，但须增加message恢复目标，并单独验证原始载体被淘汰后的表现。
-
-#### 15.4.1 Figure 4的关键：长度、显存、teacher能力不是一回事
+#### 7.4.1 Figure 4的关键：长度、显存、teacher能力不是一回事
 
 ![LongLive原文Figure 4：短训练、直接长训练与流式长训练](streaming_paper_figures/longlive_training.png)
 
@@ -1123,7 +811,7 @@ sg表示stop-gradient；Update包含实际cache构建、窗口移动等操作。
 
 因此，需要分开三个量：**累计生成时长**可为60秒；**直接可访问的cache窗口**远短于60秒；**当前反向传播clip**约5秒。历史“来自第55秒”不表示cache里还逐帧存着此前55秒。
 
-#### 15.4.2 Recache为什么能够改变旧prompt的影响
+#### 7.4.2 Recache为什么能够改变旧prompt的影响
 
 可以将第ℓ层缓存粗略写成KVᶩ＝Fᶩ(x_history,p)。虽然称作self-attention KV，多层DiT中的历史特征会受text cross-attention和前序层影响，因此缓存通常不只是原始画面的投影，也含有生成时的条件信息。切换prompt后，只替换新的text embedding，并不会自动重写所有旧层的历史特征。
 
@@ -1133,15 +821,13 @@ sg表示stop-gradient；Update包含实际cache构建、窗口移动等操作。
 
 原文把prompt switch加入训练，并在发生切换的轮次中同时更新teacher的prompt，防止student在新条件下生成却被旧条件监督。这个操作解释了为什么“推理时随手换prompt”与“训练过的交互机制”不是同样的能力。
 
-#### 15.4.3 Frame sink如何降低遗忘，又没有提供什么
+#### 7.4.3 Frame sink如何降低遗忘，又没有提供什么
 
 假设只保留最近三块B、C、D，那么生成E时A已被淘汰。A对后续的影响只能通过B、C、D间接存在，经过多轮可能逐渐改变。加入固定sink A后，每次attention都能直接访问A，使人物外观等初始信息有一条短路径。原文9个local latent帧＋3个sink latent帧的设计，用少量额外可见历史补偿更短窗口。
 
-这里有个常被忽略的因果方向：作者报告，先解决长rollout退化以后，sink才在其配置中有效。不能跳过训练，单纯给任意AR模型多留3帧，就认定能稳定长视频。更不能把sink包含的人物外观等视觉信息，等同于它能保存并传递任意16位message；后者在原目标中没有被监督。
+这里有个常被忽略的因果方向：作者报告，先解决长rollout退化以后，sink才在其配置中有效。不能跳过训练，单纯给任意AR模型多留3帧，就认定能稳定长视频。保留少量锚点也不等于完整记住所有中间事件。
 
-对我们的KV水印，最有区分力的是三组条件：保留最初被修改的sink；让它被淘汰且停止重写；在prompt切换时对原始latent做recache。第一组成功只能证明载体还在；第二组成功才可能说明消息通过后续内容／状态接力；第三组能检查水印是否仅寄居在一次性的KV偏移里。每组还应看输出像素能否恢复message，不能只读内部张量。
-
-#### 15.4.4 如何复核论文关于“长期”的证据
+#### 7.4.4 如何复核论文关于“长期”的证据
 
 阅读§4与附录时，先把三类评测分开：30秒VBench-Long比较长时生成质量，60秒交互任务比较多段prompt下的响应与连续性，240秒视频是更长的展示。它们共同说明方法具备长流运行能力，但不是同一个统计测试的三种长度。
 
@@ -1149,7 +835,7 @@ sg表示stop-gradient；Update包含实际cache构建、窗口移动等操作。
 
 <a id="paper-longlive2"></a>
 
-### 15.5 LongLive 2.0：把算法与训练、推理基础设施一起设计
+### 7.5 LongLive 2.0：把算法与训练、推理基础设施一起设计
 
 **论文身份。** *LongLive-2.0: An NVFP4 Parallel Infrastructure for Long Video Generation*；Yukang Chen等，原文署名NVIDIA，2026 technical report。精读v2的§2–4及Tables 1–4。[原文](https://arxiv.org/html/2605.18739v2) · [项目](https://nvlabs.github.io/LongLive/LongLive2/) · [代码](https://github.com/NVlabs/LongLive) · [5B权重](https://huggingface.co/Efficient-Large-Model/LongLive-2.0-5B)
 
@@ -1173,11 +859,9 @@ sg表示stop-gradient；Update包含实际cache构建、窗口移动等操作。
 | 再加异步解码 | 29.7 | 57.6 s | 表列FPS不变，E2E明显改善 |
 | 最终2-step | 45.7 | 36.3 s | 少步进一步加速，已含前述优化 |
 
-最后两行尤其能说明“DiT快”和“整个视频交付快”不等价。Table 4中BF16 4-step的VBench总分为85.06，NVFP4 2-step为83.14，也体现最终配置的质量与速度折中。以上不能转述为我们的H20单卡会有同样速度；当前项目BF16实验也不是原生NVFP4部署测试。
+最后两行尤其能说明“DiT快”和“整个视频交付快”不等价。Table 4中BF16 4-step的VBench总分为85.06，NVFP4 2-step为83.14，也体现最终配置的质量与速度折中。以上速度不能直接外推到H20单卡或BF16部署。
 
-**为什么适合我们的研究？** 它有明确的状态生命周期：clean recache、量化、窗口移动、两类sink与镜头切换。每一个都可作为水印通道的受控变量。先在BF16下证明局部message恢复，再测量化及长期状态；如果基础通道尚未成立，直接追加多镜头和FP4不会解释失败来自哪里。生成式水印的开销也应放入其整条异步流水线，而非只量writer单独耗时。
-
-#### 15.5.1 Figure 2左中两栏：先看mask，再看GPU分工
+#### 7.5.1 Figure 2左中两栏：先看mask，再看GPU分工
 
 ![LongLive 2.0原文Figure 2：Balanced SP与NVFP4训练基础设施](streaming_paper_figures/longlive2_training.png)
 
@@ -1195,7 +879,7 @@ sg表示stop-gradient；Update包含实际cache构建、窗口移动等操作。
 
 现在看分工。假设两张GPU负责前后两个时间区间，如果先把全体clean串在前、noisy串在后再机械切半，就可能让一张卡分到大量clean，另一张卡分到大量目标token。Balanced SP让每卡先拿自己时间区间的原视频，编码clean latent，再就地创建对应noisy latent；每张卡都有需要计算loss的目标。**改变的是token所有权与通信布局，逻辑上的条件概率没有因此变成self-rollout。**
 
-#### 15.5.2 All-to-All究竟交换了什么，VAE halo又是什么
+#### 7.5.2 All-to-All究竟交换了什么，VAE halo又是什么
 
 原文Eq. 1–2中，L是clean加noisy的总token数，P是SP卡数，H是attention head数，d是每head维度。每张卡初始拥有全体heads的一部分时间token；一次All-to-All后，变成全体时间token的一部分heads：
 
@@ -1211,15 +895,15 @@ $$
 
 VAE halo解决另一件事：因果VAE编码某个时间点，可能还需要此前若干RGB帧。GPU1若只拿自己的片段，左边界就缺条件；因此从前一分片取一段覆盖感受野的左侧重叠帧，编码后丢弃重叠输出，只保留自己负责的latent。**只有重叠范围、时间对齐和边界处理正确时，才可等价于完整视频编码**；随便切视频后各自调用VAE，不能假定latent一样。
 
-#### 15.5.3 “独立少步LoRA”为什么值得单独读附录
+#### 7.5.3 “独立少步LoRA”为什么值得单独读附录
 
 Figure 3用非常简洁的图概括训练，但Appendix H区分了两种初始化策略：一种拿已经AR训练的模型初始化DMD三网络；另一种直接从原始Wan底座构造独立DMD分支，使用AR attention mask训练少步LoRA，再将其加载到AR训练模型。报告采用后者来解耦流程。因此，“standalone”指训练流程和adapter可组合，并不是拿一个不相关图像模型的LoRA就能通用。
 
 可以把组合抽象成W_final＝W_AR＋ΔW_few-step，但这只是理解adapter叠加的形式。两条分支需要匹配层结构、参数位置、底座与条件约定，LoRA叠加也不保证两个能力在任意模型上严格线性相加。原报告以实际实验支持此配方的可行性。
 
-数据同样是方法的一部分。Appendix B介绍约120K长视频、按长度分桶并提供shot级描述的数据；公开Toy Dataset只是样例。若只下载权重或toy数据，我们可以研究推理接口及小规模适配，但不能说已完整复现其长视频AR训练。对于本项目，先解释5B模型怎样接收chunk prompt和维护状态，比重新训练整套底座更直接。
+数据同样是方法的一部分。Appendix B介绍约120K长视频、按长度分桶并提供shot级描述的数据；公开Toy Dataset只是样例。若只下载权重或toy数据，我们可以研究推理接口及小规模适配，但不能说已完整复现其长视频AR训练。理解推理接口与完整复现训练是两种不同的工作量，应在复现实验中明确区分。
 
-#### 15.5.4 从4bit推到显存：为什么不是正好缩小四倍
+#### 7.5.4 从4bit推到显存：为什么不是正好缩小四倍
 
 原文一层的一块K和V分别包含T_cHd个元素。BF16每元素2 bytes，两者合计4T_cHd bytes。NVFP4每元素4 bit，因此K＋V的数值部分合计T_cHd bytes；再考虑每16元素使用一个8bit block scale，两份张量的scale共增加T_cHd/8 bytes：
 
@@ -1231,11 +915,11 @@ $$
 
 这是存储格式的理想近似，忽略tensor级scale、padding和临时buffer。假设一层一块T_cHd＝100万个元素，那么K＋V从约4 MB降到1.125 MB；这是教学算例，不是实测模型大小。全模型还要乘层数和保留块数，并加上权重、激活、VAE、解量化workspace，所以总显存不会跟KV一样缩小3.56倍。
 
-量化前还做K-smoothing：对每个token/head沿通道减去均值，再进行block量化。该变换不应被理解为“任意KV偏移都原封不动保存”。尤其对水印而言，小幅度通道偏移可能被中心化或舍入改变；作者证明的是其配置下生成质量可保持，不是任意隐藏bit也能保持。
+量化前还做K-smoothing：对每个token/head沿通道减去均值，再进行block量化。中心化与分块尺度影响量化误差，因此不能只按存储位宽推断质量或速度；应结合论文具体配置和消融判断。
 
-为什么Table 3里加KV量化后反而从32.0降到29.7 FPS？省存储不等于所有算子都更快，读cache时还有重建及调度成本；表格反映整体配置表现。原文另报专用量化／解量化kernel的局部overhead低于2%，这与端到端两个配置的FPS差异是不同测量口径，不能强行用一个数解释另一个。我们的H20采用BF16，也不能从GB200上的原生NVFP4比例直接预测加速。
+为什么Table 3里加KV量化后反而从32.0降到29.7 FPS？省存储不等于所有算子都更快，读cache时还有重建及调度成本；表格反映整体配置表现。原文另报专用量化／解量化kernel的局部overhead低于2%，这与端到端两个配置的FPS差异是不同测量口径，不能强行用一个数解释另一个。也不能从GB200上的原生NVFP4比例直接预测其他硬件或精度下的加速。
 
-#### 15.5.5 Figure 6：global sink、shot sink和local window各活多久
+#### 7.5.5 Figure 6：global sink、shot sink和local window各活多久
 
 ![LongLive 2.0原文Figure 6：全局与镜头级attention sink](streaming_paper_figures/longlive2_sink.png)
 
@@ -1243,19 +927,17 @@ $$
 
 假设生成三段镜头A、B、C。global sink一直指向开头的锚点；进入B后，shot sink绑定到B的起始块；在B继续延长时，local window向前滚动，但B的起点仍可直接访问；进入C以后，shot sink换成C的起点。若一个块既属于sink又属于local window，应去重，避免重复读取影响attention权重和开销。新镜头prompt及其cross-attention cache也要相应切换。
 
-这里的设计目标是同时保留全局内容关系与当前镜头外观，并允许新镜头成立。它没有保证旧镜头的每个细节都可恢复；global与shot条件也可能产生竞争，具体效果要看内容和训练。Appendix E／Figure 9主要给出视觉消融，对“抑制shot外观漂移”提供定性证据，不能扩展成对任意message持久性的定量证明。
+这里的设计目标是同时保留全局内容关系与当前镜头外观，并允许新镜头成立。它不保证旧镜头的每个细节都可恢复；global与shot条件也可能竞争。Appendix E／Figure 9主要给出视觉消融，对抑制shot外观漂移提供定性证据。
 
-所谓通过指针维护sink的低额外开销，指的是避免不必要复制的管理方式；sink对应的KV数据本身仍占空间。讨论我们的方法时，必须分别统计固定模型权重、活动cache、额外writer状态以及每视频需长期保存的密钥／参考数据。固定窗口下活动cache可以有界，但若每段视频都存参考载体，服务端归档量仍会随视频数增长。
-
-#### 15.5.6 异步VAE为什么改善总耗时，但不消除首块等待
+#### 7.5.6 异步VAE为什么改善总耗时，但不消除首块等待
 
 假设生成C块，DiT每块用d秒、VAE每块用v秒，且d≥v。在理想的两GPU流水线中，串行总时间约C(d＋v)，异步约Cd＋v，因为解码第i块与去噪第i＋1块重叠。第一块却仍需要先生成再解码，因此其最短路径约d＋v，而不是max(d,v)。这区分了吞吐、总耗时与首块延迟。
 
-若加一个逐块后处理水印器，耗时w，且与VAE在同一设备顺序运行，则输出阶段大致变成v＋w。当它仍小于d时，稳态overhead可能被重叠隐藏；超过d就会成为新瓶颈。生成内writer若增加DiT关键路径，则可能每块都直接增加等待。这是系统层面的条件推导，**并不预先保证生成内水印总比后处理便宜**；应使用同样硬件预算实际测量。
+异步收益取决于各阶段耗时及资源竞争。若编码或传输比VAE更慢，输出侧仍会积压；若VAE与DiT共享GPU，实际重叠也可能低于理想值。应同时报告整段耗时、稳态出块间隔和队列等待，不能仅由max(d,v)的理想式推断真实吞吐。
 
 <a id="paper-magi1"></a>
 
-### 15.6 MAGI-1：块因果架构也可以重叠推进多个chunk
+### 7.6 MAGI-1：块因果架构也可以重叠推进多个chunk
 
 **论文身份。** *MAGI-1: Autoregressive Video Generation at Scale*；Sand AI团队、Hansi Teng等，2025 technical report。精读v1的Figure 1、§2.1–2.3及§4.2、Table 6。[原文](https://arxiv.org/html/2505.13211v1) · [官方代码与说明](https://github.com/SandAI-org/MAGI-1) · [模型](https://huggingface.co/sand-ai/MAGI-1)
 
@@ -1269,9 +951,7 @@ $$
 
 **最值得读的是系统证据。** §4.2将首次输出TTFC与稳态每块TPOC分开。报告在24张H100/H800、480p、16 denoising steps及指定KV范围的部署条件下，把TPOC压到1秒以内；Table 6的端到端TTFC为2.37秒、TPOC为0.98秒。DiT和VAE在不同机器上工作，因此稳态间隔由较慢阶段主导，而首块仍需经过两者。这是多卡系统成绩，不能与单H100小模型的FPS直接排榜。[原文§4.2](https://arxiv.org/html/2505.13211v1#S4.SS2)
 
-**对水印的启发。** “一个chunk写一次”必须说明是在初始化、某个去噪阶段，还是成为可复用历史之后。若A仍在变化时B已读取A，随意重写或量化A的载体可能影响已启动的后续块。噪声水印、特征水印和状态水印都应记录写入时机与实际读依赖，不能照搬clean-history模型的挂钩位置。MAGI-1也提醒我们：额外writer/reader进入多卡流水线后，延迟可能来自同步和传输，而不只是其网络前向。
-
-#### 15.6.1 一个并发瞬间，网络到底在看什么
+#### 7.6.1 一个并发瞬间，网络到底在看什么
 
 先用三个chunk做教学例子。设ρ表示噪声量，ρ越大越不确定，以免混用原文不同段落的flow时间记号。
 
@@ -1285,7 +965,7 @@ $$
 
 与clean-history路线最大的接口差异是：B读取A时，A可能尚未完成。若下一次A改变，其K/V通常也需要与新的状态匹配；只有不再变化的历史才适合长期复用。实际部署会依据调度组织缓存，但**不能把一份noisy A的KV不加区分地当作最终clean A的KV**。这种依赖还意味着，对A的某次写入未必影响已经在上一轮读过A的B，必须记录写入发生在哪一次前向之前。
 
-#### 15.6.2 Shortcut公式：大步为什么是两次小步的加权速度
+#### 7.6.2 Shortcut公式：大步为什么是两次小步的加权速度
 
 按原文§2.3，x(t)＝(1−t)ε＋tx_data，t从噪声端0走向数据端1。网络vθ除了x与t，还接收步长相关条件s；一次推进为x′＝x＋Δt·vθ(x,t,s)。这里s与实际Δt在非线性schedule下未必数值相同。
 
@@ -1307,7 +987,7 @@ $$
 
 原文最小s＝1/64，以对应的flow-matching设置并结合CFG蒸馏提供基础监督，再用bootstrap训练更大的s；其采样策略覆盖64、32、16、8步。这样的基础监督很重要：单独让一个网络与自己的两步结果一致，并不自动告诉它数据分布是什么。报告的实时演示使用16步，不应看到“支持8步”就把系统表的速度写成8步速度。
 
-#### 15.6.3 Table 6真正说明了哪部分在加速
+#### 7.6.3 Table 6真正说明了哪部分在加速
 
 下表保留作者系统实验中逐步优化DiT的几行，单位均为秒；TTFC是首块时间，TPOC是稳态每块间隔。
 
@@ -1321,11 +1001,11 @@ $$
 
 最终VAE部分报告0.07秒，对应E2E首块2.37秒；稳态由较慢的DiT阶段决定，仍为0.98秒。24帧一块并不表示用户需要等24秒，而是该块的播放时长取决于视频FPS。将首块等待与每块输出间隔分开，才能判断用户是否觉得响应及时，以及播放是否持续跟得上。
 
-这组实验也揭示系统依赖：很多收益来自多卡并行、缓存和kernel实现。它不能单独证明shortcut在同等条件下比DMD更好，更不能与单卡1.3B模型按最终FPS直接比较。若我们研究chunk-wise水印，其额外跨卡同步也应进入TTFC和TPOC；只在一张卡上测一次writer前向，会漏掉这种成本。
+这组实验也揭示系统依赖：很多收益来自多卡并行、缓存和kernel实现。它不能单独证明shortcut在同等条件下比DMD更好，也不能与单卡1.3B模型按最终FPS直接比较。
 
 <a id="paper-streamdit"></a>
 
-### 15.7 StreamDiT：把整个活动buffer作为持续变换的对象
+### 7.7 StreamDiT：把整个活动buffer作为持续变换的对象
 
 **论文身份。** *StreamDiT: Real-Time Streaming Text-to-Video Generation*；Akio Kodaira、Tingbo Hou等，UC Berkeley与Meta，CVPR 2026。精读v4的Figure 2、§3–4、Table 3及§5.4。[原文](https://arxiv.org/html/2507.03745v4) · [项目](https://cumulo-autumn.github.io/StreamDiT/)。代码与权重按资源附录的核实记录标为未找到，不将项目演示当成可运行代码。
 
@@ -1345,9 +1025,7 @@ B是活动长度，T是该划分下完整采样路径的步数。原文蒸馏设
 
 **与FIFO-Diffusion和MAGI-1怎么区分？** FIFO是理解队列推进的早期入口，强调利用已有短视频模型做无需训练的长视频扩展；StreamDiT为buffer设计专门训练及蒸馏。MAGI-1则采用block-causal架构，允许多个块重叠去噪；不要因为两者都“同时处理不同噪声位置”，就认为其attention与cache完全相同。
 
-**对水印的启发。** 此处最自然的持久状态可能是滚动中的noisy latent buffer，而不只是clean KV。已经输出的某帧曾与哪些尚未输出的帧共同更新，需要从调度中恢复；只拿当前短片段做反演可能缺条件。另一条可探索路线是随buffer移动维护message，但同样要证明像素可读、随机切入可恢复，不能把一个周期图案保存在buffer里就称为鲁棒水印。
-
-#### 15.7.1 用三阶段buffer看懂Figure 2的时间关系
+#### 7.7.1 用三阶段buffer看懂Figure 2的时间关系
 
 先把真实的8阶段缩成3阶段做教学，令H／M／L分别表示高、中、低噪声阶段。每次前向同时推进buffer中的三个位置，最靠近完成的块弹出，新噪声从末尾加入。下表从已经填满的稳态buffer开始：
 
@@ -1361,7 +1039,7 @@ B是活动长度，T是该划分下完整采样路径的步数。原文蒸馏设
 
 另一个重要区别是B、C在A输出前可能参与其建模。StreamDiT的窗口attention不等于严格block-causal；局部时空窗口内可以双向交换信息，隔层shift让不同窗口沟通。所以已输出A的生成过程可能依赖当时尚未完成的B、C。它依然能流式提交结果，因为A一旦离开buffer就不再被改写；**输出流式性不要求所有内部未提交状态都没有未来交互。**
 
-#### 15.7.2 为什么要按帧time embedding，并混合partition训练
+#### 7.7.2 为什么要按帧time embedding，并混合partition训练
 
 普通同噪声视频diffusion可以用一个t调制整段视频。现在A接近干净、C仍很吵，若仍只传一个t，网络无法正确知道各位置的去噪任务。StreamDiT把时间条件沿帧维度分开，使adaLN调制随位置变化。不是把某个scalar t复制到所有帧后，就完成了streaming改造。
 
@@ -1369,7 +1047,7 @@ Partition决定相邻多少latent帧共享一个噪声阶段。大chunk让局部
 
 Table 3专门固定c＝1测试这些训练组合，这样才能公平比较所有模型都支持的推理方式。作者观察到混合所有chunk sizes的质量最好；仅c＝1训练是第二好，说明训练与测试完全贴合同一种日程也有局部优势。主表使用另一种推理划分，数字不同不构成自相矛盾。精读时必须同时看训练partition与评测partition。
 
-#### 15.7.3 为什么蒸馏要在“固定buffer的一个阶段”内做
+#### 7.7.3 为什么蒸馏要在“固定buffer的一个阶段”内做
 
 普通短视频多步蒸馏通常围绕固定的一组变量，比较teacher走多步与student走少步的结果。但流式buffer移动后，一端有变量离开，另一端有新噪声进入；如果跨越这种变更直接套用固定张量的轨迹目标，前后变量身份就可能错位。
 
@@ -1377,63 +1055,59 @@ Table 3专门固定c＝1测试这些训练组合，这样才能公平比较所�
 
 因此128→8指一份内容跨各阶段的完整路径被压缩；s＝1指每段只需一次前向；每次弹出2个latent帧指稳态交付粒度。三个数字分别计数不同对象，没有哪一个能单独推出“从纯噪声一前向生成任意8张视频帧”。
 
-#### 15.7.4 如何理解482ms与训练成本
+#### 7.7.4 如何理解482ms与训练成本
 
 以原文稳态测量作简单验算：2个latent帧经4倍时间解码对应8个RGB帧，8/0.482约为16.6帧／秒，与报告约16 FPS的口径一致。该算式只是验证单位，不包含启动、用户网络、排队等额外延迟。窗口attention减少每次计算量，但buffer中的尚未提交内容仍需要反复处理。
 
 这也不是无需训练地把现成T2V变成实时模型。§5.1列出任务学习、泛化、质量微调三个阶段，再进行专门蒸馏；其中包括2.6M视频数据训练阶段和多卡训练。若缺少相应代码／权重，只能验证我们自己实现的近似流程，不能把“实现一个队列”算作复现StreamDiT全部能力。
 
-**对水印更具体的启发：** 假如message写在新进入的C里，必须检查它经过多个buffer更新后是否仍可读；若只在低噪声出口写，载体又更接近逐块输出端的修改。两种方案都应测随机截取，但还应额外测buffer停顿、prompt更新与状态重置。要声称利用了这种流式架构，最好有实验表明message在跨阶段状态中被维护，而不是仅在提交前反复重新嵌入。
-
-### 15.8 把七篇连起来：哪些结论能带回我们的项目
+### 7.8 把七篇连起来：四个生成设计轴
 
 现在可以把方法拆成四个互相配合的设计轴：**信息可见性、训练历史来源、采样日程、状态与系统管理**。这些轴比“是不是AR”更能解释实际差异。
 
 | 方法 | 最值得借鉴的设计 | 不能直接搬过来的结论 |
 | --- | --- | --- |
-| CausVid | 完成当前块后构建可复用历史；非对称蒸馏 | 原teacher反演能直接用于causal student |
-| Self Forcing | 在自身输出历史上训练，并模拟首块淘汰 | 有self-rollout就必然能长期保持任意message |
+| CausVid | 完成当前块后构建可复用历史；非对称蒸馏 | 换因果mask后无需进一步训练 |
+| Self Forcing | 在自身输出历史上训练，并模拟首块淘汰 | 短rollout分布对齐就解决所有长期漂移 |
 | Diffusion Forcing | 显式覆盖不同位置的不同噪声状态 | 噪声日程灵活就自然具有同一种KV cache |
-| LongLive | 长历史输入配短窗口监督；把状态切换放进训练 | Sink保留或画面连续就代表消息被继承 |
-| LongLive 2.0 | 将量化、镜头状态和异步解码一起纳入部署 | Blackwell系统速度等于H20上的本项目速度 |
-| MAGI-1 | 显式考虑未完成历史与块间重叠计算 | 所有chunk-wise方案都有相同写入时机 |
+| LongLive | 长历史输入配短窗口监督；把状态切换放进训练 | 保留sink就能完整记住所有过去事件 |
+| LongLive 2.0 | 将量化、镜头状态和异步解码一起纳入部署 | Blackwell系统速度可以直接外推到其他硬件 |
+| MAGI-1 | 显式考虑未完成历史与块间重叠计算 | 所有chunk-wise方案都有相同状态更新时机 |
 | StreamDiT | 把noisy buffer的移动视为状态生命周期 | 稳态一次前向输出等于从噪声一步生成 |
 
-对当前LongLive 2.0水印研究，最直接的学习路径是：先用CausVid看懂接口，用Self Forcing理解训练分布，再用LongLive理解状态更新与淘汰，最后用2.0报告确定具体部署条件。DF、MAGI-1和StreamDiT则帮助判断方法是否只适用于clean-KV这一类流式模型。
-
-已有实验只证明KV扰动能影响后继生成，没有建立可靠message恢复。由这些论文得到的下一步设计依据，是先建立与当前内容匹配的局部writer/reader，再将自身历史、停止重注入、载体淘汰和状态切换逐步纳入训练与验证。这里仍是研究建议，不是七篇论文已证明或本项目已实现的水印优势。
+若以LongLive 2.0为主线，先用CausVid理解因果接口，用Self Forcing理解历史分布，再用LongLive理解长期训练与状态更新，最后用2.0报告学习具体部署条件。DF、MAGI-1和StreamDiT帮助判断哪些设计只适用于clean-history模型。
 
 <a id="forcing-reading-path"></a>
 
-## 16. 帖子中的Forcing论文：从分布匹配到滚动生成与因果初始化
+## 8. 帖子中的Forcing论文：从分布匹配到滚动生成与因果初始化
 
 用户提供的8页截图来自《Forcing视角下的视频生成加速方法综述》（Leo，2026-09-19）。它讨论5篇视频／序列论文，并引用DMD与DMD2作为基础。截图用于确定阅读范围；下面的方法和实验解读回到原论文，不能将帖子的转述当作额外实验证据。核实日期为2026-10-03。
 
 | 截图中的文献 | 在本文的精读入口 | 应当回答的问题 |
 | --- | --- | --- |
-| Diffusion Forcing，2407.01392 | [15.3](#paper-diffusion-forcing) | 不同位置的噪声为什么可以不同？ |
-| CausVid，2412.07772 | [15.1](#paper-causvid) | 如何把双向、多步模型改成因果、少步模型？ |
-| Self Forcing，2506.08009 | [15.2](#paper-self-forcing) | 训练中的历史由谁生成，梯度又到哪里停止？ |
-| Rolling Forcing，2509.25161 | [16.3](#paper-rolling-forcing) | 未完成的相邻chunk怎样共同修正，长期锚点怎样保留？ |
-| Causal Forcing，2602.02214 | [16.4](#paper-causal-forcing) | ODE回归目标能否由student可见的输入唯一确定？ |
-| DMD，2311.18828 | [16.1](#paper-dmd) | 没有逐样本正确答案，如何训练一个生成器？ |
-| DMD2，2405.14867 | [16.2](#paper-dmd2) | 如何去掉持续配对回归，并训练多步student？ |
+| Diffusion Forcing，2407.01392 | [7.3](#paper-diffusion-forcing) | 不同位置的噪声为什么可以不同？ |
+| CausVid，2412.07772 | [7.1](#paper-causvid) | 如何把双向、多步模型改成因果、少步模型？ |
+| Self Forcing，2506.08009 | [7.2](#paper-self-forcing) | 训练中的历史由谁生成，梯度又到哪里停止？ |
+| Rolling Forcing，2509.25161 | [8.3](#paper-rolling-forcing) | 未完成的相邻chunk怎样共同修正，长期锚点怎样保留？ |
+| Causal Forcing，2602.02214 | [8.4](#paper-causal-forcing) | ODE回归目标能否由student可见的输入唯一确定？ |
+| DMD，2311.18828 | [8.1](#paper-dmd) | 没有逐样本正确答案，如何训练一个生成器？ |
+| DMD2，2405.14867 | [8.2](#paper-dmd2) | 如何去掉持续配对回归，并训练多步student？ |
 
 建议先读DMD／DMD2，再沿CausVid→Self Forcing→Rolling Forcing／Causal Forcing阅读。最后两篇解决不同轴上的问题：一篇改变活动窗口与状态管理，一篇改变初始化监督。这里的箭头是教学顺序，不代表全部方法严格相互取代。
 
 <a id="paper-dmd"></a>
 
-### 16.1 DMD精读：我们到底在匹配什么
+### 8.1 DMD精读：我们到底在匹配什么
 
 **论文身份。** *One-step Diffusion with Distribution Matching Distillation*；Tianwei Yin、Michaël Gharbi、Richard Zhang、Eli Shechtman、Frédo Durand、William T. Freeman、Taesung Park；MIT与Adobe Research；CVPR 2024。精读arXiv v4的§3、Figures 2–4及实验。[论文](https://arxiv.org/html/2311.18828v4) · [项目](https://tianweiy.github.io/dmd/) · [正式发表记录](https://openaccess.thecvf.com/content/CVPR2024/html/Yin_One-step_Diffusion_with_Distribution_Matching_Distillation_CVPR_2024_paper.html)。独立的原版官方代码／HF权重本轮未找到；DMD2是作者后续发布，不能直接标成DMD原版实现。
 
-#### 16.1.1 为什么“生成一张好图”不要求“生成teacher同一张图”
+#### 8.1.1 为什么“生成一张好图”不要求“生成teacher同一张图”
 
 给定prompt和随机噪声z，多步teacher会输出一张特定图片y。逐样本蒸馏希望student对同一个z也输出y；分布匹配希望许多z产生的一批图，整体符合目标分布。举一个教学例子：目标是均匀生成红球或蓝球，teacher对z₁生成红球、对z₂生成蓝球；student若正好交换这两张图，整体分布仍然正确，但配对像素回归会惩罚它。
 
 因此，分布匹配给student更大的映射自由度，特别适合不可能完全复刻复杂多步轨迹的一步网络。然而，“不要求同一张”也带来难题：对当前生成图，没有一个现成的逐像素正确答案。DMD用score差异建立可优化的分布梯度；原版再用配对回归辅助稳定训练。这两部分共同构成原方法，不能只介绍其中一个。
 
-#### 16.1.2 Figure 2逐路读：有三个网络，但只有一个用于生成交付
+#### 8.1.2 Figure 2逐路读：有三个网络，但只有一个用于生成交付
 
 ![DMD原文Figure 2：生成器、双score与配对回归](streaming_paper_figures/dmd_method.png)
 
@@ -1443,7 +1117,7 @@ Table 3专门固定c＝1测试这些训练组合，这样才能公平比较所�
 
 部署时只保留G及必要解码模块，score网络不再逐张参与采样。所以“三网络训练”可以得到“一网络一步推理”；训练开销大和推理调用少并不矛盾。
 
-#### 16.1.3 从KL目标到score差异，逐个解释符号
+#### 8.1.3 从KL目标到score差异，逐个解释符号
 
 定义x＝Gθ(z)，并令y_t＝α_t x＋σ_t ε。z是生成器的输入随机变量；ε是为了比较分布而额外加入的随机噪声。它们作用不同，不应共用一个符号。令pθ,t为生成图加噪后的分布，p*,t为目标分布加噪后的分布：
 
@@ -1461,7 +1135,7 @@ $$
 \left(s_{\mathrm{fake}}(y_t,t)-s_{\mathrm{real}}(y_t,t)\right)\right].
 $$
 
-J把图像空间的方向映射到参数空间。**下降方向是real−fake，而参数梯度里是fake−real**；梯度下降还要再减一次梯度，二者不能混写。原文实现有自己的权重与归一化，以上用于理解链式关系。第15.1节的一维高斯例子可以用来检查符号。
+J把图像空间的方向映射到参数空间。**下降方向是real−fake，而参数梯度里是fake−real**；梯度下降还要再减一次梯度，二者不能混写。原文实现有自己的权重与归一化，以上用于理解链式关系。第7.1节的一维高斯例子可以用来检查符号。
 
 为什么先加噪？目标图像和早期生成图可能落在高维空间的不同薄区域；直接比较原始分布，score可能难以估计。高斯扰动使分布平滑并产生重叠，而预训练diffusion恰好能在不同噪声层级上估计这种score。低噪声倾向强调细节，高噪声比较更粗的结构，但具体权重仍影响训练效果。
 
@@ -1473,7 +1147,7 @@ $$
 
 两份denoiser在同一个y_t上预测，因此相减时公共y_t项消去。这给出一种实现直觉：比较两者对“这张带噪图应该恢复成什么”的判断，形成生成器更新信号。real-score仍是模型估计，带有teacher自身偏差；名称中的real不意味着精确真实密度。
 
-#### 16.1.4 一次训练迭代和原版回归项
+#### 8.1.4 一次训练迭代和原版回归项
 
 ```text
 G：随机z → 生成图x
@@ -1487,19 +1161,17 @@ G：随机z → 生成图x
 
 原版回归可概括为λ·E[d(G(z_pair),y_teacher)]，实现使用LPIPS等感知距离维持大尺度结构。它在主训练中持续参与，区别于CausVid在DMD之前单独做一次ODE warm-up。原文Figure 3的双峰示例提示：只靠real score容易聚集到局部高密度区域；加入fake-score修正改善分布覆盖，但其有限训练示例仍可能遗漏一个mode，回归约束帮助恢复覆盖。不能由此推出reverse KL一般保证覆盖全部mode。
 
-#### 16.1.5 结果怎样连接到视频，以及怎样连接到水印
+#### 8.1.5 分布匹配怎样连接到视频蒸馏
 
 原版报告的一步ImageNet-64 FID为2.62、zero-shot COCO-30k为11.49。这些是图像分布质量指标，不是视频连续性指标，更不是消息恢复率。对视频的可迁移部分是**不依赖逐帧配对GT的训练信号**：当视频由自身历史rollout而来，没有与之完全对应的真实视频，仍可对其联合分布进行监督。
 
-对水印有一个关键推论：生成分布质量接近，不约束同一seed的输出轨迹，也不约束message与输出的对应关系。若希望将水印一起蒸馏，必须显式保留message条件或加入可读出约束；只说teacher和student的FID接近，不能说明teacher水印被继承。这是由目标函数推导出的研究判断，原DMD论文没有做流式水印实验。
-
 <a id="paper-dmd2"></a>
 
-### 16.2 DMD2精读：跟得上生成器的critic，以及真正来自student的中间输入
+### 8.2 DMD2精读：跟得上生成器的critic，以及真正来自student的中间输入
 
 **论文身份。** *Improved Distribution Matching Distillation for Fast Image Synthesis*；Tianwei Yin、Michaël Gharbi、Taesung Park、Richard Zhang、Eli Shechtman、Frédo Durand、William T. Freeman；MIT与Adobe Research；NeurIPS 2024，Oral由官方仓库确认。精读arXiv v2的§4、Tables 3–4、Appendices C/F。[论文](https://arxiv.org/html/2405.14867v2) · [项目](https://tianweiy.github.io/dmd2/) · [代码](https://github.com/tianweiy/DMD2) · [HF模型](https://huggingface.co/tianweiy/DMD2) · [正式发表记录](https://proceedings.neurips.cc/paper_files/paper/2024/hash/54dcf25318f9de5a7a01f0a4125c541e-Abstract-Conference.html)。专属数据仓库本轮未找到。
 
-#### 16.2.1 先分开三个改动的因果关系
+#### 8.2.1 先分开三个改动的因果关系
 
 DMD2不是“DMD多跑一步”。它先研究为什么删除回归后训练不稳，再补充real-data GAN监督，并扩展为多步student。三个改动分别对应**估计跟踪、teacher偏差、输入分布**，它们可以逐项消融。
 
@@ -1507,7 +1179,7 @@ DMD2不是“DMD多跑一步”。它先研究为什么删除回归后训练不�
 
 图源：[DMD2 v2，Figure 3](https://arxiv.org/html/2405.14867v2#S4.F3)，作者原图。与DMD图比较，绿色分支不再是固定噪声—图像对的回归，而是接入真实图像的真假判别。fake-score和GAN分类分支可以共享特征，但两者目标不同：一个估计向量score，一个输出分类结果。
 
-#### 16.2.2 TTUR：移动的目标为什么需要更快的跟踪器
+#### 8.2.2 TTUR：移动的目标为什么需要更快的跟踪器
 
 假设第k轮G的输出平均偏亮。fake-score开始学习这批亮图；但若它尚未学准，G已被更新到另一种分布，下轮用旧估计计算real−fake就会产生错误方向。critic追不上generator，形成反馈震荡。论文用平均亮度等统计量分析这一现象，而不只是给一个最终FID。
 
@@ -1515,7 +1187,7 @@ DMD2不是“DMD多跑一步”。它先研究为什么删除回归后训练不�
 
 这对视频训练尤其直观：三网络已经很贵，不能把一次“训练step”当作一次generator参数更新比较耗时。记录预算时应同时注明generator updates、critic updates与实际GPU时间。
 
-#### 16.2.3 Backward simulation究竟修复哪条分布
+#### 8.2.3 Backward simulation究竟修复哪条分布
 
 设一个4步student在t₄、t₃、t₂、t₁采样。过去常见的训练输入是“真实图x_data加噪到t₂”；但部署时t₂输入来自“G在t₃预测的图再加噪”。这两者的噪声量可以相同，图像内容分布却不同。DMD2在训练时也先运行student，获得它实际会遇到的中间状态，再监督选中阶段的clean预测。
 
@@ -1528,7 +1200,7 @@ G在早期时刻预测clean → 按下一时刻重新加噪
 
 这条链发生在**同一张图的去噪时间轴**上。Self Forcing则还处理**视频时间轴**上的历史来源：第B块的条件由先前生成的A产生。前者的成功为后者提供训练思想，但DMD2本身没有解决长视频cache滚动、镜头切换或跨chunk误差。区分这两根时间轴，就能理解为什么视频工作仍需要Self Forcing。
 
-#### 16.2.4 两张消融表应如何读
+#### 8.2.4 两张消融表应如何读
 
 ImageNet消融（arXiv v2 Table 3）按顺序移除回归、增加TTUR、再加GAN：
 
@@ -1543,21 +1215,19 @@ ImageNet消融（arXiv v2 Table 3）按顺序移除回归、增加TTUR、再加G
 
 去掉backward simulation时FID为20.66、Patch FID为24.21，CLIP同为0.332；这组比较更直接支持“模拟student实际中间输入有用”。这些数字都属于该表的10K COCO prompts设置，不与另一个30K评测直接横比。
 
-#### 16.2.5 从附录看“去掉回归”的准确边界
+#### 8.2.5 从附录看“去掉回归”的准确边界
 
 核心方法去掉主训练对大规模预生成配对数据的持续回归依赖。但Appendix F.4记录：**SDXL一步版本仍使用10K pairs做短暂回归预训练**，以改善该配置的block noise；多步版本和其他backbone不需要此调整。这个细节不否定DMD2的贡献，却意味着不能把“所有模型从第一步到最后一步都不使用配对回归”当作复现说明。
 
 同样，增加GAN意味着用到了真实图像；“不需要预生成teacher配对数据”不等于“不需要任何图像数据”。将DMD2思想移到视频时，应单独记录使用了哪几项：TTUR、backward simulation、GAN，以及是否保留ODE初始化。仅看到DMD loss命名，不能确定整套DMD2配方都已采用。
 
-**对水印的意义。** 如果writer改变了student中间状态，reader训练也应覆盖这一真实输入链，避免只在GT加噪样本上得到乐观结果。另一方面，DMD／GAN图像质量loss并不保护message；微弱水印还可能与分布质量目标竞争。可以借鉴其模拟方式，但消息目标与攻击通道仍需另行定义。
-
 <a id="paper-rolling-forcing"></a>
 
-### 16.3 Rolling Forcing精读：哪些内容仍可修改，哪些历史必须冻结
+### 8.3 Rolling Forcing精读：哪些内容仍可修改，哪些历史必须冻结
 
 **论文身份。** *Rolling Forcing: Autoregressive Long Video Diffusion in Real Time*；Kunhao Liu、Wenbo Hu、Jiale Xu、Ying Shan、Shijian Lu；Nanyang Technological University与腾讯ARC Lab；ICLR 2026。精读arXiv v1的Figure 3、Algorithms 1–2、§3.2–3.4及Appendices A/D/E。[论文](https://arxiv.org/html/2509.25161v1) · [项目](https://kunhao-liu.github.io/Rolling_Forcing_Webpage/) · [代码](https://github.com/TencentARC/RollingForcing) · [模型](https://huggingface.co/TencentARC/RollingForcing) · [正式发表记录](https://proceedings.iclr.cc/paper_files/paper/2026/hash/935151cc6cb5d8b6816133b75233775a-Abstract-Conference.html)。专属数据仓库未找到；仓库使用VidProM prompts及已有ODE初始化。
 
-#### 16.3.1 先理解它改了Self Forcing的哪一个循环
+#### 8.3.1 先理解它改了Self Forcing的哪一个循环
 
 典型Self Forcing推理有两层循环：外层依次处理A、B、C，内层对当前chunk反复去噪。A一旦完成，B只能接续它；即使B发现A里动作起势不合理，也不能修改已经提交的A。Rolling Forcing把多个尚未完成的chunk一起放进活动窗口：靠左的噪声少、靠右的噪声多，它们在窗口内双向attention。A定稿之前能参考尚未完成的B，邻接内容获得共同修正的机会。
 
@@ -1569,7 +1239,7 @@ ImageNet消融（arXiv v2 Table 3）按顺序移除回归、增加TTUR、再加G
 
 从横向看，每一行有一组尚未完成的帧，其噪声由左至右增加；从纵向看，同一帧经历多个窗口更新才离开。蓝色虚线框是初始global context，黄色虚线框是近期temporal context。红框保留梯度，绿框仍计算但不保留梯度。**红绿区别是训练计算图，不是“红框生成、绿框跳过”。**
 
-#### 16.3.2 按公式运行三个chunk，为什么输出一步不等于生成一步
+#### 8.3.2 按公式运行三个chunk，为什么输出一步不等于生成一步
 
 令K为活动chunk数，t₀＝0＜t₁＜…＜t_K为噪声时刻，C_i为当前clean历史KV。窗口从i开始，一次前向先为整个窗口预测clean结果：
 
@@ -1588,7 +1258,7 @@ $$
 
 C经过三次joint update才输出，系统却每次都输出一块。原版5阶段时也是这个关系。与StreamDiT一样，稳态输出间隔与每块停留时间分开；与某些纯flow solver不同，这里clean预测与重新加噪是显式的步骤。完成最左块后，还会做额外clean-context前向更新KV，不能将采样窗口前向当作全部开销。
 
-#### 16.3.3 Algorithm 1：为什么只选每隔K个窗口反传
+#### 8.3.3 Algorithm 1：为什么只选每隔K个窗口反传
 
 若每个重叠窗口都保留梯度，再为每个视频位置选一个预测，会存储大量重叠计算图。论文每轮随机抽相位r，只在窗口起点满足i≡r mod K时保留梯度；其余窗口照常无梯度推进，保证后面的输入仍是模型自己生成的。
 
@@ -1598,7 +1268,7 @@ C经过三次joint update才输出，系统却每次都输出一块。原版5阶
 
 这些拼接预测来自不同噪声阶段，清晰度差异可能被teacher看成异常运动。作者按50% RF＋50% SF混合训练，让相同噪声阶段的SF输出提供正则；推理仍采用RF。送入real/fake score前还会统一加一次随机噪声，这与活动窗口内的错位噪声日程是两次不同操作。
 
-#### 16.3.4 Sink不只是“把开头留着”：动态RoPE的坐标解释
+#### 8.3.4 Sink不只是“把开头留着”：动态RoPE的坐标解释
 
 近期KV负责动作连接，初始KV负责外观和整体色调。问题是：若global anchor一直使用视频最初的绝对位置，随着当前时间增长，相对距离会超出训练范围。RoPE以旋转编码位置；Query与Key的内积依赖它们的相对位置。数值上还存着同一份K，不代表模型仍以熟悉的位置关系读取它。
 
@@ -1608,7 +1278,7 @@ C经过三次joint update才输出，系统却每次都输出一块。原版5阶
 
 附录的典型可见窗口为3个global＋3个recent＋15个active latent帧，合计21；训练rollout长度则在21–27 latent帧之间变化，并用最后21帧计算DMD。**训练样本总长度与当前attention读取长度是两个量**。此外，为适配Wan首latent帧仅空间压缩的统计特性，截取监督片段时还有首帧解码再编码步骤。这些边界处理比只写“固定窗口”更接近真实复现条件。
 
-#### 16.3.5 读Table 1–2：稳定性收益与延迟口径
+#### 8.3.5 读Table 1–2：稳定性收益与延迟口径
 
 Table 1使用200个MovieGen prompts、30秒、16 FPS、832×480视频评测。作者报告RF为15.79 FPS、0.76秒延迟；§4.1明确该延迟在生成达到稳态后测量，**不代表first-frame latency**。多分钟展示与30秒量化评测也要分开。
 
@@ -1624,7 +1294,7 @@ Table 1使用200个MovieGen prompts、30秒、16 FPS、832×480视频评测。�
 
 Quality drift衡量前后5秒的imaging quality差异，小不等于人物身份、剧情和物体永久不忘。一个始终模糊的视频也可能首尾差别很小，所以必须结合绝对imaging quality与一致性指标。附录E也明确承认中途内容离开近期cache后不再保留；sink不是可随意查询整个历史的记忆库。
 
-#### 16.3.6 代码核对：同一个“流式”有算法和交付两个层面
+#### 8.3.6 代码核对：同一个“流式”有算法和交付两个层面
 
 本轮只读核对官方仓库commit `a1477d09e85dc759a6a6728f55f77f59342ce388`，未运行模型。以下位置能把论文落到实际张量操作：
 
@@ -1634,19 +1304,13 @@ Quality drift衡量前后5秒的imaging quality差异，小不等于人物身份
 
 需要特别区分的是，该文件的`inference_rolling_forcing`还分配整段output与noisy cache，并在循环结束后统一调用VAE解码。因此，**这个普通推理入口的整体存储不能由固定KV推断为与视频长度无关**，也不能直接拿它证明逐块RGB已经交付。论文的流式算法可以另行组织在线解码；仓库其他demo路径应另查，不能由这一入口否定全部部署能力。
 
-#### 16.3.7 对状态水印提出了哪些更具体的问题
-
-第一，写到pre-RoPE K中的message会在读取时旋转；固定方向的相关性检测不一定对这种坐标变换不变。可比较在旋转前写、旋转后写以及使用相对位置不变结构，但每一项都要以输出像素可读为最终标准。第二，活动窗口尚未提交的多块彼此交互，如果每块使用不同message，可能出现混合；若共享message，可以尝试联合约束，但不能预设必然更鲁棒。
-
-第三，rolling的未来块已经部分生成。用户切prompt或切message时，即使下一次调用马上换条件，窗口右侧仍有旧条件影响；应测切换后的恢复过渡区，而非只看长期平均bit accuracy。第四，永久global sink会保留旧消息条件，若希望下一镜头绑定新message，应明确reset、替换或隔离策略。这些是RF机制给出的实验变量，不是论文已经展示了水印优势。
-
 <a id="paper-causal-forcing"></a>
 
-### 16.4 Causal Forcing精读：teacher知道的答案，student是否有足够信息学到
+### 8.4 Causal Forcing精读：teacher知道的答案，student是否有足够信息学到
 
 **论文身份。** *Causal Forcing: Autoregressive Diffusion Distillation Done Right for High-Quality Real-Time Interactive Video Generation*；Hongzhou Zhu、Min Zhao、Guande He、Hang Su、Chongxuan Li、Jun Zhu；清华大学、生数科技、UT Austin、中国人民大学；ICML 2026，由官方仓库确认，未核实特殊展示类型。精读arXiv v5的§3、Tables 1–2及附录。[论文](https://arxiv.org/html/2602.02214v5) · [项目](https://thu-ml.github.io/CausalForcing.github.io/) · [代码](https://github.com/thu-ml/Causal-Forcing) · [模型](https://huggingface.co/zhuhz22/Causal-Forcing) · [官方数据文件](https://huggingface.co/zhuhz22/Causal-Forcing-data)。数据托管于HF model namespace，不能擅自改成`datasets/`路径。本节指原作，不混用同仓库的Causal Forcing++结果。
 
-#### 16.4.1 它质疑的是ODE配对，不是否定双向teacher的一切用途
+#### 8.4.1 它质疑的是ODE配对，不是否定双向teacher的一切用途
 
 回看CausVid／Self Forcing初始化：从双向teacher生成的轨迹中取中间带噪视频，让因果student回归轨迹终点。双向teacher在生成A的终点时可能参考未来B，而student预测A时看不到B。若A的监督答案随不可见的B变化，那么student接受的就是同一可见输入对应不同答案的回归问题。
 
@@ -1656,7 +1320,7 @@ Quality drift衡量前后5秒的imaging quality差异，小不等于人物身份
 
 图源：[Causal Forcing v5，Figure 3](https://arxiv.org/html/2602.02214v5#S3.F3)，作者原图。左边是完整视频状态对应终点，中间是因果条件一致的轨迹，右边展示投影到student可见状态后出现目标歧义。图下样例是作者的定性结果，不是该示意图本身构成定理。
 
-#### 16.4.2 用条件期望推导“模糊从哪里来”
+#### 8.4.2 用条件期望推导“模糊从哪里来”
 
 令u表示student能看见的全部信息，包括当前noisy chunk、时间、prompt及允许的历史；v表示它看不到的未来状态。双向teacher对当前chunk的轨迹终点为y＝f(u,v)。对固定u，v若变化，y可能也变化。student学习g(u)，MSE目标是E[‖g(u)−y‖²]。在足够函数容量下，其最优解为：
 
@@ -1673,7 +1337,7 @@ $$
 
 这项分析针对匹配特定PF-ODE轨迹的回归任务，不能推出“因果模型无法拟合由双向模型表达的分布”。后者只需重新选择一种因果生成映射，正是分布蒸馏给予的自由度。
 
-#### 16.4.3 三阶段中的history和target分别是什么
+#### 8.4.3 三阶段中的history和target分别是什么
 
 | 阶段 | 训练条件来源 | 监督目标 | 该阶段解决什么 |
 | --- | --- | --- | --- |
@@ -1692,9 +1356,9 @@ h_i是真值条件，**target却是teacher采样终点，不是数据里当前ch
 
 TF更适合这一阶段的论证也有范围：它匹配推理中的clean历史噪声形态，但数据历史与自生成历史仍不完全相同，所以后面仍有self-rollout DMD。不能将论文某个AR设置中TF胜过DF，扩展成Diffusion Forcing框架在所有noisy-history或rolling任务上都更差。
 
-#### 16.4.4 实验怎样支持“初始化真的重要”
+#### 8.4.4 实验怎样支持“初始化真的重要”
 
-作者以Wan2.1-T2V-1.3B、832×480、81帧为基本设置：3K合成视频训练AR teacher约2K步，3K causal trajectories进行ODE初始化约1K步，再进行DMD约750步。这里只复述作者实验预算，不代表本项目执行过这些训练。推理主设置仍为3 latent帧一块、4-step逐块生成。
+作者以Wan2.1-T2V-1.3B、832×480、81帧为基本设置：3K合成视频训练AR teacher约2K步，3K causal trajectories进行ODE初始化约1K步，再进行DMD约750步。这里只复述作者实验预算，不代表本综述复现过这些训练。推理主设置仍为3 latent帧一块、4-step逐块生成。
 
 Table 1主比较中，Self Forcing与Causal Forcing吞吐都为17 FPS、延迟都为0.69秒；Dynamic Degree为57→68，VisionReward为5.820→6.326，Instruction Following为48→56。三项补充质量指标来自作者100个较强运动／复杂动作prompts，量纲按原文缩放；不能将相对提升19.3%解释为增加19.3个百分点，也不能当作所有开放域视频的比例保证。
 
@@ -1702,7 +1366,7 @@ Table 2的受控消融更直接：chunk-wise下，Self Forcing式ODE＋DMD与cau
 
 还有一个读表陷阱：TF相对DF的VisionReward为1.583→3.343，但Dynamic Degree为60→50，反而降低。作者将DF的部分高运动归于崩坏，因此不能机械写成TF在所有数值上都更高；运动幅度指标与运动质量不是同一个量。Figure 2关于后续DMD未能补偿差初始化，是实验中观察到的结果，不是证明任意训练预算下都绝无可能补偿。
 
-#### 16.4.5 代码中能直接核对的输入输出
+#### 8.4.5 代码中能直接核对的输入输出
 
 本轮只读查看官方commit `da3ddf1a590f30c9edc568e11c2f77170995c31c`。在[get_causal_ode_data_chunkwise.py](https://github.com/thu-ml/Causal-Forcing/blob/da3ddf1a590f30c9edc568e11c2f77170995c31c/get_causal_ode_data_chunkwise.py#L85)中，采样过程中持续传入`clean_x=clean_latent`，保存ODE中间状态与采样终点，最后另外追加参考clean latent。两份clean具有不同语义。
 
@@ -1710,15 +1374,11 @@ Table 2的受控消融更直接：chunk-wise下，Self Forcing式ODE＋DMD与cau
 
 原作与++共用仓库。阅读chunk-wise原作应对照[causal_forcing_dmd_chunkwise.yaml](https://github.com/thu-ml/Causal-Forcing/blob/da3ddf1a590f30c9edc568e11c2f77170995c31c/configs/causal_forcing_dmd_chunkwise.yaml)，而不是把后来frame-wise 1／2-step配置和新结果混入原论文。官方现在也提供6K toy／数据文件入口，不能继续沿用此前目录中的“数据仓库未找到”。
 
-#### 16.4.6 对水印有启发的是“可见条件”，不是再加一个层的位置
+#### 8.4.6 如何与长视频方法组合
 
-设离线teacher在完整视频上生成带水印目标，但在线writer只能访问当前chunk和已生成历史。如果目标中的当前扰动还依赖不可见未来，直接让writer逐像素回归整段teacher结果，可能重现类似的条件歧义。应先固定历史、message、key和当前噪声，检查可见条件是否足以确定监督目标；或者转向明确message可恢复性的目标，而非执着复刻某份全片段扰动。
+基础Causal Forcing仍主要在短视频上训练，不以多分钟记忆为直接贡献。它的初始化思想可与rolling方案组合，但组合后的长时质量、状态管理和速度需要独立验证。初始化目标与学生可见条件一致，解决的是监督关系；活动窗口、sink和位置编码解决的是运行过程，两者可以互补，但不能把两篇论文的结果相加当成已测性能。
 
-需要同时注意reader的可见性。服务器知道chunk起点、初始noise、cache和prompt，外部验证者通常只拿到剪辑后RGB；在前者条件下能够解码，不代表后者能盲提取。Causal Forcing提供的是检查信息条件的思路，并没有替我们证明KV水印能抵抗剪辑或video edit。
-
-基础Causal Forcing仍主要在短视频上训练，不以多分钟记忆为直接贡献。它的初始化思想可与rolling方案组合，但组合后的状态、速度与水印表现需要独立验证，不能将两篇论文的优点相加当成已测结果。
-
-### 16.5 把截图中的论证连起来：五种不同的“不匹配”
+### 8.5 把截图中的论证连起来：五种不同的“不匹配”
 
 | 不匹配发生在哪里 | 一个具体例子 | 对应阅读 |
 | --- | --- | --- |
@@ -1732,4 +1392,4 @@ Diffusion Forcing给出不同位置噪声条件的统一视角；CausVid把强�
 
 截图对DF的long-horizon guidance还涉及一个值得补充的基础区别：**前向因果与反向梯度方向不同**。例如未提交A影响未来预测B，规划损失在B上定义，它的梯度可以沿B对A的依赖回到A；这不代表A前向读取真实未来。已经播放或冻结的历史则不能由这一优化回头更改。相关机制见[DF §3.3](https://arxiv.org/html/2407.01392v4#S3.SS3)，不能将其概括成任意流式系统都允许回改过去。
 
-对当前项目，最值得带走的三个研究问题是：writer训练是否面对真实自生成且已被写入的历史；消息载体经历滚动、RoPE重编码与recache时怎样变化；验证者仅有攻击后RGB时，是否仍有足够信息恢复message。可以据此设计停止重注入、原始载体淘汰、随机切入、不同message拼接和video edit实验。以上是对这些生成论文的研究推论，当前没有新增水印实验，既有KV负结果也没有因此改变。
+设计新生成方法时，可以先定位不匹配发生在何处：监督信息是否可见、训练历史是否代表自由生成、活动窗口是否覆盖真实噪声日程、位置与缓存是否适应长时运行。再选择对应的训练或系统改动，并分别评估质量、长时稳定性与交互延迟。

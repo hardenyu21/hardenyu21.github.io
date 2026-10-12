@@ -34,7 +34,8 @@ if (/\bon\w+\s*=|(?:href|src)=["']javascript:/i.test(main)) {
 
 /** 将原文章的自身引用统一到目录 URL，保持深链接可用。 */
 function rewriteSelfLinks(content) {
-  return content.replaceAll(`${sourceFilename}#`, '#');
+  return content.replaceAll(`${sourceFilename}#`, '#')
+    .replaceAll(`href="${sourceFilename}"`, 'href="index.html"');
 }
 
 /** 转义作为 HTML 文本或属性写入的文章元数据。 */
