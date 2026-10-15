@@ -3,8 +3,8 @@
     "slug": "streaming-video",
     "title": "流式视频生成：基础原理、模型架构与论文精读",
     "titleChunks": ["流式视频生成：", "基础原理、", "模型架构", "与论文精读"],
-    "summary": "从基础表示、diffusion 与 flow matching 出发，梳理因果架构、训练与推理、长期状态及实时交互，精读核心生成论文与 Forcing 系列，收录 20 篇生成／解码／系统研究和 7 篇基础读物。",
-    "date": "2026-10-12",
+    "summary": "从基础原理与 Forcing 系列出发，梳理历史梯度、KV 状态与缓存管理，精读 EditStream、Vidu S2、Zing-0.5 等交互生成报告，收录 36 篇生成／解码／系统研究和 7 篇基础读物。",
+    "date": "2026-10-15",
     "category": "Research notes",
     "tags": ["Streaming Video", "Literature Review", "Video Generation"],
     "href": "/blog/streaming-video/"

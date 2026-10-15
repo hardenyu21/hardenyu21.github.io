@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="从基础表示、diffusion 与 flow matching 出发，梳理因果架构、训练与推理、长期状态及实时交互，精读核心生成论文与 Forcing 系列，收录 20 篇生成／解码／系统研究和 7 篇基础读物。">
+  <meta name="description" content="从基础原理与 Forcing 系列出发，梳理历史梯度、KV 状态与缓存管理，精读 EditStream、Vidu S2、Zing-0.5 等交互生成报告，收录 36 篇生成／解码／系统研究和 7 篇基础读物。">
   <meta name="theme-color" content="#f4f6f9">
   <link rel="stylesheet" href="/theme.css">
   <script src="/theme.js"></script>
@@ -26,7 +26,7 @@
   <main class="article-page">
     <nav class="article-breadcrumb" aria-label="Breadcrumb"><a href="/blog/">← Blog</a><span>Streaming video</span></nav>
     <header class="article-heading">
-      <div class="article-meta"><span>Research notes</span><time datetime="2026-10-12">更新 2026-10-12</time><span>Yu Huang</span></div>
+      <div class="article-meta"><span>Research notes</span><time datetime="2026-10-15">更新 2026-10-15</time><span>Yu Huang</span></div>
       <h1><span>流式视频生成：</span><wbr><span>基础原理、</span><wbr><span>模型架构</span><wbr><span>与论文精读</span></h1>
       <ul class="article-tags"><li>Streaming Video</li><li>Literature Review</li><li>Video Generation</li></ul>
     </header>
@@ -43,13 +43,15 @@
 <li><a href="#6">6. 术语速查、常见疑问与入门阅读路径</a></li>
 <li><a href="#7">7. 重要论文精读：从生成下一块，到维护长期状态</a></li>
 <li><a href="#8-forcing">8. 帖子中的Forcing论文：从分布匹配到滚动生成与因果初始化</a></li>
+<li><a href="#9-202610">9. 2026年10月更新：从自生成历史到可学习、可管理的状态</a></li>
+<li><a href="#10-technical-report">10. 交互生成technical report精读：条件、训练与服务链路</a></li>
 </ul>
 </details>
       </aside>
-      <article id="article-body" class="article-body"><nav class="toolbar"><a href="#paper-readings">七篇重点论文精读</a><a href="#forcing-reading-path">帖子七篇 · Forcing精读路线</a><a href="streaming_video_research.md" download>下载可编辑正文</a><a href="streaming_generation_resources.md" download>下载文献与资源</a><a href="#resources">20 篇生成研究 + 7 篇基础读物</a><a href="streaming_beginner_pipeline.svg">入门流程图</a></nav>
-<p>本文聚焦流式视频生成，覆盖基础表示、diffusion与flow matching、因果架构、训练与推理、长期状态、交互、多镜头及系统性能。共收录20篇生成／解码／系统研究和7篇基础读物；作者、单位、发表状态与官方资源见<a href="#resources">文献资源附录</a>，机器可读版本见<a href="streaming_generation_catalog.json">资源目录</a>。</p>
-<p>第0–3节建立基础与架构视角，第4节梳理技术路线，第5节解释性能与质量，第6节提供术语及阅读路径。<a href="#paper-readings">第7节</a>精读七篇核心生成论文，<a href="#forcing-reading-path">第8节</a>串起Forcing路线，并展开DMD、DMD2、Rolling Forcing与Causal Forcing。</p>
-<p>范围整理于2026-10-12；文献方法与资源核实沿用各条目的2026-09-27至2026-10-03日期，不表示已检索到10月12日的新进展。论文报告值、代码事实与教学推导分别标明；本次仅整理综述内容。</p>
+      <article id="article-body" class="article-body"><nav class="toolbar"><a href="#october-update">10月更新 · 状态与梯度精读</a><a href="#paper-readings">七篇重点论文精读</a><a href="#forcing-reading-path">帖子七篇 · Forcing精读路线</a><a href="streaming_video_research.md" download>下载可编辑正文</a><a href="streaming_generation_resources.md" download>下载文献与资源</a><a href="#resources">36 篇生成研究 + 7 篇基础读物</a><a href="streaming_beginner_pipeline.svg">入门流程图</a></nav>
+<p>本文聚焦流式视频生成，覆盖基础表示、diffusion与flow matching、因果架构、训练与推理、长期状态、交互、多镜头及系统性能。共收录36篇生成／解码／系统研究和7篇基础读物；作者、单位、发表状态与官方资源见<a href="#resources">文献资源附录</a>，机器可读版本见<a href="streaming_generation_catalog.json">资源目录</a>。</p>
+<p>第0–3节建立基础与架构视角，第4节梳理技术路线，第5节解释性能与质量，第6节提供术语及阅读路径。<a href="#paper-readings">第7节</a>精读七篇核心生成论文，<a href="#forcing-reading-path">第8节</a>串起Forcing路线，并展开DMD、DMD2、Rolling Forcing与Causal Forcing。<a href="#october-update">第9节</a>补充10月的梯度、状态与缓存研究，第10节精读EditStream、Vidu S2与Zing-0.5等交互生成报告。</p>
+<p>本轮检索截至2026-10-15，新增16篇有效文献，并复查Causal Forcing++的10月修订版。新文献统一记录核实日期，旧条目保留既有发表状态来源；撤回记录单列。论文报告值、代码事实与教学推导分别标明。</p>
 
 <h2 id="0">0. 入门：一段视频是怎样从噪声生成出来的</h2>
 <h3 id="01">0.1 先建立全流程，不急着记论文名字</h3>
@@ -263,6 +265,7 @@
 <h2 id="1">1. 核心判断</h2>
 <p><strong>流式视频生成把视频从一次性整体采样，变成依赖历史状态、接收新条件并逐块提交输出的过程。</strong> 架构中的因果性、少步采样、训练历史分布与运行时状态管理共同决定它能否持续、稳定地输出。</p>
 <p>目前最值得关注的是 <strong>causal / block-causal DiT + few-step diffusion / flow matching + KV cache + streaming decoder</strong>。CausVid 打通双向模型到 causal student 的蒸馏；Self Forcing 改善生成历史带来的 exposure bias；LongLive 处理长时间运行和提示切换；Causal Forcing / ++、Causal-rCM 进一步改进初始化和 1–2 步生成。另一条路线使用滚动去噪 buffer，FIFO-Diffusion、MAGI-1、StreamDiT 是理解它的重要入口；这些路线会交叉，不能只按论文名字分类。<a href="https://arxiv.org/abs/2412.07772">CausVid</a>、<a href="https://arxiv.org/abs/2506.08009">Self Forcing</a>、<a href="https://arxiv.org/abs/2509.22622">LongLive</a>、<a href="https://arxiv.org/abs/2605.15141">Causal Forcing++</a>、<a href="https://arxiv.org/abs/2606.25473">Causal-rCM</a></p>
+<p><strong>10月更新进一步把“历史状态”拆开研究：</strong> SGF／SGF+／CSF研究梯度怎样训练历史；ID-Forcing研究KV构建来源；AGF研究历史误差敏感性；MosaiChunk、FrameFold和TempoKV分别处理检索、合并与精度。完整路线与精读见<a href="#october-update">第9节</a>。</p>
 <p>可以沿四个问题组织阅读：当前输出能看到哪些信息；训练时历史从哪里来；去噪如何在视频时间轴上调度；状态、解码和设备如何协同。长时稳定性、低首帧延迟、交互响应和高吞吐需要分别评价，不能由一个指标代替。</p>
 <h2 id="2">2. “流式”究竟指什么</h2>
 <p>至少要区分以下五种性质。论文标题中的 streaming，可能只满足其中一部分。</p>
@@ -506,6 +509,7 @@
 <p><strong>Diagonal Distillation — ICLR 2026。</strong> 前面块分配更多步骤，后面块利用已经建立的外观上下文减少步骤；训练和推理同时使用带噪历史条件，并加入 flow distribution matching。其noisy cache与Self Forcing的clean-context cache不同。<a href="https://arxiv.org/abs/2603.09488">论文</a></p>
 <p><strong>Stream Forcing — 2026-08 预印本。</strong> 将逐帧噪声水平建模为随机过程，让训练分布从独立采样逐渐过渡到符合推理时序结构的配置；研究的是训练覆盖与推理一致性的折中。论文在 UCF-101 上的 FVD 改进是该设定的证据，不是所有开放域流式大模型都已受益的证明。<a href="https://arxiv.org/abs/2608.10439">论文</a></p>
 <p><strong>Live2Diff 和 FlashDecoder 分别补足输入侧、输出侧。</strong> 前者帮助理解带真实在线输入的多噪声缓存；后者帮助理解 latent 已经生成、像素仍没来得及输出的瓶颈。</p>
+<p><strong>2026年10月扩展。</strong> 新工作已超出“更换forcing噪声配置”的单一视角：包括可学习context-writing、跨块梯度、cache provenance、历史检索与预测压缩，以及多任务交互服务。<a href="#october-update">第9.1节</a>将它们按具体问题分类，避免把所有长流改进归为exposure bias。</p>
 <h3 id="45-forcing">4.5 把几个“forcing”和蒸馏名词彻底分开</h3>
 <div class="table-wrap"><table>
 <thead>
@@ -766,6 +770,31 @@
 <td>原始像素可以不变，cache仍发生变化</td>
 </tr>
 <tr>
+<td>Context writer</td>
+<td>把已生成latent编码为供后续读取的KV的计算角色</td>
+<td>不一定是独立参数网络；SGF+才明确拆分角色参数</td>
+</tr>
+<tr>
+<td>KV provenance</td>
+<td>构建某条KV时使用过的历史上下文</td>
+<td>移除旧条目不等于抹去其他条目已经吸收的信息</td>
+</tr>
+<tr>
+<td>Replay</td>
+<td>用记录状态重算选定训练前向与梯度</td>
+<td>是否回到历史latent或历史生成，取决于detach边界</td>
+</tr>
+<tr>
+<td>Active cache / history bank</td>
+<td>当前attention读取的缓存 / 归档的历史库</td>
+<td>前者固定大小不代表CPU历史库也固定大小</td>
+</tr>
+<tr>
+<td>Residual quantization</td>
+<td>预测张量后，量化并存储预测残差</td>
+<td>压缩率、总显存和延迟是不同指标</td>
+</tr>
+<tr>
 <td>RoPE</td>
 <td>用旋转变换引入位置关系的一类编码</td>
 <td>位置管理变化可能影响缓存复用</td>
@@ -843,8 +872,9 @@
 <p><strong>长期画面连续是否意味着完整记住了历史？</strong> 不意味着。模型可能保持色调与主体外观，却遗忘较早的事件或空间布局；应分别评估身份、事件、场景记忆和交互条件的保持。</p>
 <h3 id="63">6.3 三遍阅读，每遍有一个具体目标</h3>
 <p><strong>第一遍：能画出系统。</strong> 阅读第0节、第2节与第3.1–3.4节；不要求理解每篇论文。自己画出条件、noise、DiT、sampler、VAE、RGB六个模块，并标明生成KV与VAE状态分别在哪里、两个循环沿哪个时间轴推进。</p>
-<p><strong>第二遍：能解释方法差异。</strong> 先读CausVid的推理算法，再读Self Forcing的训练示意和rollout算法，随后读LongLive的窗口、sink和recache。对每篇只回答：它改变了哪个模块，解决哪个失败模式，为此新增了什么成本？之后再读MAGI-1 / StreamDiT，理解重叠去噪；不必一开始把20篇生成相关工作全部读完。</p>
+<p><strong>第二遍：能解释方法差异。</strong> 先读CausVid的推理算法，再读Self Forcing的训练示意和rollout算法，随后读LongLive的窗口、sink和recache。对每篇只回答：它改变了哪个模块，解决哪个失败模式，为此新增了什么成本？之后再读MAGI-1 / StreamDiT，理解重叠去噪；不必一开始把36篇生成相关工作全部读完。</p>
 <p><strong>第三遍：能设计公平实验。</strong> 阅读第5节与论文消融，固定硬件、分辨率、生成长度及解码配置，分别测量首块、稳态和控制响应。把短视频质量、长时漂移和系统吞吐拆开，判断改进来自训练、采样、缓存还是工程实现。</p>
+<p><strong>接入10月进展。</strong> 在理解上述基础后，读<a href="#paper-sgf">SGF／SGF+</a>、<a href="#paper-connected-sf">CSF</a>、<a href="#paper-id-forcing">ID-Forcing</a>和<a href="#paper-agf">AGF</a>，对照画出前向历史与反向梯度；再用<a href="#paper-framefold">FrameFold</a>、<a href="#paper-mosaichunk">MosaiChunk</a>、<a href="#paper-tempokv">TempoKV</a>比较记忆预算。想理解实际交互系统，再读<a href="#paper-editstream">EditStream</a>与<a href="#paper-zing">Zing-0.5</a>。</p>
 <p>基础读物按缺口选择：不懂Q/K/V读Transformer；不懂加噪与采样读DDPM；不懂latent读LDM；不懂patch与生成主干读DiT；不懂速度场读Flow Matching。它们都是基础来源，不能用其图像实验替代流式视频上的实证。作者、单位、发表状态与官方资源统一放在下方文献附录。</p>
 <p><a id="paper-readings"></a></p>
 <h2 id="7">7. 重要论文精读：从生成下一块，到维护长期状态</h2>
@@ -1918,9 +1948,448 @@ X_{t_{j-1}}^{i+j-1}=\Psi(\hat X_0^{i+j-1},t_{j-1}),\quad j=1,\ldots,K."><math xm
 </table></div>
 <p>Diffusion Forcing给出不同位置噪声条件的统一视角；CausVid把强双向teacher与因果少步student结合；后续工作再分别处理上述具体问题。这比把所有改进都统称“消除exposure bias”更有助于判断方案是否适用于当前模型。</p>
 <p>截图对DF的long-horizon guidance还涉及一个值得补充的基础区别：<strong>前向因果与反向梯度方向不同</strong>。例如未提交A影响未来预测B，规划损失在B上定义，它的梯度可以沿B对A的依赖回到A；这不代表A前向读取真实未来。已经播放或冻结的历史则不能由这一优化回头更改。相关机制见<a href="https://arxiv.org/html/2407.01392v4#S3.SS3">DF §3.3</a>，不能将其概括成任意流式系统都允许回改过去。</p>
-<p>设计新生成方法时，可以先定位不匹配发生在何处：监督信息是否可见、训练历史是否代表自由生成、活动窗口是否覆盖真实噪声日程、位置与缓存是否适应长时运行。再选择对应的训练或系统改动，并分别评估质量、长时稳定性与交互延迟。</p><details id="resources"><summary>展开：27 篇文献的作者、单位、发表状态与官方资源</summary><h1 id="ref-_1">流式视频生成：文献与官方资源</h1>
-<p>共27篇：20篇生成／解码／系统研究，7篇基础读物。范围整理于2026-10-12；各条目保留原核实日期，未将本次整理视为重新核验。正文见<a href="index.html">流式视频生成综述</a>。</p>
-<p>作者与单位沿用原论文及官方资料；未找到不代表尚未公开。</p>
+<p>设计新生成方法时，可以先定位不匹配发生在何处：监督信息是否可见、训练历史是否代表自由生成、活动窗口是否覆盖真实噪声日程、位置与缓存是否适应长时运行。再选择对应的训练或系统改动，并分别评估质量、长时稳定性与交互延迟。</p>
+<p><a id="october-update"></a></p>
+<h2 id="9-202610">9. 2026年10月更新：从自生成历史到可学习、可管理的状态</h2>
+<p>本轮检索与资源核实截至 <strong>2026-10-15</strong>，新增16篇有效文献：12篇10月新论文，以及此前遗漏的SGF、EditStream、Vidu S2、Zing-0.5。它们均按预印本／technical report记录，未确认会议或期刊录用；此前已收录论文的发表状态仍以各自核实日期为准。本节先解释新机制，第10节精读交互生成报告。新原文已先解析为Markdown并保存在 <code>work/papers/</code>，正文中的实验数字均为作者报告，本轮没有复现实验。</p>
+<h3 id="91">9.1 用六个问题重画路线图</h3>
+<p>“自回归生成很长的视频”不再足以区分方法。假设模型生成到第100个chunk：当前图像是否清晰、早先出现过的物体是否记得、历史误差是否放大、收到新条件后多久响应，是不同问题。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>要解决的问题</th>
+<th>新代表工作</th>
+<th>改动发生在哪里</th>
+<th>阅读时抓住什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>历史如何获得未来的训练反馈？</td>
+<td>SGF、SGF+、Connected Self Forcing</td>
+<td>梯度路径与参数分工</td>
+<td>梯度停在KV、历史latent，还是回到历史生成过程？</td>
+</tr>
+<tr>
+<td>历史有一点错，未来会不会迅速变坏？</td>
+<td>AGF、CRP</td>
+<td>历史扰动训练、条件依赖结构</td>
+<td>历史来源对齐与历史误差鲁棒性不同</td>
+</tr>
+<tr>
+<td>同一段历史为何在长流中表现不同？</td>
+<td>ID-Forcing</td>
+<td>KV构建上下文与位置</td>
+<td>KV保存了怎样的上下文来源？</td>
+</tr>
+<tr>
+<td>固定预算内如何保留有用记忆？</td>
+<td>MosaiChunk、FrameFold、TempoKV</td>
+<td>检索、合并、低比特存储</td>
+<td>活跃缓存、外部历史库、总显存分别是多少？</td>
+</tr>
+<tr>
+<td>能否少算一些而保持质量？</td>
+<td>Prospective Forcing、Frequency-Step Cache</td>
+<td>未来预测、去噪中间计算复用</td>
+<td>哪些前向被省掉，哪些cache更新仍必须执行？</td>
+</tr>
+<tr>
+<td>怎样接收持续变化的外部输入？</td>
+<td>EditStream、Vidu S2、Zing-0.5、Parallel Adapter Composition</td>
+<td>条件接口、联合生成与系统执行</td>
+<td>输入何时可见、哪个状态需更新、端到端延迟是多少？</td>
+</tr>
+</tbody>
+</table></div>
+<p>DuoMatching补充另一条训练路线：视频教师管跨帧联合分布，图像教师补充单帧视觉和语义监督。它改善生成质量，但自身并不解决缓存随时间增长或交互延迟。</p>
+<p>建议阅读顺序：已有Self Forcing精读 → <strong>SGF／SGF+ → Connected Self Forcing → ID-Forcing → AGF</strong>；之后再读缓存三篇。最后将这些机制放入第10节的完整系统。以下机制解释和算例是本文组织的教学视角，具体效果以相应原文实验为准。</p>
+<p><a id="paper-sgf"></a>
+<a id="paper-sgf-plus"></a></p>
+<h3 id="92-sgfsgf">9.2 SGF与SGF+精读：未来的损失怎样教会模型“写好历史”</h3>
+<p><strong>文献定位。</strong> SGF：<em>Self Gradient Forcing: Native Long Video Extrapolation</em>，Junhao Zhuang等，JD Joy Future Academy，2026-07-22；本轮补读v2。SGF+：<em>SGF+: Decoupling Gradient Flows for Autoregressive Video Generation</em>，Zihan Su等，清华、JD Joy Future Academy、香港中文大学，2026-10-07；本轮读v2。完整作者与官方代码、权重见附录。<a href="https://arxiv.org/html/2607.20368v2">SGF原文</a> · <a href="https://arxiv.org/html/2610.10429v2">SGF+原文</a></p>
+<h4 id="921-self-forcing">9.2.1 Self Forcing还截断了什么</h4>
+<p>回忆第7节：Self Forcing让训练时的历史也来自模型自身。可是“用自己生成的历史”只是前向过程的描述。如果历史KV被detach，未来损失虽然看得见历史，却不能教会模型怎样把历史编码成更有用的KV。历史画面仍有自己的直接DMD监督；缺失的是它作为未来条件时的反馈。</p>
+<p>用教学记号表示：C把历史latent写成KV，D利用KV去噪当前chunk。在冻结历史KV的训练图中，未来损失只更新当前D；SGF恢复“未来损失→KV→C的参数”这条路径。</p>
+<h4 id="922-sgf">9.2.2 SGF的两遍计算与精确梯度边界</h4>
+<p>第一遍无梯度自回归rollout，记录干净预测X，以及随机退出去噪步对应的带噪输入Z*。第二遍用这些记录重算：在因果mask约束下构建可微的干净历史KV，再重算带噪位置的预测，用视频级DMD监督。</p>
+<div class="math-block" aria-label="M_\theta=C_\theta(\operatorname{sg}(X),0),\qquad
+\widehat X=D_\theta(Z^*,t^*;M_\theta),\qquad
+\mathcal L=\mathcal L_{\rm DMD}(\widehat X)."><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>M</mi><mi>&#x003B8;</mi></msub><mo>&#x0003D;</mo><msub><mi>C</mi><mi>&#x003B8;</mi></msub><mo stretchy="false">&#x00028;</mo><mo>sg</mo><mo stretchy="false">&#x00028;</mo><mi>X</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mover><mi>X</mi><mo>&#x0005E;</mo></mover><mo>&#x0003D;</mo><msub><mi>D</mi><mi>&#x003B8;</mi></msub><mo stretchy="false">&#x00028;</mo><msup><mi>Z</mi><mo>&#x0002A;</mo></msup><mo>&#x0002C;</mo><msup><mi>t</mi><mo>&#x0002A;</mo></msup><mi>;</mi><msub><mi>M</mi><mi>&#x003B8;</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi mathvariant="script">L</mi><mo>&#x0003D;</mo><msub><mi mathvariant="script">L</mi><mrow><mi mathvariant="normal">D</mi><mi mathvariant="normal">M</mi><mi mathvariant="normal">D</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mover><mi>X</mi><mo>&#x0005E;</mo></mover><mo stretchy="false">&#x00029;</mo><mo>&#x0002E;</mo></mrow></math></div>
+<p>这里sg表示stop-gradient。<strong>梯度能够进入C的参数，但记录的X仍然detach。</strong> 所以SGF不等于把整段多步采样图保留下来做完整BPTT，也不意味着未来损失已经回到了产生X的原始去噪过程。两个角色仍共享同一套参数，这是SGF+接下来研究的矛盾。</p>
+<h4 id="923-sgfloss">9.2.3 SGF+为何拆参数，而不是再加一种loss</h4>
+<p>SGF+把共享参数收到的梯度拆成context-writing与denoising两部分。作者在128个prompt、4个去噪步的512组测量中，观察到attention与FFN中的两类梯度系统性负对齐；报告的平均夹角分别约104.2°、106.3°。这支持“在所测模型和状态上，两种职责存在优化冲突”，不是所有视频模型的普遍定理。</p>
+<p>SGF+给两种职责各一套参数：</p>
+<div class="math-block" aria-label="M_{\theta_c}=C_{\theta_c}(\operatorname{sg}(X),0),\qquad
+\widehat X=D_{\theta_d}(Z^*,t^*;M_{\theta_c})."><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>M</mi><mrow><msub><mi>&#x003B8;</mi><mi>c</mi></msub></mrow></msub><mo>&#x0003D;</mo><msub><mi>C</mi><mrow><msub><mi>&#x003B8;</mi><mi>c</mi></msub></mrow></msub><mo stretchy="false">&#x00028;</mo><mo>sg</mo><mo stretchy="false">&#x00028;</mo><mi>X</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mover><mi>X</mi><mo>&#x0005E;</mo></mover><mo>&#x0003D;</mo><msub><mi>D</mi><mrow><msub><mi>&#x003B8;</mi><mi>d</mi></msub></mrow></msub><mo stretchy="false">&#x00028;</mo><msup><mi>Z</mi><mo>&#x0002A;</mo></msup><mo>&#x0002C;</mo><msup><mi>t</mi><mo>&#x0002A;</mo></msup><mi>;</mi><msub><mi>M</mi><mrow><msub><mi>&#x003B8;</mi><mi>c</mi></msub></mrow></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002E;</mo></mrow></math></div>
+<p>DMD仍是同一个目标。Context writer通过改善未来预测获得监督，并没有新增“正确KV标签”。两套参数初始化于同一AR模型，随后分别学习怎样存储历史与怎样完成当前去噪；它们通过attention继续交互。</p>
+<p><img alt="SGF与SGF+的两遍训练及参数分工" src="streaming_paper_figures/sgf_plus_method.png" /></p>
+<p>原图为<a href="https://arxiv.org/html/2610.10429v2#S1.F4">SGF+ Figure 4</a>。先读上半图：无梯度rollout保存两类输入。再看左下：两种计算共用θ；右下：θc与θd分离。红虚线是训练梯度，不是推理时让未来视频反过来改变已经播放的帧。</p>
+<h4 id="924">9.2.4 实验支持什么，代价是什么</h4>
+<p>作者用Wan系1.3B学生与14B教师，训练rollout为5秒，评测包含60秒及240秒长视频。24小时连续生成出现在定性结果与附录，不能当成24小时多prompt量化基准。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>SGF+ Table 3的同组测量</th>
+<th>SGF</th>
+<th>SGF+</th>
+<th>解读</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>生成器参数量</td>
+<td>约1.4B</td>
+<td>约2.8B</td>
+<td>报告方案使用两套完整参数</td>
+</tr>
+<tr>
+<td>训练每步时间</td>
+<td>11.79秒</td>
+<td>12.76秒</td>
+<td>增加约8.2%</td>
+</tr>
+<tr>
+<td>推理显存</td>
+<td>24.85 GB</td>
+<td>27.96 GB</td>
+<td>参数分离增加存储</td>
+</tr>
+<tr>
+<td>81帧推理耗时</td>
+<td>4.962秒</td>
+<td>4.969秒</td>
+<td>该工作负载下接近不变</td>
+</tr>
+</tbody>
+</table></div>
+<p>参数翻倍不自动意味着FLOPs翻倍，因为原本就需要分别做去噪和context-writing调用，SGF+是在相应调用中换用角色参数。上表只用于论文内部比较；未以可核实的统一硬件口径与其他论文横比。关键自测：<strong>SGF+训练了两个角色，不等于一次当前chunk去噪要同时跑两个完整denoiser。</strong></p>
+<p><a id="paper-connected-sf"></a></p>
+<h3 id="93-connected-self-forcing">9.3 Connected Self Forcing精读：让历史生成过程也收到未来反馈</h3>
+<p><em>Connected Self Forcing: Beyond Local Learning in Video Autoregression</em>，Dongbin Zhang等，XPeng、香港中文大学、清华；2026-10-08，v1。<a href="https://arxiv.org/html/2610.12156v1">原文</a> · <a href="https://eastbeanzhang.github.io/CSF/">项目与代码入口</a></p>
+<h4 id="931-sgflatent">9.3.1 它与SGF的差别发生在历史latent处</h4>
+<p>设第j块被写成缓存Cj，第i块在后面读取它。未来DMD梯度先到Cj，再经context writer到历史输出xj，最后进入生成xj的计算。SGF在记录的xj处停止；CSF继续回传这一段。</p>
+<div class="math-block" aria-label="g_{C_j}=\left(\frac{\partial \widehat x_i}{\partial C_j}\right)^\top g_i^{\rm DMD},\qquad
+g_{x_j}^{\rm cross}=\left(\frac{\partial C_j}{\partial\widehat x_j}\right)^\top g_{C_j}."><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>g</mi><mrow><msub><mi>C</mi><mi>j</mi></msub></mrow></msub><mo>&#x0003D;</mo><msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mfrac><mrow><mo>&#x02202;</mo><msub><mover><mi>x</mi><mo>&#x0005E;</mo></mover><mi>i</mi></msub></mrow><mrow><mo>&#x02202;</mo><msub><mi>C</mi><mi>j</mi></msub></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo>&#x022A4;</mo></msup><msubsup><mi>g</mi><mi>i</mi><mrow><mi mathvariant="normal">D</mi><mi mathvariant="normal">M</mi><mi mathvariant="normal">D</mi></mrow></msubsup><mo>&#x0002C;</mo><mspace width="2em" /><msubsup><mi>g</mi><mrow><msub><mi>x</mi><mi>j</mi></msub></mrow><mrow><mi mathvariant="normal">c</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">s</mi></mrow></msubsup><mo>&#x0003D;</mo><msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mfrac><mrow><mo>&#x02202;</mo><msub><mi>C</mi><mi>j</mi></msub></mrow><mrow><mo>&#x02202;</mo><msub><mover><mi>x</mi><mo>&#x0005E;</mo></mover><mi>j</mi></msub></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo>&#x022A4;</mo></msup><msub><mi>g</mi><mrow><msub><mi>C</mi><mi>j</mi></msub></mrow></msub><mo>&#x0002E;</mo></mrow></math></div>
+<p>直观上，某个历史块既要自己看起来好，也要给后续块提供有用条件。未来损失因此参与训练历史生成器。这是训练时的信用分配，推理仍然因果输出，不需要预知真实未来。</p>
+<h4 id="932-shortcut-gradient-replaybptt">9.3.2 Shortcut Gradient Replay不是完整BPTT</h4>
+<p>完整保留所有chunk、所有去噪步的计算图很贵。CSF先记录rollout状态，再重放选中的计算：</p>
+<ol>
+<li>重放未来chunk，把所选历史KV当作可微叶子，其他历史保持detach，求KV梯度。</li>
+<li>重放该历史块的context-writing，把梯度传到writer参数和记录的历史latent。</li>
+<li>重放该历史块的生成，把上述latent梯度用于更新生成参数。</li>
+</ol>
+<p>它通过保留KV的直接attention依赖取回<strong>选定路径</strong>的梯度，跳过中间chunk的逐块生成递归；生成反馈在目标历史块终止。Writer路径还可向更早的writer传播，但相应历史latent仍detach，防止重新进入更早的生成分支。因此不能把“connected”写成“无截断地精确恢复整段全采样梯度”。</p>
+<h4 id="933">9.3.3 消融比单个最高分更有解释力</h4>
+<p>主实验是Wan1.3B、4步、7个chunk组成21 latent帧训练序列；60秒使用40个VBench-Long prompt，240秒使用固定128个MovieGen prompt。论文控制初始化、训练预算与推理配置比较SF、SGF、CSF。</p>
+<p>在60秒Causal-CD初始化组，Avg.(6)从SF的0.8537、SGF的0.8563到CSF的0.8589；CSF Dynamic Degree为0.5976，低于SGF的0.6113。Avg.(6)明确不包含Dynamic Degree。消融中的Full BPTT为0.8529，CSF为0.8589，而减半跨块反馈会提高运动量却损失若干质量指标。证据支持该设置下更好的质量—运动折中，不支持“梯度越完整，视频必然越好”。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>重算历史KV的参数可获未来梯度</th>
+<th>历史latent收到未来反馈</th>
+<th>反馈进入历史生成</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>常规detached-cache SF</td>
+<td>否，指被detach的历史路径</td>
+<td>否</td>
+<td>否</td>
+</tr>
+<tr>
+<td>SGF</td>
+<td>是</td>
+<td>记录latent处截断</td>
+<td>否</td>
+</tr>
+<tr>
+<td>SGF+</td>
+<td>是，独立context参数</td>
+<td>记录latent处截断</td>
+<td>否</td>
+</tr>
+<tr>
+<td>CSF</td>
+<td>是</td>
+<td>是，选定路径</td>
+<td>是，shortcut replay边界内</td>
+</tr>
+</tbody>
+</table></div>
+<p>这张表描述论文讨论的训练图，不意味着各方法的完整系统、初始化与训练预算完全相同。</p>
+<p><a id="paper-id-forcing"></a></p>
+<h3 id="94-id-forcingkv">9.4 ID-Forcing精读：窗口里留下的KV，可能仍携带窗外历史</h3>
+<p><em>In-Distribution Forcing for Long Video Generation at Test Time</em>，Jeongwoo Shin等，首尔大学、高丽大学、成均馆大学、Georgia Tech；2026-10-02，所读v2更新于10月7日。<a href="https://arxiv.org/html/2610.03120v2">原文</a> · <a href="https://in-distribution-forcing.github.io/">项目</a></p>
+<h4 id="941-cachingconditioning">9.4.1 先分清caching与conditioning</h4>
+<p><strong>KV caching</strong>是把已生成latent编码成KV；<strong>KV conditioning</strong>是下一个chunk读取哪些KV。滑动窗口只限制第二件事，并不保证第一件事处于训练中见过的条件范围。</p>
+<p>例如，第6块的KV构建时读过0–5块；后来0、1块被逐出窗口，但第6块KV已经混入这些上下文。保留同样的“最近三块”，并不能保证它们与短序列训练时的KV分布相同。可用教学式表达：</p>
+<div class="math-block" aria-label="\kappa_i=E_\theta(x_i;\kappa_{&lt;i}),\qquad
+E_\theta(x_i;H_a)\ne E_\theta(x_i;H_b)\quad\text{in general}."><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x003BA;</mi><mi>i</mi></msub><mo>&#x0003D;</mo><msub><mi>E</mi><mi>&#x003B8;</mi></msub><mo stretchy="false">&#x00028;</mo><msub><mi>x</mi><mi>i</mi></msub><mi>;</mi><msub><mi>&#x003BA;</mi><mrow><mo>&#x0003C;</mo><mi>i</mi></mrow></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>E</mi><mi>&#x003B8;</mi></msub><mo stretchy="false">&#x00028;</mo><msub><mi>x</mi><mi>i</mi></msub><mi>;</mi><msub><mi>H</mi><mi>a</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x02260;</mo><msub><mi>E</mi><mi>&#x003B8;</mi></msub><mo stretchy="false">&#x00028;</mo><msub><mi>x</mi><mi>i</mi></msub><mi>;</mi><msub><mi>H</mi><mi>b</mi></msub><mo stretchy="false">&#x00029;</mo><mspace width="1em" /><mtext>in&#x000A0;general</mtext><mo>&#x0002E;</mo></mrow></math></div>
+<p>论文把这种构建来源称为KV provenance。它不是视频像素内容来源，而是<strong>一个缓存表示在计算时见过什么上下文</strong>。</p>
+<p><img alt="相同条件窗口，不同KV构建来源" src="streaming_paper_figures/id_forcing_provenance.png" /></p>
+<p>原图来自<a href="https://arxiv.org/html/2610.03120v2#S1.F2">ID-Forcing Figure 2</a>。三种设置改变第6块的缓存构建路径，而后续生成读取的窗口形式相近；下方差异用于展示构建来源的重要性。此图是案例，平均表现需看Table 1。</p>
+<h4 id="942-self-cachingrecache">9.4.2 Self-caching与受控recache如何配合</h4>
+<p>Self-caching让已生成chunk在无旧KV的条件下重新编码，得到不递归吸收任意长历史的基础KV。<strong>这是生成之后的缓存编码操作，不是让生成当前画面时丢弃全部历史。</strong></p>
+<p>完整算法还包括：保留特殊首块作为sink；将近期窗口的RoPE重新映射到训练位置范围；窗口前部使用self-cached表示，必要时在其后重算尾部的上下文KV。论文Self Forcing配置为L=3、ℓ=2，包含尾部recache；LongLive配置为L=3、ℓ=3。不能概括为“所有缓存永远只独立编码一次”。</p>
+<h4 id="943">9.4.3 哪些数据支持它</h4>
+<p>在同组128个MovieGen prompt、240秒Self Forcing实验中，Imaging Quality由58.38到67.88，Dynamic Degree由29.61到64.76。论文的Color Drift、Motion Drift已经从距离转换成0–100的分数，<strong>越高越好</strong>，不可按字面当作越小越好。</p>
+<p>120秒逐项消融很有帮助：加入sink，再加位置重映射，仍不及加入self-caching后的颜色和视觉质量；这说明仅仅保留首块、限制位置不足以解释全部收益。</p>
+<p>“in-distribution”主要针对论文所定义的缓存构建与条件配置。它不构成任意时长像素分布完全一致的证明；重编码还有计算代价，应核算每个chunk实际增加的前向，而不能因为“training-free”就写成零overhead。</p>
+<p><a id="paper-agf"></a></p>
+<h3 id="95-agf">9.5 AGF精读：见过自己的历史，还要学会承受历史误差</h3>
+<p><em>Adversarial Gradient Forcing for Robust Few-Step Autoregressive Video Generation</em>，Chenxi Xia等，浙江大学、Alibaba、南京大学；2026-10-10，v1。<a href="https://arxiv.org/html/2610.14553v1">原文</a> · <a href="https://wuli-art.github.io/Adversarial-Gradient-Forcing/">项目</a></p>
+<h4 id="951-exposure-bias">9.5.1 Exposure bias与局部敏感性是两个轴</h4>
+<p>SF让训练历史来自模型，但模型仍可能对历史中的微小偏差敏感。教学上设下一块为F(h,z)：训练覆盖了h，不自动保证F(h+δ,z)与F(h,z)都合理。AGF用未来生成质量的DMD梯度寻找对模型不利的历史扰动，再同时训练干净和扰动历史。</p>
+<h4 id="952">9.5.2 扰动不是任意高斯噪声</h4>
+<p>先无梯度rollout并记录状态，选一个历史块j，在其干净latent上加入初始为零的δ，重算它影响的后续预测。设后续DMD梯度为g，预测对δ的Jacobian为J，则历史的有害方向由J的转置把未来损失带回来。</p>
+<div class="math-block" aria-label="u=J^\top g,\qquad
+\delta^*=\operatorname{sg}\left(\varepsilon\frac{\operatorname{Mean}_{\rm time}(u)}{\operatorname{RMS}(\operatorname{Mean}_{\rm time}(u))}\right)."><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>u</mi><mo>&#x0003D;</mo><msup><mi>J</mi><mo>&#x022A4;</mo></msup><mi>g</mi><mo>&#x0002C;</mo><mspace width="2em" /><msup><mi>&#x003B4;</mi><mo>&#x0002A;</mo></msup><mo>&#x0003D;</mo><mo>sg</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mi>&#x003B5;</mi><mfrac><mrow><msub><mo>Mean</mo><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">m</mi><mi mathvariant="normal">e</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>u</mi><mo stretchy="false">&#x00029;</mo></mrow><mrow><mo>RMS</mo><mo stretchy="false">&#x00028;</mo><msub><mo>Mean</mo><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">m</mi><mi mathvariant="normal">e</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>u</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo>&#x0002E;</mo></mrow></math></div>
+<p>这是省略数值稳定项的机制式。实现把同一空间—通道扰动模式共享到该块的各latent帧，控制RMS预算；默认预算0.05。随后两分支训练：原历史分支监督全部块，扰动分支只监督j之后的块，避免要求模型把人为扰动本身当成好图像。</p>
+<p>训练前期还约束两分支<strong>首个去噪步的velocity预测</strong>接近干净分支的stop-gradient目标，缓解一开始过强扰动对学习的破坏；后期关闭该正则。它不是始终把所有未来输出强行拉成一样。</p>
+<h4 id="953">9.5.3 为什么说它主要改善长流</h4>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>作者同组比较</th>
+<th>5秒VBench Total</th>
+<th>60秒VBench Total</th>
+<th>240秒Q5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Self Forcing</td>
+<td>82.21</td>
+<td>79.56</td>
+<td>82.47</td>
+</tr>
+<tr>
+<td>Causal Forcing</td>
+<td>82.94</td>
+<td>79.83</td>
+<td>81.79</td>
+</tr>
+<tr>
+<td>LongLive</td>
+<td>80.34</td>
+<td>79.81</td>
+<td>83.62</td>
+</tr>
+<tr>
+<td>SGF</td>
+<td>82.08</td>
+<td>79.67</td>
+<td>84.07</td>
+</tr>
+<tr>
+<td>AGF</td>
+<td>82.03</td>
+<td>81.47</td>
+<td>84.82</td>
+</tr>
+</tbody>
+</table></div>
+<p>该表来自原文Table 1；Q5是五项质量指标平均值，不是VBench Total。三个时长分别使用944、240、120个prompt，不是同一批视频简单延长。AGF短视频总分并非最高，长视频优势更明显，这与“抑制误差放大”的动机相符。</p>
+<p>Table 2进一步比较同RMS的高斯扰动：240秒Q5为75.11，低于AGF的84.82；去掉首步一致性正则后为82.75。这表明收益来自所选扰动与配套稳定训练，不是任意加噪都会变好。</p>
+<p>训练使用5秒rollout、Wan1.3B四步学生与14B教师。论文报告从现成ODE初始化开始的364.4 GPU-hours；这不包含上游模型预训练和ODE初始化成本。方法值得与SGF／CSF对照：后者改变历史的训练反馈路径，AGF改变训练时要求模型承受的历史邻域；兼容性需实验，不能直接假定收益可相加。</p>
+<p><a id="paper-framefold"></a></p>
+<h3 id="96-framefold">9.6 FrameFold精读：压缩记忆时保留“读出来的内容”</h3>
+<p><em>FrameFold: Response-Guided KV Cache Consolidation for Autoregressive Long Video Generation</em>，Muyu Liu等，上海科技大学、vivo BlueImage Lab；2026-10-10，v1。<a href="https://arxiv.org/html/2610.14568v1">原文</a> · <a href="https://vivocameraresearch.github.io/FrameFold-Webpage/dist/">项目</a></p>
+<h4 id="961-attention">9.6.1 为什么attention分数高，不一定值得保留</h4>
+<p>不同空间位置的query需要不同的历史内容。全局Top-K选取可能保住总attention mass，却遗漏某些位置所需的信息。FrameFold从另一角度问：<strong>合并前后，同一批query实际读到的value是否变化很大？</strong></p>
+<p>它保护sink和近期块，在较旧历史中寻找相邻条目对；每个条目保留完整空间网格，把两个时间条目合成一个，而不是从空间上零散删token。</p>
+<h4 id="962-attention">9.6.2 从attention读出到闭式解</h4>
+<p>先按条目代表的原始帧数，对pre-RoPE keys做加权合并。固定这个合并K之后，attention权重A也固定。令合并V为αV1+(1−α)V2，则读出是一个关于α的线性函数：</p>
+<div class="math-block" aria-label="O^+(\alpha)=C+\alpha D,\qquad C=AV_2,\quad D=A(V_1-V_2),"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msup><mi>O</mi><mo>&#x0002B;</mo></msup><mo stretchy="false">&#x00028;</mo><mi>&#x003B1;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>C</mi><mo>&#x0002B;</mo><mi>&#x003B1;</mi><mi>D</mi><mo>&#x0002C;</mo><mspace width="2em" /><mi>C</mi><mo>&#x0003D;</mo><mi>A</mi><msub><mi>V</mi><mn>2</mn></msub><mo>&#x0002C;</mo><mspace width="1em" /><mi>D</mi><mo>&#x0003D;</mo><mi>A</mi><mo stretchy="false">&#x00028;</mo><msub><mi>V</mi><mn>1</mn></msub><mo>&#x02212;</mo><msub><mi>V</mi><mn>2</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo></mrow></math></div>
+<div class="math-block" aria-label="\alpha^*=\operatorname{clip}_{[0,1]}\frac{\langle D,O^- - C\rangle_F}{\|D\|_F^2}."><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msup><mi>&#x003B1;</mi><mo>&#x0002A;</mo></msup><mo>&#x0003D;</mo><msub><mo>clip</mo><mrow><mo stretchy="false">[</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">]</mo></mrow></msub><mfrac><mrow><mi>&#x027E8;</mi><mi>D</mi><mo>&#x0002C;</mo><msup><mi>O</mi><mo>&#x02212;</mo></msup><mo>&#x02212;</mo><mi>C</mi><msub><mi>&#x027E9;</mi><mi>F</mi></msub></mrow><mrow><mo fence="false" stretchy="false">&#x02016;</mo><mi>D</mi><msubsup><mo fence="false" stretchy="false">&#x02016;</mo><mi>F</mi><mn>2</mn></msubsup></mrow></mfrac><mo>&#x0002E;</mo></mrow></math></div>
+<p>O−是同一query从原始条目对读出的结果。对每个候选对算拟合误差，选失真最小的一对合并，仍超预算则重复。实际使用池化query/KV降低评分成本，将得到的系数应用于完整网格。</p>
+<p>这里的softmax在候选历史块内部归一化，称为conditional response；并非证明完整attention输出在任意未来query下都相同。闭式最优也仅限于固定K、固定query、单个共享混合系数的局部拟合问题。</p>
+<p><img alt="FrameFold的合并选择与代表构建" src="streaming_paper_figures/framefold_method.png" /></p>
+<p>原图为<a href="https://arxiv.org/html/2610.14568v1#S4.F3">Figure 3</a>。左侧是缓存超限触发，中间是逐对试算与选择，右侧展示K的跨度加权与V的闭式拟合。应把“保持空间网格”和“压缩时间历史”同时记住。</p>
+<h4 id="963">9.6.3 固定显存不等于免费计算</h4>
+<p>主要实验对齐128个prompt、480×832、30／60秒、12个frame-equivalent KV条目预算（包含当前3帧chunk）。在Self Forcing 60秒组，Imaging Quality从66.12到68.80，Dynamic Degree从55.34到62.11。另有24个prompt的480秒嵌套rollout量化实验，不能与仅有8分钟展示的工作混淆。</p>
+<p>H20计时明确<strong>排除VAE解码和视频保存</strong>：同12条目预算下，FIFO 6.39 FPS、FadeMem 6.21、FrameFold 5.56。FrameFold比FIFO慢约13%；与更大缓存基线的比较才可能同时节省计算。它的主要贡献是固定记忆容量内的质量，而不是同预算下无代价提速。</p>
+<p><a id="paper-mosaichunk"></a></p>
+<h3 id="97-mosaichunk">9.7 MosaiChunk精读：遗忘的对象需要什么粒度的历史</h3>
+<p><em>MosaiChunk: Compositing Spatio-Temporal Memory for Autoregressive Video Generation</em>，Yiwen Zhang等，Cornell、UC Berkeley、Harvard、Impossible Inc.；2026-10-01，v1。<a href="https://arxiv.org/html/2610.02153v1">原文</a> · <a href="https://mosaichunk.github.io/">项目</a></p>
+<h4 id="971">9.7.1 从“记住整块”到“只取回相关区域”</h4>
+<p>例如打开饼干盒，看见粉色星形饼干，关上很久，再次打开。近期窗口看不见最初饼干，首帧sink也未必包含它。论文先做手工KV移植：从早先chunk选取饼干区域对应的KV，加入当前条件，即使主干冻结，也能帮助恢复外观。这个干预提示KV可以作为可取回的视觉记忆。</p>
+<p>方法将每个chunk的未加RoPE的KV用balanced k-means分为等大小section；轻量descriptor encoder把pooled keys映射成描述向量。最新chunk的section作为query，在窗外历史库中检索：</p>
+<div class="math-block" aria-label="\operatorname{score}(h)=\max_{q\in\mathcal Q}\cos(d(q),d(h))."><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo>score</mo><mo stretchy="false">&#x00028;</mo><mi>h</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mo>max</mo><mrow><mi>q</mi><mo>&#x02208;</mo><mi mathvariant="script">Q</mi></mrow></msub><mi>cos</mi><mo stretchy="false">&#x00028;</mo><mi>d</mi><mo stretchy="false">&#x00028;</mo><mi>q</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mi>d</mi><mo stretchy="false">&#x00028;</mo><mi>h</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0002E;</mo></mrow></math></div>
+<p>取全局Top-N section，按归一化权重缩放V，组合成一个MosaiChunk，与近期窗口一起供冻结DiT读取。它可以来自多个不连续时间点，不必把整段旧视频塞回attention。</p>
+<h4 id="972-router">9.7.2 Router怎样训练，梯度穿过哪里</h4>
+<p>教师和学生使用同一个冻结DiT、同样的带噪输入与近期窗口，只改变far memory：教师得到覆盖重访目标的完整旧chunks，学生得到小预算检索结果。匹配两者velocity训练descriptor encoder。</p>
+<p>离散Top-N索引本身不求导，梯度通过被选section的value权重进入encoder。教师旧chunks由训练prompt阶段或相机姿态选定；这解释了它虽不需要真实目标渲染视频，却仍需要构造“何时重访何种历史”的监督关系。</p>
+<h4 id="973">9.7.3 评价应真正把物体移出视野</h4>
+<p>作者提出RememBench：100个T2V场景，以及150个I2V场景，后者包含不同角度旋转及部分平移。测试重点是离开后重访，而非始终看着同一主体。T2V基座为H3-AR，I2V为LingBot-World-Infinity。</p>
+<p>例如I2V仅旋转、1个chunk远期记忆预算下，重访CLIP中位数相对同预算Base提高0.072；WBench与WorldMark另有公开基准比较。必须区分<strong>固定活跃KV预算</strong>和<strong>总历史存储</strong>：论文把section原始KV及descriptor存入CPU bank。若持续归档而不清理，历史库仍随生成长度增长。它解决有限attention预算下的取用效率，不能据此写成整个系统恒定内存。</p>
+<p><a id="paper-tempokv"></a></p>
+<h3 id="98-tempokv">9.8 TempoKV精读：预测缓存，再低比特存残差</h3>
+<p><em>TempoKV: Predictive KV Cache Quantization for Autoregressive Video Generation</em>，Jiahui Hu等，上海交大、华南理工、Alibaba；2026-10-11，v1。<a href="https://arxiv.org/html/2610.15324v1">原文</a></p>
+<h4 id="981-kv">9.8.1 K与V的依赖为什么要分开</h4>
+<p>相邻视频latent在相同空间位置通常高度相关。论文测得K较容易由历史K预测；V单靠历史V较差，但加入当前K后明显改善。因此先恢复K，再用恢复出的K帮助恢复V，避免K与V互相依赖造成解码循环。</p>
+<div class="math-block" aria-label="\widetilde K_t=\beta_K+\sum_i A_i^K\odot\widehat K_{t-i},\qquad
+\widetilde V_t=\beta_V+W_{K\to V}\widehat K_t+\sum_j A_j^V\odot\widehat V_{t-j},"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mover><mi>K</mi><mo>&#x0007E;</mo></mover><mi>t</mi></msub><mo>&#x0003D;</mo><msub><mi>&#x003B2;</mi><mi>K</mi></msub><mo>&#x0002B;</mo><munder><mo>&#x02211;</mo><mi>i</mi></munder><msubsup><mi>A</mi><mi>i</mi><mi>K</mi></msubsup><mo>&#x02299;</mo><msub><mover><mi>K</mi><mo>&#x0005E;</mo></mover><mrow><mi>t</mi><mo>&#x02212;</mo><mi>i</mi></mrow></msub><mo>&#x0002C;</mo><mspace width="2em" /><msub><mover><mi>V</mi><mo>&#x0007E;</mo></mover><mi>t</mi></msub><mo>&#x0003D;</mo><msub><mi>&#x003B2;</mi><mi>V</mi></msub><mo>&#x0002B;</mo><msub><mi>W</mi><mrow><mi>K</mi><mo>&#x02192;</mo><mi>V</mi></mrow></msub><msub><mover><mi>K</mi><mo>&#x0005E;</mo></mover><mi>t</mi></msub><mo>&#x0002B;</mo><munder><mo>&#x02211;</mo><mi>j</mi></munder><msubsup><mi>A</mi><mi>j</mi><mi>V</mi></msubsup><mo>&#x02299;</mo><msub><mover><mi>V</mi><mo>&#x0005E;</mo></mover><mrow><mi>t</mi><mo>&#x02212;</mo><mi>j</mi></mrow></msub><mo>&#x0002C;</mo></mrow></math></div>
+<div class="math-block" aria-label="R_t=X_t-\widetilde X_t,\qquad \widehat X_t=\widetilde X_t+\operatorname{Dequant}(\operatorname{Quant}(R_t))."><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>R</mi><mi>t</mi></msub><mo>&#x0003D;</mo><msub><mi>X</mi><mi>t</mi></msub><mo>&#x02212;</mo><msub><mover><mi>X</mi><mo>&#x0007E;</mo></mover><mi>t</mi></msub><mo>&#x0002C;</mo><mspace width="2em" /><msub><mover><mi>X</mi><mo>&#x0005E;</mo></mover><mi>t</mi></msub><mo>&#x0003D;</mo><msub><mover><mi>X</mi><mo>&#x0007E;</mo></mover><mi>t</mi></msub><mo>&#x0002B;</mo><mo>Dequant</mo><mo stretchy="false">&#x00028;</mo><mo>Quant</mo><mo stretchy="false">&#x00028;</mo><msub><mi>R</mi><mi>t</mi></msub><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0002E;</mo></mrow></math></div>
+<p>默认K用2帧历史、V用1帧。首latent帧作为较高精度anchor，初始化后续预测。K误差既改变softmax attention，又进入V预测，因此K通常分配更多bit。</p>
+<h4 id="982-training-free">9.8.2 Training-free仍需要校准</h4>
+<p>模型权重不训练，但预测器需要少量BF16缓存轨迹做离线线性回归。校准输入使用量化后重建的历史，以贴近真实解码依赖；不同bit配置可以复用记录轨迹，不必重新生成。它既不是简单把KV转成int4，也不是每一步在线拟合一个预测网络。</p>
+<h4 id="983">9.8.3 压缩率、峰值显存、运行时间是三列</h4>
+<p>论文Self Forcing配置中，INT4方案把KV存储48.18 GB降至13.2 GB，峰值显存由68.27降至35.59 GB；相对BF16 337.9秒基线，生成耗时增加11.9%。最高6.71×是某低比特配置的<strong>KV压缩率</strong>，不是总显存缩减6.71倍，更不是速度提升6.71倍。</p>
+<p>保留完整历史时，低比特仅缩小每个条目的常数，条目总数仍随时长增长。论文还单独用固定180 latent帧attention窗口做质量比较，避免因为上下文不同而误判压缩质量。代码在摘要中承诺后续发布；截至核实时未找到实际仓库入口。</p>
+<p><a id="paper-prospective-forcing"></a></p>
+<h3 id="99-prospective-forcing">9.9 Prospective Forcing精读：预测未来表示，并让验证器决定能否跳算</h3>
+<p><em>Prospective Forcing: Learning to Look Ahead for Autoregressive Long Video Diffusion</em>，Yifan Shen等，MBZUAI、CMU、Institute of Foundation Models；2026-10-10，v1。<a href="https://arxiv.org/html/2610.14654v1">原文</a></p>
+<h4 id="991-rolling-forcing">9.9.1 它在Rolling Forcing上加了什么</h4>
+<p>一个窗口同时去噪W个不同噪声水平的chunk。模型取最新位置的feature，用多个轻量head分别预测未来offset的feature和velocity；各head共享当前条件、独立预测，不是第一个head预测错后让第二个继续递归。</p>
+<p>未来噪声提前采样，等对应chunk真的进入后续窗口时复用相同噪声。训练仍执行所有窗口，因此能拿到后续主干真实计算出的feature和velocity作为stop-gradient目标，加入DMD一起训练。默认W=5、offset heads为1和2。</p>
+<p>这为当前表示增加“对更远未来有用”的学习压力。训练对齐的是模型后续计算，不是提前获知用户尚未输入的未来指令。</p>
+<h4 id="992">9.9.2 候选与拒绝机制怎么工作</h4>
+<p>下一块head再加不同的可学习candidate embedding，产生多个候选。训练时找最接近后续主干输出的候选；若连最佳候选误差也超过阈值，则标为拒绝。轻量MLP verifier学习选择一个候选或全部拒绝。</p>
+<p>推理接受时可额外提交一个预测chunk并省去一次窗口主干执行；拒绝时回到常规滚动生成。这里是<strong>学习到的近似接受规则</strong>，不是LLM中保证保持原分布的精确rejection sampling。作者的理论分析有误差与稳定性条件，不意味着任意提示、任意交互切换都保持原分布。</p>
+<h4 id="993">9.9.3 为什么接受一个候选不等于速度翻倍</h4>
+<p>原文在同一A100 80GB、batch=1、BF16上比较30秒、480帧输出：标准推理有46次sampling和46次cache-update；即使不验证而全接受一个预测，sampling也只降到27次，cache-update仍为46次。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>推理模式</th>
+<th>Sampling调用</th>
+<th>Cache更新调用</th>
+<th>速度比</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>标准</td>
+<td>46</td>
+<td>46</td>
+<td>1.00×</td>
+</tr>
+<tr>
+<td>不验证，接受一个未来预测</td>
+<td>27</td>
+<td>46</td>
+<td>1.56×</td>
+</tr>
+<tr>
+<td>学习验证器</td>
+<td>37</td>
+<td>46</td>
+<td>1.20×</td>
+</tr>
+</tbody>
+</table></div>
+<p>验证器接受率32.1%；正式表中9.23 FPS，低于视频设定16 FPS的播放速度，因此该配置不能直接称为实时。200个MovieGen prompt评测中VBench Total为81.40；效果更好也不能跨论文与不同初始化、硬件、时长的分数直接排序。</p>
+<p><a id="paper-crp"></a></p>
+<h3 id="910-crp">9.10 CRP精读：没有双向视频教师，能否训练好因果模型</h3>
+<p><em>Conditional Residual Prediction: Improving Autoregressive Video Diffusion without a Bidirectional Teacher</em>，Bowen Zheng等，香港中文大学（深圳）、Tencent Hunyuan；2026-10-08，v1。<a href="https://arxiv.org/html/2610.11479v1">原文</a></p>
+<h4 id="9101">9.10.1 将历史限制为当前预测的补充</h4>
+<p>论文假设：教师强制训练中，因果模型可能过度依赖干净历史，而当前带噪输入与文本本来就能决定不少内容。CRP用<strong>共享参数</strong>的网络做两次计算：history-free分支只看当前输入和文本；history-conditioned分支看历史，预测残差。</p>
+<div class="math-block" aria-label="\widehat x_f=f_\theta(c),\qquad r=f_\theta(c,h),\qquad
+\mathcal L=\|\widehat x_f-x\|^2+\|\operatorname{sg}(\widehat x_f)+r-x\|^2."><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mover><mi>x</mi><mo>&#x0005E;</mo></mover><mi>f</mi></msub><mo>&#x0003D;</mo><msub><mi>f</mi><mi>&#x003B8;</mi></msub><mo stretchy="false">&#x00028;</mo><mi>c</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi>r</mi><mo>&#x0003D;</mo><msub><mi>f</mi><mi>&#x003B8;</mi></msub><mo stretchy="false">&#x00028;</mo><mi>c</mi><mo>&#x0002C;</mo><mi>h</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi mathvariant="script">L</mi><mo>&#x0003D;</mo><mo fence="false" stretchy="false">&#x02016;</mo><msub><mover><mi>x</mi><mo>&#x0005E;</mo></mover><mi>f</mi></msub><mo>&#x02212;</mo><mi>x</mi><msup><mo fence="false" stretchy="false">&#x02016;</mo><mn>2</mn></msup><mo>&#x0002B;</mo><mo fence="false" stretchy="false">&#x02016;</mo><mo>sg</mo><mo stretchy="false">&#x00028;</mo><msub><mover><mi>x</mi><mo>&#x0005E;</mo></mover><mi>f</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mi>r</mi><mo>&#x02212;</mo><mi>x</mi><msup><mo fence="false" stretchy="false">&#x02016;</mo><mn>2</mn></msup><mo>&#x0002E;</mo></mrow></math></div>
+<p>推理输出为两者相加；无历史的首块仅用free分支。残差分支可以读取free分支的detach hidden states，但反向信息不能传回free分支。这里“history-free”不等于unconditional，因为文本和当前噪声仍是输入。无新增参数也不等于无额外前向计算。</p>
+<h4 id="9102-vae">9.10.2 为什么同时研究VAE</h4>
+<p>视频VAE自身也有历史依赖：早先latent的误差可通过时序解码影响后续帧；首帧latent与后续四帧压缩latent的统计也不同。作者将同一个Wan VAE改用逐帧image mode，让每帧独立编码；输入端用轻量temporal patch layer合并四帧latent，输出再拆分，控制DiT token成本。这是另一个改动，应与CRP分开看消融。</p>
+<h4 id="9103">9.10.3 最强证据是控制变量实验</h4>
+<p>同样4M训练视频、256p、5秒条件下：双向参考VBench Total 77.28；因果baseline 71.14；改x0-prediction后72.41；再加CRP到77.09；再加image VAE到77.48。CRP相对其直接前项提高4.68分，不能把所有增益都算给单一改动。</p>
+<p>扩展后的Optica为2B，约15M训练视频、480p、5秒、<strong>50步采样</strong>，VBench Total 82.78。它说明无需双向视频模型参与初始化或蒸馏也能训练较强因果生成器，但不是已验证的少步实时长流方案。“没有双向视频教师”也不等于从随机权重起步：使用了图像模型初始化。</p>
+<p><a id="paper-duomatching"></a></p>
+<h3 id="911-duomatching">9.11 DuoMatching：视频联合监督之外，再加单帧边缘监督</h3>
+<p><em>DuoMatching: Joint-Marginal Distribution Matching for Few-Step Video Generation</em>，Jiahao Zhan等，CUHK、ByteDance、HKUST、CPII/InnoHK；2026-10-02，v1。<a href="https://arxiv.org/html/2610.03543v1">原文</a> · <a href="https://johnzhan2023.github.io/DuoMatching/">项目</a></p>
+<p>视频教师同时负责运动和外观，但其单帧质量与语义先验未必优于强图像模型。DuoMatching保留video joint DMD，另用image marginal DMD监督抽样帧，默认图像教师为Qwen-Image。用M表示帧抽样，机制目标为：</p>
+<div class="math-block" aria-label="\mathcal J(\theta)=D_{\rm KL}(Q_\theta\|P_v)+\omega D_{\rm KL}(MQ_\theta\|P_i)."><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi mathvariant="script">J</mi><mo stretchy="false">&#x00028;</mo><mi>&#x003B8;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mi>D</mi><mrow><mi mathvariant="normal">K</mi><mi mathvariant="normal">L</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><msub><mi>Q</mi><mi>&#x003B8;</mi></msub><mo fence="false" stretchy="false">&#x02016;</mo><msub><mi>P</mi><mi>v</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mi>&#x003C9;</mi><msub><mi>D</mi><mrow><mi mathvariant="normal">K</mi><mi mathvariant="normal">L</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>M</mi><msub><mi>Q</mi><mi>&#x003B8;</mi></msub><mo fence="false" stretchy="false">&#x02016;</mo><msub><mi>P</mi><mi>i</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002E;</mo></mrow></math></div>
+<p>关键实现并非简单把视频latent送给图像教师：二者VAE表示不兼容。LatentBridge用当前及前一video latent slice，加上该slice内的RGB帧索引，预测对应image latent；先用配对数据训练，之后冻结参数但保留输入梯度。这样不用为每次监督反传完整video decoder和image encoder。</p>
+<p>帧抽样也有设计：按相邻latent变化最大的K−1个位置分段，每段采样一个slice，减少预算全部花在静态区域。默认K=4、边缘loss权重0.4；Bridge使用29,400个OpenVid视频训练。生成评测以81帧480×832、VBench和400个挑战prompt为主，支持视觉、构图、语义改善；不要把这些短片段结果外推成任意长度记忆能力。该训练思路也可用于双向生成器，属于生成质量路线，并非流式专属状态机制。</p>
+<p><a id="paper-frequency-step-cache"></a></p>
+<h3 id="912-frequency-step-cache">9.12 Frequency-Step Cache：把“完全校准”和“局部修补”分开调度</h3>
+<p><em>Frequency-Step Cache: Separating Synchronization and Repair for Efficient Autoregressive Video Diffusion</em>，Kerry Xu等，Rice University；2026-10-11，v1。<a href="https://arxiv.org/html/2610.15922v1">原文</a></p>
+<p>这里cache的主要对象是<strong>去噪迭代中的中间计算复用</strong>，与MosaiChunk检索远期历史的目标不同。FSC安排由密到疏的完整计算anchor，承担精确同步；两次anchor之间，根据latent频率分量的变化和token距上次更新的年龄决定：整步复用、选择性token重算，或完整修补。一个信号不再同时控制“什么时候必须重置”和“这一步修多少”。</p>
+<p>论文指出SkyReels-V2上大部分加速来自整步复用，稀疏token计算更适合作为质量修补，因为稀疏执行自身也有开销。在作者同栈设置中，FSC-Speed为2.36×；与MotionCache同延迟的FSC-Quality把SSIM从0.790提高到0.821。SSIM／PSNR在这里比较<strong>相同seed下未加速模型的轨迹</strong>，不是拿真实视频当GT；它们刻画近似误差，不能替代无参考生成质量。</p>
+<p>该文还明确报告某些VBench差异未达到统计可分辨程度。因此合理结论是更好的速度—保真折中，而不是所有生成语义或真实感都显著提升。它也没有直接证明同等加速能迁移到只剩4步的蒸馏模型：可复用的去噪步数和轨迹不同，需重新测量。</p>
+<p><a id="paper-parallel-av"></a></p>
+<h3 id="913-parallel-adapter-composition">9.13 Parallel Adapter Composition：流式音视频的两种能力能否并行学习</h3>
+<p><em>Real-Time Joint Audio-Video Generation by Parallel Adapter Composition</em>，Jingyu Li、Xiaoxiao Xiang、Yiwen Guo，LIGHTSPEED／Independent Researcher；2026-10-07，所读v2更新于10月8日。<a href="https://arxiv.org/html/2610.10343v2">原文</a> · <a href="https://pac-demo-2027.github.io/demo/">官方演示</a></p>
+<p>本节讨论联合生成机制。音频与视频共同生成时，不仅需要画面连续，还要保证语音内容、节奏与口型同步。</p>
+<p>作者基于MiniMax-H3 FL2VA冻结主干，单独用clean-context teacher forcing训练causal LoRA；few-step LoRA则使用现成lightx2v Turbo。推理时将两种权重增量相加：一个改变时间可见性适应，另一个提供四步采样能力。它们不串行覆盖彼此参数，也不做合并后的联合训练；实验测得更新方向近正交，但没有训练时强制正交，也不能保证任意两个LoRA都能直接相加。</p>
+<p>每个chunk为34个视频帧，最多7个chunk上下文；输出后额外前向把干净块写入cache，首帧anchor保留。论文承认旧cache是在较早、较短上下文中编码的，仍有stale-cache错配。这与ID-Forcing所分析的状态来源形成有价值的对照：解决参数组合，不等于解决缓存构建分布。</p>
+<p>约26 FPS是在480×832、<strong>六张GPU</strong>的系统上测得，30秒持续生成是其长时验证尺度。四步因果版本WER约0.126–0.136，而双向Whole-seg为0.047；组合版本保持较好的图像质量，但口型同步也不是各配置最佳。联合流式系统的画质、语音准确性、同步和延迟必须分别报告，单个视频质量分数无法说明全部能力。</p>
+<p><a id="paper-causal-forcing-pp"></a></p>
+<h3 id="914-causal-forcing">9.14 Causal Forcing++版本复查：把完整轨迹回归换成局部一致性学习</h3>
+<p>这篇已在原目录，<strong>不是本轮新增论文</strong>；arXiv于2026-10-04更新到v4，本轮将精读与资源指向该版本。<a href="https://arxiv.org/html/2605.15141v4">v4原文</a></p>
+<h4 id="9141">9.14.1 相同目标，换一种获得监督的方式</h4>
+<p>Causal Forcing先让AR教师生成完整ODE轨迹，再用中间状态回归教师干净终点。Causal Forcing++的Stage 2使用causal consistency distillation：从数据加噪状态出发，由同一历史条件下的AR教师在线走一个相邻时间步，让学生在这两个状态上的终点预测一致。</p>
+<div class="math-block" aria-label="\mathcal L_{\rm CD}=\mathbb E\left[w(t)\,d\left(G_\theta(x_t,h,t),\operatorname{sg}\left[G_{\bar\theta}(\widehat x_{t-\Delta t},h,t-\Delta t)\right]\right)\right]."><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi mathvariant="script">L</mi><mrow><mi mathvariant="normal">C</mi><mi mathvariant="normal">D</mi></mrow></msub><mo>&#x0003D;</mo><mi mathvariant="double-struck">E</mi><mrow><mo stretchy="true" fence="true" form="prefix">[</mo><mi>w</mi><mo stretchy="false">&#x00028;</mo><mi>t</mi><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mi>d</mi><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><msub><mi>G</mi><mi>&#x003B8;</mi></msub><mo stretchy="false">&#x00028;</mo><msub><mi>x</mi><mi>t</mi></msub><mo>&#x0002C;</mo><mi>h</mi><mo>&#x0002C;</mo><mi>t</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mo>sg</mo><mrow><mo stretchy="true" fence="true" form="prefix">[</mo><msub><mi>G</mi><mrow><mover><mi>&#x003B8;</mi><mo stretchy="true">&#x000AF;</mo></mover></mrow></msub><mo stretchy="false">&#x00028;</mo><msub><mover><mi>x</mi><mo>&#x0005E;</mo></mover><mrow><mi>t</mi><mo>&#x02212;</mo><mi>&#x00394;</mi><mi>t</mi></mrow></msub><mo>&#x0002C;</mo><mi>h</mi><mo>&#x0002C;</mo><mi>t</mi><mo>&#x02212;</mo><mi>&#x00394;</mi><mi>t</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="true" fence="true" form="postfix">]</mo></mrow><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo stretchy="true" fence="true" form="postfix">]</mo></mrow><mo>&#x0002E;</mo></mrow></math></div>
+<p>h是同一个干净历史前缀，后一个G使用EMA参数。它学习的仍是AR条件流映射；“只做一个教师ODE步”描述训练监督构造，不代表最后系统所有视频都只需一步。Stage 1的AR teacher forcing与Stage 3的on-policy非对称DMD仍保留。</p>
+<h4 id="9142">9.14.2 哪部分成本下降，哪部分延迟不随步数变</h4>
+<p>论文80K视频规模下，Stage 2数据构建与训练由约11,600降到2,900 A800 GPU-hours，额外轨迹存储由约1,900 GiB变为不需要离线轨迹文件。这不是整个预训练到部署流程都减少四倍，也不是训练不再需要数据或显存。</p>
+<p>A800表中，frame-wise的1／2／4步吞吐分别为20.7／14.1／8.69 FPS，但首帧延迟均为0.27秒：因为采用ASD，<strong>首帧统一执行4步</strong>，后续才按各配置步数。由此可见，“每块少一步”不一定改善time-to-first-output。2步VBench Total为84.14，4步为84.10；不同质量子项仍有权衡。</p>
+<p>动作条件world-model扩展使用camera pose、chunk-wise四步，报告将frame-wise两步动作模型留作后续工作。不能把T2V的最快表格数字直接当成动作交互版本的已经测得性能。本轮核对的是v4的当前机制与结果，没有将未逐版本比对的内容标为v4新贡献。</p>
+<h2 id="10-technical-report">10. 交互生成technical report精读：条件、训练与服务链路</h2>
+<p>这三篇在7–9月已出现，本轮作为旧survey的遗漏补充。保留论文与报告的具体公开时间，不称为10月才发布的新模型。</p>
+<p><a id="paper-editstream"></a></p>
+<h3 id="101-editstream">10.1 EditStream：把生成、编辑与相机控制放入同一流式模型</h3>
+<p><em>EditStream: A Unified Autoregressive Framework for Interactive Video Generation and Editing</em>，Yuqian Zhou等，Adobe Research、University of Rochester；2026-08-16，v1。<a href="https://arxiv.org/html/2608.21424v1">原文</a> · <a href="https://real-time-video-research.github.io/editstream/">项目</a></p>
+<h4 id="1011">10.1.1 统一任务靠什么接口</h4>
+<p>T2V、I2V、V2V、参考图编辑、首帧编辑传播、相机重拍并非简单把所有输入拼成同一种token。EditStream区分两类条件：</p>
+<ul>
+<li><strong>像素对齐条件</strong>：源视频、mask、根据目标相机重投影的视频，与目标latent沿channel拼接，避免把attention序列长度按输入数膨胀。新增patch embedding通道零初始化。</li>
+<li><strong>参考条件</strong>：参考图或首帧沿token维输入，供attention建立外观关系。不同任务用特殊文本前缀区分，否则相同输入可能对应不同“保留／修改”要求。</li>
+</ul>
+<p>例如相机控制使用重投影视频加有效区域mask：黑色像素可能是真的黑色，也可能是没有几何覆盖，mask使两者可区分。这里的统一来自条件表示与任务语义，不是所有任务数据天然等价。</p>
+<h4 id="1012-vmmdmd">10.1.2 VMM与DMD为什么不同</h4>
+<p>DMD常在学生最终生成结果重新加噪后比较分布。VMM沿Moment Matching思路：让学生先从噪声状态做一次粗步转移，在<strong>学生实际到达的下一噪声状态</strong>比较条件velocity moments。冻结教师估计目标分布，辅助网络估计学生诱导分布，学生据其差异更新。</p>
+<p>因此二者都有教师／学生／辅助估计器，但监督所在的状态与匹配对象不同。VMM直接工作在flow velocity空间；与clean-sample moment在线性可逆参数化下有关系，却改变了时间相关梯度缩放。不能把它仅改名为“velocity形式DMD”。</p>
+<h4 id="1013">10.1.3 从双向模型到因果学生的两阶段训练</h4>
+<p>教师保持双向attention，混合全序列、首块cold-start和单块带噪／其余前后块干净的训练。注意最后一项允许教师看到clean suffix，<strong>不能称为严格因果教师</strong>。学生先teacher-forced warm-up，再在自生成历史上unroll蒸馏；因果约束由学生的block attention承担。</p>
+<p>这一做法与Causal Forcing的因果ODE教师路径不同，值得并读。报告展示了它在相应VMM训练配方中的效果，不构成“任何双向未来监督都不会产生错配”的结论。</p>
+<h4 id="1014">10.1.4 性能表怎样读</h4>
+<p>单H100、5B、1280×704、batch=1，Table 3定义首输出为首个<strong>已解码RGB块</strong>：0.90秒；稳态吞吐10.56 FPS。用两张GPU并行VAE解码与DiT可到16.10 FPS。作者也明确指出该720p设置还未达到目标实时播放速度；低首块延迟与长期不积压是不同要求。</p>
+<p>同表三种AR配方从ODE初始化+SF、VMM初始化+SF，到VMM初始化+VMM unroll，VBench Total为83.67／84.13／84.42，Dynamic Degree为48.06／66.67／79.17。这个消融支持初始化和unroll目标都影响动态性，不能只归因于“换成causal mask”。</p>
+<p><a id="paper-vidu-s2"></a></p>
+<h3 id="102-vidu-s2">10.2 Vidu S2：联合音视频、实时编辑与分层生成系统</h3>
+<p><em>Vidu S2: Real-Time Interactive, Editable, and Spatial Video Generation</em>，Jintao Zhang等，清华、Shengshu Technology；2026-09-10，technical report v1。<a href="https://arxiv.org/html/2609.11638v1">原文</a> · <a href="https://vidu.com/vidu-stream">官方入口</a></p>
+<h4 id="1021-avatarediting">10.2.1 Avatar与Editing不是同一个条件问题</h4>
+<p>Avatar使用audio-visual joint DiT，联合预测视频与音频latent，参考图提供身份／外观条件，并按segment提供不同caption。它不是简单给无声视频接一个外部音轨。Editing使用源视频和可选参考图；源与目标视频的条件交互按对应帧约束，避免目标帧任意读取不对齐的源时间片。</p>
+<p>前者需要生成跨模态同步，后者需要尽快响应持续输入的视频。两种系统的延迟容忍度和评价方式应分开，不能只用一个“实时生成”标签替代。</p>
+<h4 id="1022-self-replay-forcing">10.2.2 Self-Replay Forcing怎样跨块训练</h4>
+<p>训练先做双向适配，再用block-causal mask与TF／DF混合历史训练，之后进入Self-Replay Forcing：无梯度长rollout → 抽取自生成片段并重新加噪 → 可微因果replay → 对replay输出施加DMD与感知正则。Replay片段内部允许跨块梯度，继承自原rollout的外部历史固定。</p>
+<p>它与SGF同属“先生成、后可微重算”的思路，但replay对象、噪声状态、损失与边界不应自动当作完全相同。要判断训练算法是否等价，需逐项核对记录了什么、重算了什么、哪里detach，而不是只看名字中都有forcing。</p>
+<h4 id="1023-refiner">10.2.3 一步Refiner与两套不同噪声的历史</h4>
+<p>主干先低分辨率生成运动和粗结构，再由一步latent super-resolution refiner恢复细节。主干读取较高噪声历史以减轻细节伪影传播，refiner读取低噪声高分辨率历史保留身份与纹理。两阶段不是重复做同一件事，其cache也有不同职责。</p>
+<p>系统还包括混合attention实现、W8A8线性层、kernel fusion、CUDA Graphs和多卡context parallelism。报告25–42 FPS／720p的范围不能脱离这些执行条件理解为“任何单张消费卡均可达到”。现有公开文档不足以让本文把该范围绑定成与其他论文同硬件的公平对比。</p>
+<h4 id="1024-agent">10.2.4 读报告时要拆开模型与agent贡献</h4>
+<p>动态参考图与复杂动作不仅来自DiT，报告还包含VLM agent生成prompt、视觉反馈及参考图管理。对于“戴上饰品／脱下饰品”等交互，需区分基础模型一次调用的能力和agent多步调整的最终成功率。</p>
+<p>评估包含公开数字角色／编辑基准及内部人类偏好；全身生成与face-only API另分轨道。空间视频还涉及左右视图一致性，不能由普通单目画质直接推出。项目入口可访问，本轮未找到专属公开代码、权重和训练数据仓库；在线服务不等于可复现训练配方。</p>
+<p><a id="paper-zing"></a></p>
+<h3 id="103-zing-05">10.3 Zing-0.5：键盘与文本共同控制的可玩世界</h3>
+<p><em>Zing-0.5: Toward Playable Worlds with Real-Time Joint Action and Text Control</em>，Zing Team／SeedLeap.ai，2026-09-15，technical report v1；完整个人作者列表见附录。<a href="https://arxiv.org/html/2609.17909v1">原文</a> · <a href="https://zing.loopit.me/">项目</a> · <a href="https://github.com/seedleap/zing-world-model">代码</a> · <a href="https://huggingface.co/seedleap/zing-0.5">权重</a></p>
+<h4 id="1031-wan5b">10.3.1 两种控制在什么地方进入Wan5B</h4>
+<p>基于Wan2.2-TI2V-5B保留VAE与DiT。键盘输入用8个非负强度通道表示移动及视角转动，不把按键先转换成累计相机姿态；强度表示相对动作量，不是米或角度的严格物理单位。按latent时间窗对动作对齐后，经轻量因果encoder加入视觉token；文本按时间段通过cross-attention注入。</p>
+<p>直接动作条件避免了“计划相机轨迹”和“实际生成画面”偏离后仍不断累积姿态的一个问题，但不保证物理一致性。Action encoder约3.68M参数，只是主干的一小部分；能力仍依赖动作—视频、文本—事件的联合训练数据。</p>
+<h4 id="1032">10.3.2 为什么教师按事件段，学生按小块</h4>
+<p>一句“打开门，走进去”可能跨越多个输出chunk。报告训练segment-level教师，在一个prompt事件段内双向去噪、段间因果；学生按4 latent帧一块输出。教师提供事件尺度的分布监督，学生满足交互输出尺度。</p>
+<p>完整路线包含双向动作适配、AR教师与学生分支、因果ODE初始化／local consistency distillation、on-policy DMD。首帧单独建模为T2I，后续作为I2V继续，形成1+4n latent布局；部分阶段训练到30秒。因而不能把其长流能力描述成“全程只用5秒数据训练”。</p>
+<p>DMD还采用两遍rollout/replay，将不同长度样本打包；先计算并保存scorer梯度，再构建学生replay图，减少scorer与学生激活同时驻留的峰值。生成的历史latent仍detach，重建context表示可微，这一边界与SGF相近。</p>
+<h4 id="1033">10.3.3 文本更新时，哪些缓存留下</h4>
+<p>更新文本时刷新text KV，保留visual KV；这与LongLive在新prompt下重算历史视觉特征的recache路线不同。固定prefix sink、近期窗口以及切换后参考帧pin共享总预算；新pin替换旧pin，不是每次prompt变化就永久增加一个sink。</p>
+<p>其好处是降低切换成本并保持视觉上下文；潜在代价是旧视觉表示仍受旧条件影响。报告展示该训练配方下可用，不能推广成所有主干上“只更新文本cache”都够用。</p>
+<h4 id="1034">10.3.4 为什么这篇的实时数字更接近服务问题</h4>
+<p>报告在8张RTX 5090服务器上运行8个独立832×480 stream，每卡一份完整副本；单流未限速稳态24.63 FPS，客户端播放24 FPS。<strong>不是8卡共同生成一路24 FPS。</strong> 四步生成4 latent帧，对应常规16个视频帧；续流使用轻量TAEHV decoder，原VAE主要负责初始图像编码。</p>
+<p>服务链路包括解码后的媒体编码、H.264/fMP4片段、有限ring buffer、浏览器worker及短播放队列。发生背压时偏向保持live edge；这属于低延迟服务策略，不应和“完整保存每一帧”混为同一目标。24.63 FPS是稳态能力，不能自行换算成按键到屏幕的交互延迟。</p>
+<p>WBench Navigation使用158个case，质量评测分辨率1248×704、四步，整体81.0、consistency 88.5；这与上述480p运行配置不同。报告也承认，视觉历史不等于完整世界状态，长期交互后果与持久世界仍需要进一步支持。可玩导航演示不能直接证明可靠的长期物理模拟。</p>
+<h3 id="104">10.4 新文献共同改变了哪些认识</h3>
+<p><strong>首先，历史不仅是输入，还由模型主动构建。</strong> SF解决“历史来自谁”；SGF／SGF+／CSF讨论“历史怎样获得未来反馈”；ID-Forcing讨论“历史表示经过什么计算”；AGF／CRP讨论“模型有多依赖它”。这些是不同环节，比较时应把初始化、训练历史、梯度边界和推理cache策略分别列出。</p>
+<p><strong>其次，长期记忆与长期稳定不相同。</strong> 画面能连续生成四分钟，并不意味着可以正确恢复一分钟前离开视野的对象；RememBench式重访任务更直接。检索、合并、量化分别改变取用方式、表示方式和存储精度，不能统一用“压缩KV”概括。</p>
+<p><strong>最后，流式、实时、交互、长时四个词要各自有证据。</strong> 因果小块输出说明流式；吞吐赶上播放说明稳态实时；条件变化到画面响应需要端到端计时；长时稳定需要时长、prompt数量和动态性一起报告。新的研究没有消除这些区分，反而使它们更重要。</p>
+<h3 id="105">10.5 检索边界、撤回记录与下一轮阅读入口</h3>
+<p>本轮使用arXiv原页／全文、作者项目页及官方仓库，重点检索2026年10月流式、AR视频、长流状态与交互生成，并补入直接相关旧文。它是有选择的生成综述，不声称穷尽所有world model、机器人动作模型或多模态服务框架。新收录文献的全文版本、核实日期、作者单位及资源统一见附录；空资源项表示未找到。</p>
+<p><a href="https://arxiv.org/abs/2610.11756">Memory Forcing（2610.11756）</a>于10月8日提交、10月11日撤回，arXiv作者说明原因为严重排版问题。本轮确认撤回状态，未将摘要中的性能主张写入有效方法比较，也未计入43篇正式目录；此处仅留检索记录，后续若有新版本需重新核验。</p>
+<p>对系统研究可另读<a href="https://arxiv.org/abs/2610.09307">vLLM-Omni technical report</a>：本轮仅核对摘要所述的多阶段调度与session服务范围，未做全文精读，未计入正式目录。它是服务运行时，不能替代某个因果视频生成模型的架构说明。</p><details id="resources"><summary>展开：43 篇文献的作者、单位、发表状态与官方资源</summary><h1 id="ref-_1">流式视频生成：文献与官方资源</h1>
+<p>共43篇：36篇生成／解码／系统研究，7篇基础读物。更新于2026-10-15。本轮新增16篇，Causal Forcing++精读更新至v4；其余旧条目的发表状态保留原核实日期。正文见<a href="index.html">流式视频生成综述</a>。</p>
+<p>新条目作者来自arXiv元数据，单位核对论文署名。未找到不等于尚未公开；项目页、代码仓库、模型仓库和数据仓库分列，基座依赖不冒充本方法的新资源。</p>
 <h2 id="ref-1-fifo-diffusion-generating-infinite-videos-from-text-without-training">1. FIFO-Diffusion: Generating Infinite Videos from Text without Training</h2>
 <ul>
 <li>作者：Kim, Jihwan；Kang, Junoh；Choi, Jinyoung；Han, Bohyung</li>
@@ -1941,13 +2410,14 @@ X_{t_{j-1}}^{i+j-1}=\Psi(\hat X_0^{i+j-1},t_{j-1}),\quad j=1,\ldots,K."><math xm
 <li>单位：MIT CSAIL；Technical University of Munich。<a href="https://arxiv.org/html/2407.01392v4">论文全文</a></li>
 <li>发表状态：NeurIPS 2024。<a href="https://proceedings.neurips.cc/paper_files/paper/2024/hash/2aee1c4159e48407d68fe16ae8e6e49e-Abstract-Conference.html">核实来源</a>；核实于2026-09-27。</li>
 <li>初次提交：2024-07-01；所读版本日期：2024-12-10。</li>
-<li><a href="https://arxiv.org/abs/2407.01392">论文</a> · <a href="https://arxiv.org/html/2407.01392v4">全文</a> · <a href="#paper-diffusion-forcing">精读</a></li>
+<li><a href="https://arxiv.org/abs/2407.01392">论文</a> · <a href="https://arxiv.org/html/2407.01392v4">全文</a> · <a href="#paper-diffusion-forcing">解读</a></li>
 <li>项目主页：<a href="https://boyuan.space/diffusion-forcing/">入口1</a></li>
 <li>GitHub：<a href="https://github.com/buoyancy99/diffusion-forcing">入口1</a></li>
 <li>Hugging Face模型：核实时未找到</li>
 <li>数据资源：核实时未找到</li>
 <li>其他官方资源：<a href="https://drive.google.com/file/d/1xAOQxWcLzcFyD4zc0_rC9jGXe_uaHb7b/view?usp=sharing">入口1</a></li>
 <li>备注：官方仓库 main 为 v1.5 temporal-attention 实现；paper 分支保留原论文 RNN 实现，不应混用。 官方 Drive 包含 quick-start 权重与小型数据；未下载大文件。</li>
+<li>方法阅读日期：2026-10-03</li>
 </ul>
 <h2 id="ref-3-live2diff-live-stream-translation-via-uni-directional-attention-in-video-diffusion-models">3. Live2Diff: Live Stream Translation via Uni-directional Attention in Video Diffusion Models</h2>
 <ul>
@@ -1969,13 +2439,14 @@ X_{t_{j-1}}^{i+j-1}=\Psi(\hat X_0^{i+j-1},t_{j-1}),\quad j=1,\ldots,K."><math xm
 <li>单位：Massachusetts Institute of Technology；Adobe。<a href="https://arxiv.org/html/2412.07772v4">论文全文</a></li>
 <li>发表状态：CVPR 2025。<a href="https://causvid.github.io/">核实来源</a>；核实于2026-09-27。</li>
 <li>初次提交：2024-12-10；所读版本日期：2025-09-23。</li>
-<li><a href="https://arxiv.org/abs/2412.07772">论文</a> · <a href="https://arxiv.org/html/2412.07772v4">全文</a> · <a href="#paper-causvid">精读</a></li>
+<li><a href="https://arxiv.org/abs/2412.07772">论文</a> · <a href="https://arxiv.org/html/2412.07772v4">全文</a> · <a href="#paper-causvid">解读</a></li>
 <li>项目主页：<a href="https://causvid.github.io/">入口1</a></li>
 <li>GitHub：<a href="https://github.com/tianweiy/CausVid">入口1</a></li>
 <li>Hugging Face模型：<a href="https://huggingface.co/tianweiy/CausVid">入口1</a></li>
 <li>数据资源：核实时未找到</li>
 <li>其他官方资源：核实时未找到</li>
 <li>备注：模型与推理代码入口已核实；未找到自建完整训练数据仓库。论文报告的吞吐只对其硬件/配置成立。</li>
+<li>方法阅读日期：2026-10-03</li>
 </ul>
 <h2 id="ref-5-magi-1-autoregressive-video-generation-at-scale">5. MAGI-1: Autoregressive Video Generation at Scale</h2>
 <ul>
@@ -1983,13 +2454,14 @@ X_{t_{j-1}}^{i+j-1}=\Psi(\hat X_0^{i+j-1},t_{j-1}),\quad j=1,\ldots,K."><math xm
 <li>单位：Sand AI。<a href="https://arxiv.org/html/2505.13211v1">论文全文</a></li>
 <li>发表状态：预印本 / technical report；本轮未确认会议或期刊录用。<a href="https://arxiv.org/abs/2505.13211">核实来源</a>；核实于2026-09-27。</li>
 <li>初次提交：2025-05-19；所读版本日期：2025-05-19。</li>
-<li><a href="https://arxiv.org/abs/2505.13211">论文</a> · <a href="https://arxiv.org/html/2505.13211v1">全文</a> · <a href="#paper-magi1">精读</a></li>
+<li><a href="https://arxiv.org/abs/2505.13211">论文</a> · <a href="https://arxiv.org/html/2505.13211v1">全文</a> · <a href="#paper-magi1">解读</a></li>
 <li>项目主页：核实时未找到</li>
 <li>GitHub：<a href="https://github.com/SandAI-org/MAGI-1">入口1</a></li>
 <li>Hugging Face模型：<a href="https://huggingface.co/sand-ai/MAGI-1">入口1</a></li>
 <li>数据资源：核实时未找到</li>
 <li>其他官方资源：核实时未找到</li>
 <li>备注：技术报告另有官方 PDF：https://static.magi.world/static/files/MAGI_1.pdf。代码与模型区分 4.5B / 24B、base / distill / quant；仓库还含后续 MAGI-1.1。</li>
+<li>方法阅读日期：2026-10-03</li>
 </ul>
 <h2 id="ref-6-skyreels-v2-infinite-length-film-generative-model">6. SkyReels-V2: Infinite-length Film Generative Model</h2>
 <ul>
@@ -2011,13 +2483,14 @@ X_{t_{j-1}}^{i+j-1}=\Psi(\hat X_0^{i+j-1},t_{j-1}),\quad j=1,\ldots,K."><math xm
 <li>单位：Adobe Research；The University of Texas at Austin。<a href="https://arxiv.org/html/2506.08009v2">论文全文</a></li>
 <li>发表状态：NeurIPS 2025 Spotlight（官方仓库/arXiv 标注；论文集确认会议）。<a href="https://papers.neurips.cc/paper_files/paper/2025/hash/f4823f831af67a3ef15e41a85434422a-Abstract-Conference.html">核实来源</a>；核实于2026-09-27。</li>
 <li>初次提交：2025-06-09；所读版本日期：2025-11-10。</li>
-<li><a href="https://arxiv.org/abs/2506.08009">论文</a> · <a href="https://arxiv.org/html/2506.08009v2">全文</a> · <a href="#paper-self-forcing">精读</a></li>
+<li><a href="https://arxiv.org/abs/2506.08009">论文</a> · <a href="https://arxiv.org/html/2506.08009v2">全文</a> · <a href="#paper-self-forcing">解读</a></li>
 <li>项目主页：<a href="https://self-forcing.github.io/">入口1</a></li>
 <li>GitHub：<a href="https://github.com/guandeh17/Self-Forcing">入口1</a></li>
 <li>Hugging Face模型：<a href="https://huggingface.co/gdhe17/Self-Forcing">入口1</a></li>
 <li>数据资源：核实时未找到</li>
 <li>其他官方资源：核实时未找到</li>
 <li>备注：代码与权重可用，未找到专属完整训练数据仓库。</li>
+<li>方法阅读日期：2026-10-03</li>
 </ul>
 <h2 id="ref-8-streamdit-real-time-streaming-text-to-video-generation">8. StreamDiT: Real-Time Streaming Text-to-Video Generation</h2>
 <ul>
@@ -2025,13 +2498,14 @@ X_{t_{j-1}}^{i+j-1}=\Psi(\hat X_0^{i+j-1},t_{j-1}),\quad j=1,\ldots,K."><math xm
 <li>单位：UC Berkeley；Meta。<a href="https://arxiv.org/html/2507.03745v4">论文全文</a></li>
 <li>发表状态：CVPR 2026（作者项目页与 arXiv Comments 确认）。<a href="https://cumulo-autumn.github.io/StreamDiT/">核实来源</a>；核实于2026-09-27。</li>
 <li>初次提交：2025-07-04；所读版本日期：2026-03-27。</li>
-<li><a href="https://arxiv.org/abs/2507.03745">论文</a> · <a href="https://arxiv.org/html/2507.03745v4">全文</a> · <a href="#paper-streamdit">精读</a></li>
+<li><a href="https://arxiv.org/abs/2507.03745">论文</a> · <a href="https://arxiv.org/html/2507.03745v4">全文</a> · <a href="#paper-streamdit">解读</a></li>
 <li>项目主页：<a href="https://cumulo-autumn.github.io/StreamDiT/">入口1</a></li>
 <li>GitHub：核实时未找到</li>
 <li>Hugging Face模型：核实时未找到</li>
 <li>数据资源：核实时未找到</li>
 <li>其他官方资源：核实时未找到</li>
 <li>备注：项目页可访问；本轮未找到模型实现或权重。https://github.com/streamdit/streamdit.github.io 为网页源码，不等同于模型代码。</li>
+<li>方法阅读日期：2026-10-03</li>
 </ul>
 <h2 id="ref-9-matrix-game-20-an-open-source-real-time-and-streaming-interactive-world-model">9. Matrix-game 2.0: An open-source real-time and streaming interactive world model</h2>
 <ul>
@@ -2053,13 +2527,14 @@ X_{t_{j-1}}^{i+j-1}=\Psi(\hat X_0^{i+j-1},t_{j-1}),\quad j=1,\ldots,K."><math xm
 <li>单位：NVIDIA；MIT；HKUST (Guangzhou)；University of Hong Kong；Tsinghua University。<a href="https://arxiv.org/html/2509.22622v2">论文全文</a></li>
 <li>发表状态：ICLR 2026（官方仓库 2026-01-27 公告）。<a href="https://github.com/NVlabs/LongLive">核实来源</a>；核实于2026-09-27。</li>
 <li>初次提交：2025-09-26；所读版本日期：2025-10-13。</li>
-<li><a href="https://arxiv.org/abs/2509.22622">论文</a> · <a href="https://arxiv.org/html/2509.22622v2">全文</a> · <a href="#paper-longlive">精读</a></li>
+<li><a href="https://arxiv.org/abs/2509.22622">论文</a> · <a href="https://arxiv.org/html/2509.22622v2">全文</a> · <a href="#paper-longlive">解读</a></li>
 <li>项目主页：<a href="https://nvlabs.github.io/LongLive/">入口1</a></li>
 <li>GitHub：<a href="https://github.com/NVlabs/LongLive/tree/v1.0">入口1</a></li>
 <li>Hugging Face模型：<a href="https://huggingface.co/Efficient-Large-Model/LongLive-1.3B">入口1</a></li>
 <li>数据资源：核实时未找到</li>
 <li>其他官方资源：核实时未找到</li>
 <li>备注：旧论文代码已移至 v1.0 分支；仓库 main 当前为 2.0。</li>
+<li>方法阅读日期：2026-10-03</li>
 </ul>
 <h2 id="ref-11-streamdiffusionv2-a-streaming-system-for-dynamic-and-interactive-video-generation">11. StreamDiffusionV2: A Streaming System for Dynamic and Interactive Video Generation</h2>
 <ul>
@@ -2081,13 +2556,15 @@ X_{t_{j-1}}^{i+j-1}=\Psi(\hat X_0^{i+j-1},t_{j-1}),\quad j=1,\ldots,K."><math xm
 <li>单位：Tsinghua University；ShengShu；UT Austin；Renmin University of China。<a href="https://arxiv.org/html/2602.02214v5">论文全文</a></li>
 <li>发表状态：ICML 2026（官方仓库与 arXiv Comments 确认）。<a href="https://github.com/thu-ml/Causal-Forcing">核实来源</a>；核实于2026-10-03。</li>
 <li>初次提交：2026-02-02；所读版本日期：2026-06-01。</li>
-<li><a href="https://arxiv.org/abs/2602.02214">论文</a> · <a href="https://arxiv.org/html/2602.02214v5">全文</a> · <a href="#paper-causal-forcing">精读</a></li>
+<li><a href="https://arxiv.org/abs/2602.02214">论文</a> · <a href="https://arxiv.org/html/2602.02214v5">全文</a> · <a href="#paper-causal-forcing">解读</a></li>
 <li>项目主页：<a href="https://thu-ml.github.io/CausalForcing.github.io/">入口1</a></li>
 <li>GitHub：<a href="https://github.com/thu-ml/Causal-Forcing">入口1</a></li>
 <li>Hugging Face模型：<a href="https://huggingface.co/zhuhz22/Causal-Forcing">入口1</a></li>
 <li>数据资源：<a href="https://huggingface.co/zhuhz22/Causal-Forcing-data">入口1</a></li>
 <li>其他官方资源：核实时未找到</li>
 <li>备注：原作与 ++ 共用仓库，须固定模型路径；原作录用状态不能自动移植给 ++。 2026-10-03补核官方数据文件，托管于HF model namespace。原文沿用已归档v5；只读核对代码commit da3ddf1a590f30c9edc568e11c2f77170995c31c，未运行模型。</li>
+<li>版本复查：2026-10-15；复查arXiv版本日期；未将此操作视为重新核实原有会议录用状态。</li>
+<li>方法阅读日期：2026-10-03</li>
 </ul>
 <h2 id="ref-13-streaming-autoregressive-video-generation-via-diagonal-distillation">13. Streaming Autoregressive Video Generation via Diagonal Distillation</h2>
 <ul>
@@ -2120,16 +2597,18 @@ X_{t_{j-1}}^{i+j-1}=\Psi(\hat X_0^{i+j-1},t_{j-1}),\quad j=1,\ldots,K."><math xm
 <h2 id="ref-15-causal-forcing-scalable-few-step-autoregressive-diffusion-distillation-for-real-time-interactive-video-generation">15. Causal Forcing++: Scalable Few-Step Autoregressive Diffusion Distillation for Real-Time Interactive Video Generation</h2>
 <ul>
 <li>作者：Zhao, Min；Zhu, Hongzhou；Zheng, Kaiwen；Zhou, Zihan；Yan, Bokai；Li, Xinyuan；Yang, Xiao；Li, Chongxuan；Zhu, Jun</li>
-<li>单位：Tsinghua University；ShengShu；Renmin University of China。<a href="https://arxiv.org/html/2605.15141v3">论文全文</a></li>
+<li>单位：Tsinghua University；ShengShu；Renmin University of China。<a href="https://arxiv.org/html/2605.15141v4">论文全文</a></li>
 <li>发表状态：预印本 / technical report；本轮未确认会议或期刊录用。<a href="https://arxiv.org/abs/2605.15141">核实来源</a>；核实于2026-09-27。</li>
-<li>初次提交：2026-05-14；所读版本日期：2026-06-01。</li>
-<li><a href="https://arxiv.org/abs/2605.15141">论文</a> · <a href="https://arxiv.org/html/2605.15141v3">全文</a></li>
+<li>初次提交：2026-05-14；所读版本日期：2026-10-04。</li>
+<li><a href="https://arxiv.org/abs/2605.15141">论文</a> · <a href="https://arxiv.org/html/2605.15141v4">全文</a> · <a href="#paper-causal-forcing-pp">解读</a></li>
 <li>项目主页：<a href="https://thu-ml.github.io/CausalForcing.github.io/">入口1</a></li>
 <li>GitHub：<a href="https://github.com/thu-ml/Causal-Forcing">入口1</a></li>
 <li>Hugging Face模型：<a href="https://huggingface.co/zhuhz22/Causal-Forcing">入口1</a></li>
 <li>数据资源：核实时未找到</li>
 <li>其他官方资源：核实时未找到</li>
 <li>备注：framewise 1 / 2-step 权重在 causal-forcing++ 子目录。world-model 扩展代码：https://github.com/shengshu-ai/minWM；模型：https://huggingface.co/MIN-Lab/minWM。</li>
+<li>版本复查：2026-10-15；复查arXiv版本日期；未将此操作视为重新核实原有会议录用状态。</li>
+<li>方法阅读日期：2026-10-15</li>
 </ul>
 <h2 id="ref-16-longlive-20-an-nvfp4-parallel-infrastructure-for-long-video-generation">16. LongLive-2.0: An NVFP4 Parallel Infrastructure for Long Video Generation</h2>
 <ul>
@@ -2137,13 +2616,15 @@ X_{t_{j-1}}^{i+j-1}=\Psi(\hat X_0^{i+j-1},t_{j-1}),\quad j=1,\ldots,K."><math xm
 <li>单位：NVIDIA（原文署名）。<a href="https://arxiv.org/html/2605.18739v2">论文全文</a></li>
 <li>发表状态：预印本 / technical report；本轮未确认会议或期刊录用。<a href="https://arxiv.org/abs/2605.18739">核实来源</a>；核实于2026-09-27。</li>
 <li>初次提交：2026-05-18；所读版本日期：2026-05-19。</li>
-<li><a href="https://arxiv.org/abs/2605.18739">论文</a> · <a href="https://arxiv.org/html/2605.18739v2">全文</a> · <a href="#paper-longlive2">精读</a></li>
+<li><a href="https://arxiv.org/abs/2605.18739">论文</a> · <a href="https://arxiv.org/html/2605.18739v2">全文</a> · <a href="#paper-longlive2">解读</a></li>
 <li>项目主页：<a href="https://nvlabs.github.io/LongLive/LongLive2/">入口1</a></li>
 <li>GitHub：<a href="https://github.com/NVlabs/LongLive">入口1</a></li>
 <li>Hugging Face模型：<a href="https://huggingface.co/Efficient-Large-Model/LongLive-2.0-5B">入口1</a></li>
 <li>数据资源：<a href="https://huggingface.co/datasets/Efficient-Large-Model/LongLive2.0-Toy-Dataset">入口1</a></li>
 <li>其他官方资源：核实时未找到</li>
 <li>备注：另有 LongLive-2.0-5B-NVFP4-S2 / S4 权重；文档：https://nvlabs.github.io/LongLive/LongLive2/docs/。网页由 JS 加载，普通文本抓取不足时依据仓库和原文。 数据链接为官方 toy dataset，不等于完整训练集。</li>
+<li>版本复查：2026-10-15；复查arXiv版本日期；未将此操作视为重新核实原有会议录用状态。</li>
+<li>方法阅读日期：2026-10-03</li>
 </ul>
 <h2 id="ref-17-causal-rcm-a-unified-teacher-forcing-and-self-forcing-open-recipe-for-autoregressive-diffusion-distillation-in-streaming-video-generation-and-interactive-world-models">17. Causal-rCM: A Unified Teacher-Forcing and Self-Forcing Open Recipe for Autoregressive Diffusion Distillation in Streaming Video Generation and Interactive World Models</h2>
 <ul>
@@ -2158,6 +2639,7 @@ X_{t_{j-1}}^{i+j-1}=\Psi(\hat X_0^{i+j-1},t_{j-1}),\quad j=1,\ldots,K."><math xm
 <li>数据资源：<a href="https://huggingface.co/datasets/worstcoder/Wan_datasets">入口1</a></li>
 <li>其他官方资源：核实时未找到</li>
 <li>备注：rCM 仓库的 ICLR 2026 标识不自动属于这篇 Causal-rCM。复现入口为 Causal_rCM.md；所列数据为仓库提供的合成训练数据，专属 causal checkpoint 下载入口见核验备注。 已读取官方 Causal_rCM.md，给出本地 checkpoint 命名与运行命令，但本轮未找到专属 causal 权重下载链接。</li>
+<li>版本复查：2026-10-15；复查arXiv版本日期；未将此操作视为重新核实原有会议录用状态。</li>
 </ul>
 <h2 id="ref-18-flashdecoder-real-time-latent-to-pixel-streaming-decoder-with-transformers">18. FlashDecoder: Real-Time Latent-to-Pixel Streaming Decoder with Transformers</h2>
 <ul>
@@ -2186,12 +2668,14 @@ X_{t_{j-1}}^{i+j-1}=\Psi(\hat X_0^{i+j-1},t_{j-1}),\quad j=1,\ldots,K."><math xm
 <li>数据资源：核实时未找到</li>
 <li>其他官方资源：核实时未找到</li>
 <li>备注：较新的训练噪声调度论文；本文选读方法与实验设定，不把 UCF-101 FVD 改进直接解释为开放域高分辨率实时质量提升。</li>
+<li>版本复查：2026-10-15；复查arXiv版本日期；未将此操作视为重新核实原有会议录用状态。</li>
 </ul>
 <h2 id="ref-20-attention-is-all-you-need">20. Attention Is All You Need</h2>
 <ul>
 <li>作者：Ashish Vaswani；Noam Shazeer；Niki Parmar；Jakob Uszkoreit；Llion Jones；Aidan N. Gomez；Łukasz Kaiser；Illia Polosukhin</li>
 <li>单位：Google Brain；Google Research；University of Toronto。<a href="https://arxiv.org/html/1706.03762v7">论文全文</a></li>
 <li>发表状态：NIPS 2017；展示类型未核实。<a href="https://proceedings.neurips.cc/paper_files/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html">核实来源</a>；核实于2026-10-02。</li>
+<li>初次提交：未记录；所读版本日期：未记录。</li>
 <li><a href="https://arxiv.org/abs/1706.03762">论文</a> · <a href="https://arxiv.org/html/1706.03762v7">全文</a></li>
 <li>项目主页：核实时未找到</li>
 <li>GitHub：<a href="https://github.com/tensorflow/tensor2tensor">入口1</a></li>
@@ -2205,6 +2689,7 @@ X_{t_{j-1}}^{i+j-1}=\Psi(\hat X_0^{i+j-1},t_{j-1}),\quad j=1,\ldots,K."><math xm
 <li>作者：Jonathan Ho；Ajay Jain；Pieter Abbeel</li>
 <li>单位：UC Berkeley。<a href="https://arxiv.org/html/2006.11239v2">论文全文</a></li>
 <li>发表状态：NeurIPS 2020；展示类型未核实。<a href="https://proceedings.neurips.cc/paper/2020/hash/4c5bcfec8584af0d967f1ab10179ca4b-Abstract.html">核实来源</a>；核实于2026-10-02。</li>
+<li>初次提交：未记录；所读版本日期：未记录。</li>
 <li><a href="https://arxiv.org/abs/2006.11239">论文</a> · <a href="https://arxiv.org/html/2006.11239v2">全文</a></li>
 <li>项目主页：<a href="https://hojonathanho.github.io/diffusion/">入口1</a></li>
 <li>GitHub：<a href="https://github.com/hojonathanho/diffusion">入口1</a></li>
@@ -2218,6 +2703,7 @@ X_{t_{j-1}}^{i+j-1}=\Psi(\hat X_0^{i+j-1},t_{j-1}),\quad j=1,\ldots,K."><math xm
 <li>作者：Robin Rombach；Andreas Blattmann；Dominik Lorenz；Patrick Esser；Björn Ommer</li>
 <li>单位：LMU Munich；IWR, Heidelberg University；Runway。<a href="https://arxiv.org/html/2112.10752v2">论文全文</a></li>
 <li>发表状态：CVPR 2022 Oral。<a href="https://ommer-lab.com/research/latent-diffusion-models/">核实来源</a>；核实于2026-10-02。</li>
+<li>初次提交：未记录；所读版本日期：未记录。</li>
 <li><a href="https://arxiv.org/abs/2112.10752">论文</a> · <a href="https://arxiv.org/html/2112.10752v2">全文</a></li>
 <li>项目主页：<a href="https://ommer-lab.com/research/latent-diffusion-models/">入口1</a></li>
 <li>GitHub：<a href="https://github.com/CompVis/latent-diffusion">入口1</a></li>
@@ -2231,6 +2717,7 @@ X_{t_{j-1}}^{i+j-1}=\Psi(\hat X_0^{i+j-1},t_{j-1}),\quad j=1,\ldots,K."><math xm
 <li>作者：William Peebles；Saining Xie</li>
 <li>单位：UC Berkeley；New York University；Meta AI FAIR（论文注明实习期间工作）。<a href="https://arxiv.org/html/2212.09748v2">论文全文</a></li>
 <li>发表状态：ICCV 2023 Oral。<a href="https://www.wpeebles.com/DiT">核实来源</a>；核实于2026-10-02。</li>
+<li>初次提交：未记录；所读版本日期：未记录。</li>
 <li><a href="https://arxiv.org/abs/2212.09748">论文</a> · <a href="https://arxiv.org/html/2212.09748v2">全文</a></li>
 <li>项目主页：<a href="https://www.wpeebles.com/DiT">入口1</a></li>
 <li>GitHub：<a href="https://github.com/facebookresearch/DiT">入口1</a></li>
@@ -2244,6 +2731,7 @@ X_{t_{j-1}}^{i+j-1}=\Psi(\hat X_0^{i+j-1},t_{j-1}),\quad j=1,\ldots,K."><math xm
 <li>作者：Yaron Lipman；Ricky T. Q. Chen；Heli Ben-Hamu；Maximilian Nickel；Matt Le</li>
 <li>单位：Meta AI FAIR；Weizmann Institute of Science。<a href="https://arxiv.org/html/2210.02747v2">论文全文</a></li>
 <li>发表状态：ICLR 2023；展示类型本次未进一步确认。<a href="https://openreview.net/pdf?id=PqvMRDCJT9t">核实来源</a>；核实于2026-10-02。</li>
+<li>初次提交：未记录；所读版本日期：未记录。</li>
 <li><a href="https://arxiv.org/abs/2210.02747">论文</a> · <a href="https://arxiv.org/html/2210.02747v2">全文</a></li>
 <li>项目主页：核实时未找到</li>
 <li>GitHub：<a href="https://github.com/facebookresearch/flow_matching">入口1</a></li>
@@ -2258,13 +2746,15 @@ X_{t_{j-1}}^{i+j-1}=\Psi(\hat X_0^{i+j-1},t_{j-1}),\quad j=1,\ldots,K."><math xm
 <li>单位：Nanyang Technological University；ARC Lab, Tencent PCG。<a href="https://arxiv.org/html/2509.25161v1">论文全文</a></li>
 <li>发表状态：ICLR 2026；特殊展示类型未核实。<a href="https://proceedings.iclr.cc/paper_files/paper/2026/hash/935151cc6cb5d8b6816133b75233775a-Abstract-Conference.html">核实来源</a>；核实于2026-10-03。</li>
 <li>初次提交：2025-09-29；所读版本日期：2025-09-29。</li>
-<li><a href="https://arxiv.org/abs/2509.25161">论文</a> · <a href="https://arxiv.org/html/2509.25161v1">全文</a> · <a href="#paper-rolling-forcing">精读</a></li>
+<li><a href="https://arxiv.org/abs/2509.25161">论文</a> · <a href="https://arxiv.org/html/2509.25161v1">全文</a> · <a href="#paper-rolling-forcing">解读</a></li>
 <li>项目主页：<a href="https://kunhao-liu.github.io/Rolling_Forcing_Webpage/">入口1</a></li>
 <li>GitHub：<a href="https://github.com/TencentARC/RollingForcing">入口1</a></li>
 <li>Hugging Face模型：<a href="https://huggingface.co/TencentARC/RollingForcing">入口1</a></li>
 <li>数据资源：核实时未找到</li>
 <li>其他官方资源：<a href="https://huggingface.co/spaces/TencentARC/RollingForcing">入口1</a></li>
 <li>备注：官方演示Space可找到，但本轮页面报告环境配置错误，不将其视为可运行验证。代码只读核对commit a1477d09e85dc759a6a6728f55f77f59342ce388；未运行模型。</li>
+<li>版本复查：2026-10-15；复查arXiv版本日期；未将此操作视为重新核实原有会议录用状态。</li>
+<li>方法阅读日期：2026-10-03</li>
 </ul>
 <h2 id="ref-26-one-step-diffusion-with-distribution-matching-distillation">26. One-step Diffusion with Distribution Matching Distillation</h2>
 <ul>
@@ -2272,28 +2762,269 @@ X_{t_{j-1}}^{i+j-1}=\Psi(\hat X_0^{i+j-1},t_{j-1}),\quad j=1,\ldots,K."><math xm
 <li>单位：Massachusetts Institute of Technology；Adobe Research。<a href="https://arxiv.org/html/2311.18828v4">论文全文</a></li>
 <li>发表状态：CVPR 2024；特殊展示类型未核实。<a href="https://openaccess.thecvf.com/content/CVPR2024/html/Yin_One-step_Diffusion_with_Distribution_Matching_Distillation_CVPR_2024_paper.html">核实来源</a>；核实于2026-10-03。</li>
 <li>初次提交：2023-11-30；所读版本日期：2024-10-04。</li>
-<li><a href="https://arxiv.org/abs/2311.18828">论文</a> · <a href="https://arxiv.org/html/2311.18828v4">全文</a> · <a href="#paper-dmd">精读</a></li>
+<li><a href="https://arxiv.org/abs/2311.18828">论文</a> · <a href="https://arxiv.org/html/2311.18828v4">全文</a> · <a href="#paper-dmd">解读</a></li>
 <li>项目主页：<a href="https://tianweiy.github.io/dmd/">入口1</a></li>
 <li>GitHub：核实时未找到</li>
 <li>Hugging Face模型：核实时未找到</li>
 <li>数据资源：核实时未找到</li>
 <li>其他官方资源：核实时未找到</li>
 <li>备注：本轮未找到独立的原版官方代码、HF模型及专属数据仓库；DMD2是后续方法，不直接标成DMD原版实现。</li>
+<li>方法阅读日期：2026-10-03</li>
 </ul>
 <h2 id="ref-27-improved-distribution-matching-distillation-for-fast-image-synthesis">27. Improved Distribution Matching Distillation for Fast Image Synthesis</h2>
 <ul>
 <li>作者：Yin, Tianwei；Gharbi, Michaël；Park, Taesung；Zhang, Richard；Shechtman, Eli；Durand, Fredo；Freeman, William T.</li>
 <li>单位：Massachusetts Institute of Technology；Adobe Research。<a href="https://arxiv.org/html/2405.14867v2">论文全文</a></li>
 <li>发表状态：NeurIPS 2024 Oral（官方仓库明确标注Oral）。<a href="https://proceedings.neurips.cc/paper_files/paper/2024/hash/54dcf25318f9de5a7a01f0a4125c541e-Abstract-Conference.html">核实来源</a>；核实于2026-10-03。</li>
-<li>展示类型：<a href="https://github.com/tianweiy/DMD2">官方来源</a></li>
 <li>初次提交：2024-05-23；所读版本日期：2024-05-24。</li>
-<li><a href="https://arxiv.org/abs/2405.14867">论文</a> · <a href="https://arxiv.org/html/2405.14867v2">全文</a> · <a href="#paper-dmd2">精读</a></li>
+<li><a href="https://arxiv.org/abs/2405.14867">论文</a> · <a href="https://arxiv.org/html/2405.14867v2">全文</a> · <a href="#paper-dmd2">解读</a></li>
 <li>项目主页：<a href="https://tianweiy.github.io/dmd2/">入口1</a></li>
 <li>GitHub：<a href="https://github.com/tianweiy/DMD2">入口1</a></li>
 <li>Hugging Face模型：<a href="https://huggingface.co/tianweiy/DMD2">入口1</a></li>
 <li>数据资源：核实时未找到</li>
 <li>其他官方资源：核实时未找到</li>
 <li>备注：Oral来源为官方仓库；论文集确认正式发表。SDXL一步版本附录仍使用小规模配对warm-up，不能将去掉主训练回归误读成全部配置完全不用配对数据。</li>
+<li>方法阅读日期：2026-10-03</li>
+</ul>
+<h2 id="ref-28-self-gradient-forcing-native-long-video-extrapolation">28. Self Gradient Forcing: Native Long Video Extrapolation</h2>
+<ul>
+<li>作者：Zhuang, Junhao；Zhang, Shiyi；Bian, Yuxuan；Li, Yaowei；Luo, Yawen；Liu, Yijun；Jin, Weiyang；Zhang, Songchun；He, Xianglong；Zhang, Xuying；Li, Haoran；Huang, Haoyang；Xue, Zeyue；Duan, Nan</li>
+<li>单位：Joy Future Academy, JD。<a href="https://arxiv.org/html/2607.20368v2">论文全文</a></li>
+<li>发表状态：预印本 / technical report；截至2026-10-15未确认会议或期刊录用。<a href="https://arxiv.org/abs/2607.20368">核实来源</a>；核实于2026-10-15。</li>
+<li>初次提交：2026-07-22；所读版本日期：2026-07-24。</li>
+<li><a href="https://arxiv.org/abs/2607.20368">论文</a> · <a href="https://arxiv.org/html/2607.20368v2">全文</a> · <a href="#paper-sgf">解读</a></li>
+<li>项目主页：<a href="https://zhuang2002.github.io/SelfGradientForcing">入口1</a></li>
+<li>GitHub：<a href="https://github.com/zhuang2002/Self_Gradient_Forcing">入口1</a></li>
+<li>Hugging Face模型：<a href="https://huggingface.co/JunhaoZhuang/Self_Gradient_Forcing">入口1</a></li>
+<li>数据资源：核实时未找到</li>
+<li>其他官方资源：核实时未找到</li>
+<li>备注：两遍replay恢复context参数梯度，记录的历史latent仍detach；7月旧文补读。</li>
+<li>方法阅读日期：2026-10-15</li>
+</ul>
+<h2 id="ref-29-sgf-decoupling-gradient-flows-for-autoregressive-video-generation">29. SGF+: Decoupling Gradient Flows for Autoregressive Video Generation</h2>
+<ul>
+<li>作者：Su, Zihan；Zhuang, Junhao；Li, Yaowei；Lu, Siwen；Li, Haoran；Li, Lingen；Wu, Haoyu；Jin, Weiyang；Zhang, Songchun；Huang, Haoyang；Yuan, Chun；Xue, Zeyue；Duan, Nan</li>
+<li>单位：Tsinghua University；Joy Future Academy, JD；The Chinese University of Hong Kong。<a href="https://arxiv.org/html/2610.10429v2">论文全文</a></li>
+<li>发表状态：预印本 / technical report；截至2026-10-15未确认会议或期刊录用。<a href="https://arxiv.org/abs/2610.10429">核实来源</a>；核实于2026-10-15。</li>
+<li>初次提交：2026-10-07；所读版本日期：2026-10-08。</li>
+<li><a href="https://arxiv.org/abs/2610.10429">论文</a> · <a href="https://arxiv.org/html/2610.10429v2">全文</a> · <a href="#paper-sgf-plus">解读</a></li>
+<li>项目主页：<a href="https://zihan-su.github.io/self-gradient-forcing-plus">入口1</a></li>
+<li>GitHub：<a href="https://github.com/Zihan-Su/Self_Gradient_Forcing_Plus">入口1</a></li>
+<li>Hugging Face模型：<a href="https://huggingface.co/ZihanSu/Self_Gradient_Forcing_Plus">入口1</a></li>
+<li>数据资源：核实时未找到</li>
+<li>其他官方资源：核实时未找到</li>
+<li>备注：主文按Wan实验精读；24小时是定性长时结果，量化评测另见60/240秒设置。</li>
+<li>方法阅读日期：2026-10-15</li>
+</ul>
+<h2 id="ref-30-connected-self-forcing-beyond-local-learning-in-video-autoregression">30. Connected Self Forcing: Beyond Local Learning in Video Autoregression</h2>
+<ul>
+<li>作者：Zhang, Dongbin；Zheng, Chaoda；Chen, Kangjie；Li, Xiangyu；Chen, Shijia；Deng, Jinhao；Zhang, Yuqi；Jiang, Guangfeng；Lin, Hongbin；Wai, Choo Sin；Wang, Minqi；Wang, Puyi；Zhang, Jingye；Zhang, Yu；Liu, Xianming；Wang, Boyang</li>
+<li>单位：XPeng；The Chinese University of Hong Kong；Tsinghua University。<a href="https://arxiv.org/html/2610.12156v1">论文全文</a></li>
+<li>发表状态：预印本 / technical report；截至2026-10-15未确认会议或期刊录用。<a href="https://arxiv.org/abs/2610.12156">核实来源</a>；核实于2026-10-15。</li>
+<li>初次提交：2026-10-08；所读版本日期：2026-10-08。</li>
+<li><a href="https://arxiv.org/abs/2610.12156">论文</a> · <a href="https://arxiv.org/html/2610.12156v1">全文</a> · <a href="#paper-connected-sf">解读</a></li>
+<li>项目主页：<a href="https://eastbeanzhang.github.io/CSF/">入口1</a></li>
+<li>GitHub：<a href="https://github.com/EastbeanZhang/Connected-Self-Forcing">入口1</a></li>
+<li>Hugging Face模型：核实时未找到</li>
+<li>数据资源：核实时未找到</li>
+<li>其他官方资源：核实时未找到</li>
+<li>备注：shortcut replay恢复选定跨块梯度，不能视为完整多步BPTT；官方代码入口可访问，专属HF权重未找到。</li>
+<li>方法阅读日期：2026-10-15</li>
+</ul>
+<h2 id="ref-31-in-distribution-forcing-for-long-video-generation-at-test-time">31. In-Distribution Forcing for Long Video Generation at Test Time</h2>
+<ul>
+<li>作者：Shin, Jeongwoo；Choi, Youngyoon；Jo, Sangwoo；Kim, Hyunmog；Choi, Sungjoon；Lee, Joonseok；Choi, Jaewoong；Choi, Jaemoo</li>
+<li>单位：Seoul National University；Korea University；Sungkyunkwan University；Georgia Institute of Technology。<a href="https://arxiv.org/html/2610.03120v2">论文全文</a></li>
+<li>发表状态：预印本 / technical report；截至2026-10-15未确认会议或期刊录用。<a href="https://arxiv.org/abs/2610.03120">核实来源</a>；核实于2026-10-15。</li>
+<li>初次提交：2026-10-02；所读版本日期：2026-10-07。</li>
+<li><a href="https://arxiv.org/abs/2610.03120">论文</a> · <a href="https://arxiv.org/html/2610.03120v2">全文</a> · <a href="#paper-id-forcing">解读</a></li>
+<li>项目主页：<a href="https://in-distribution-forcing.github.io/">入口1</a></li>
+<li>GitHub：<a href="https://github.com/In-Distribution-Forcing/ID-Forcing">入口1</a></li>
+<li>Hugging Face模型：核实时未找到</li>
+<li>数据资源：核实时未找到</li>
+<li>其他官方资源：核实时未找到</li>
+<li>备注：training-free推理策略；官方仓库引用原Self Forcing/LongLive权重，不把这些基座计作本方法新权重。</li>
+<li>方法阅读日期：2026-10-15</li>
+</ul>
+<h2 id="ref-32-adversarial-gradient-forcing-for-robust-few-step-autoregressive-video-generation">32. Adversarial Gradient Forcing for Robust Few-Step Autoregressive Video Generation</h2>
+<ul>
+<li>作者：Xia, Chenxi；Xu, Yixuan；Liu, Shan；Wang, Jiapeng；Li, Maohua；Tang, Hanlin；Liu, Kan；Lan, Tao；Lu, Weiyi；Liu, Xinggao</li>
+<li>单位：Zhejiang University；Alibaba Group；Nanjing University。<a href="https://arxiv.org/html/2610.14553v1">论文全文</a></li>
+<li>发表状态：预印本 / technical report；截至2026-10-15未确认会议或期刊录用。<a href="https://arxiv.org/abs/2610.14553">核实来源</a>；核实于2026-10-15。</li>
+<li>初次提交：2026-10-10；所读版本日期：2026-10-10。</li>
+<li><a href="https://arxiv.org/abs/2610.14553">论文</a> · <a href="https://arxiv.org/html/2610.14553v1">全文</a> · <a href="#paper-agf">解读</a></li>
+<li>项目主页：<a href="https://wuli-art.github.io/Adversarial-Gradient-Forcing/">入口1</a></li>
+<li>GitHub：<a href="https://github.com/wuli-art/Adversarial-Gradient-Forcing">入口1</a></li>
+<li>Hugging Face模型：<a href="https://huggingface.co/Wuli-art/Adversarial-Gradient-Forcing">入口1</a></li>
+<li>数据资源：核实时未找到</li>
+<li>其他官方资源：核实时未找到</li>
+<li>备注：5秒训练、60/240秒评测；Q5与VBench Total不同。</li>
+<li>方法阅读日期：2026-10-15</li>
+</ul>
+<h2 id="ref-33-framefold-response-guided-kv-cache-consolidation-for-autoregressive-long-video-generation">33. FrameFold: Response-Guided KV Cache Consolidation for Autoregressive Long Video Generation</h2>
+<ul>
+<li>作者：Liu, Muyu；Liu, Mingming；Gu, Hong；Zhang, Yuyao；Lu, Qin</li>
+<li>单位：ShanghaiTech University；vivo BlueImage Lab。<a href="https://arxiv.org/html/2610.14568v1">论文全文</a></li>
+<li>发表状态：预印本 / technical report；截至2026-10-15未确认会议或期刊录用。<a href="https://arxiv.org/abs/2610.14568">核实来源</a>；核实于2026-10-15。</li>
+<li>初次提交：2026-10-10；所读版本日期：2026-10-10。</li>
+<li><a href="https://arxiv.org/abs/2610.14568">论文</a> · <a href="https://arxiv.org/html/2610.14568v1">全文</a> · <a href="#paper-framefold">解读</a></li>
+<li>项目主页：<a href="https://vivocameraresearch.github.io/FrameFold-Webpage/dist">入口1</a></li>
+<li>GitHub：核实时未找到</li>
+<li>Hugging Face模型：核实时未找到</li>
+<li>数据资源：核实时未找到</li>
+<li>其他官方资源：核实时未找到</li>
+<li>备注：无训练的KV合并；项目页未提供代码/权重链接，检索未找到专属仓库。</li>
+<li>方法阅读日期：2026-10-15</li>
+</ul>
+<h2 id="ref-34-mosaichunk-compositing-spatio-temporal-memory-for-autoregressive-video-generation">34. MosaiChunk: Compositing Spatio-Temporal Memory for Autoregressive Video Generation</h2>
+<ul>
+<li>作者：Zhang, Yiwen；Xi, Haocheng；Liu, Michael Tian-Yue；Efros, Alexei A.；Averbuch-Elor, Hadar；Wang, Qianqian；Feng, Haiwen</li>
+<li>单位：Cornell University；University of California, Berkeley；Harvard University；Impossible, Inc.。<a href="https://arxiv.org/html/2610.02153v1">论文全文</a></li>
+<li>发表状态：预印本 / technical report；截至2026-10-15未确认会议或期刊录用。<a href="https://arxiv.org/abs/2610.02153">核实来源</a>；核实于2026-10-15。</li>
+<li>初次提交：2026-10-01；所读版本日期：2026-10-01。</li>
+<li><a href="https://arxiv.org/abs/2610.02153">论文</a> · <a href="https://arxiv.org/html/2610.02153v1">全文</a> · <a href="#paper-mosaichunk">解读</a></li>
+<li>项目主页：<a href="https://mosaichunk.github.io/">入口1</a></li>
+<li>GitHub：<a href="https://github.com/mosaichunk/MosaiChunk">入口1</a></li>
+<li>Hugging Face模型：<a href="https://huggingface.co/mosaichunk/MosaiChunk">入口1</a></li>
+<li>数据资源：<a href="https://huggingface.co/datasets/mosaichunk/RememBench">入口1</a></li>
+<li>其他官方资源：核实时未找到</li>
+<li>备注：CPU section bank与固定active KV预算不同；RememBench为作者发布的重访数据。</li>
+<li>方法阅读日期：2026-10-15</li>
+</ul>
+<h2 id="ref-35-tempokv-predictive-kv-cache-quantization-for-autoregressive-video-generation">35. TempoKV: Predictive KV Cache Quantization for Autoregressive Video Generation</h2>
+<ul>
+<li>作者：Hu, Jiahui；Mo, Weile；Cai, Peiliang；Liu, Jiacheng；Ren, Jinkui；Zhang, Xiantao；Tu, Xiaobing；Zhang, Linfeng</li>
+<li>单位：Shanghai Jiao Tong University；South China University of Technology；Alibaba Group。<a href="https://arxiv.org/html/2610.15324v1">论文全文</a></li>
+<li>发表状态：预印本 / technical report；截至2026-10-15未确认会议或期刊录用。<a href="https://arxiv.org/abs/2610.15324">核实来源</a>；核实于2026-10-15。</li>
+<li>初次提交：2026-10-11；所读版本日期：2026-10-11。</li>
+<li><a href="https://arxiv.org/abs/2610.15324">论文</a> · <a href="https://arxiv.org/html/2610.15324v1">全文</a> · <a href="#paper-tempokv">解读</a></li>
+<li>项目主页：核实时未找到</li>
+<li>GitHub：核实时未找到</li>
+<li>Hugging Face模型：核实时未找到</li>
+<li>数据资源：核实时未找到</li>
+<li>其他官方资源：核实时未找到</li>
+<li>备注：论文声明代码将发布；核实时未找到GitHub入口。需要离线预测器校准，不更新生成主干。</li>
+<li>方法阅读日期：2026-10-15</li>
+</ul>
+<h2 id="ref-36-prospective-forcing-learning-to-look-ahead-for-autoregressive-long-video-diffusion">36. Prospective Forcing: Learning to Look Ahead for Autoregressive Long Video Diffusion</h2>
+<ul>
+<li>作者：Shen, Yifan；Xia, Yewei；Luo, Gongxu；Zhu, Peiyuan；Sun, Boyang；Chen, Zhenhao；Liu, Guangyi；Chen, Guangyi；Zhang, Kun</li>
+<li>单位：Mohamed bin Zayed University of Artificial Intelligence；Carnegie Mellon University；Institute of Foundation Models。<a href="https://arxiv.org/html/2610.14654v1">论文全文</a></li>
+<li>发表状态：预印本 / technical report；截至2026-10-15未确认会议或期刊录用。<a href="https://arxiv.org/abs/2610.14654">核实来源</a>；核实于2026-10-15。</li>
+<li>初次提交：2026-10-10；所读版本日期：2026-10-10。</li>
+<li><a href="https://arxiv.org/abs/2610.14654">论文</a> · <a href="https://arxiv.org/html/2610.14654v1">全文</a> · <a href="#paper-prospective-forcing">解读</a></li>
+<li>项目主页：核实时未找到</li>
+<li>GitHub：核实时未找到</li>
+<li>Hugging Face模型：核实时未找到</li>
+<li>数据资源：核实时未找到</li>
+<li>其他官方资源：核实时未找到</li>
+<li>备注：原文与公开检索未找到专属项目、代码、HF或数据仓库；文中DeepForcing链接属于参考文献。</li>
+<li>方法阅读日期：2026-10-15</li>
+</ul>
+<h2 id="ref-37-conditional-residual-prediction-improving-autoregressive-video-diffusion-without-a-bidirectional-teacher">37. Conditional Residual Prediction: Improving Autoregressive Video Diffusion without a Bidirectional Teacher</h2>
+<ul>
+<li>作者：Zheng, Bowen；Liu, Zhiguang；Ou, Jiarong；Chen, Rui；Hu, Tianyang</li>
+<li>单位：The Chinese University of Hong Kong, Shenzhen；Tencent Hunyuan。<a href="https://arxiv.org/html/2610.11479v1">论文全文</a></li>
+<li>发表状态：预印本 / technical report；截至2026-10-15未确认会议或期刊录用。<a href="https://arxiv.org/abs/2610.11479">核实来源</a>；核实于2026-10-15。</li>
+<li>初次提交：2026-10-08；所读版本日期：2026-10-08。</li>
+<li><a href="https://arxiv.org/abs/2610.11479">论文</a> · <a href="https://arxiv.org/html/2610.11479v1">全文</a> · <a href="#paper-crp">解读</a></li>
+<li>项目主页：核实时未找到</li>
+<li>GitHub：核实时未找到</li>
+<li>Hugging Face模型：核实时未找到</li>
+<li>数据资源：核实时未找到</li>
+<li>其他官方资源：核实时未找到</li>
+<li>备注：Optica使用50步；本轮未找到专属代码、模型或内部训练数据仓库。</li>
+<li>方法阅读日期：2026-10-15</li>
+</ul>
+<h2 id="ref-38-duomatching-joint-marginal-distribution-matching-for-few-step-video-generation">38. DuoMatching: Joint-Marginal Distribution Matching for Few-Step Video Generation</h2>
+<ul>
+<li>作者：Zhan, Jiahao；Wang, Yan；Ma, Yongrui；Xing, Qunliang；Yao, Ruchang；Liu, Runtao；Zhao, Shijie；Xue, Tianfan</li>
+<li>单位：MMLab, The Chinese University of Hong Kong；ByteDance；Hong Kong University of Science and Technology；CPII under InnoHK。<a href="https://arxiv.org/html/2610.03543v1">论文全文</a></li>
+<li>发表状态：预印本 / technical report；截至2026-10-15未确认会议或期刊录用。<a href="https://arxiv.org/abs/2610.03543">核实来源</a>；核实于2026-10-15。</li>
+<li>初次提交：2026-10-02；所读版本日期：2026-10-02。</li>
+<li><a href="https://arxiv.org/abs/2610.03543">论文</a> · <a href="https://arxiv.org/html/2610.03543v1">全文</a> · <a href="#paper-duomatching">解读</a></li>
+<li>项目主页：<a href="https://johnzhan2023.github.io/DuoMatching/">入口1</a></li>
+<li>GitHub：<a href="https://github.com/JohnZhan2023/DuoMatching">入口1</a></li>
+<li>Hugging Face模型：<a href="https://huggingface.co/JohnZhan/DuoMatching">入口1</a></li>
+<li>数据资源：核实时未找到</li>
+<li>其他官方资源：核实时未找到</li>
+<li>备注：官方代码和模型可访问；LatentBridge训练数据来自OpenVid子集，未找到专属整理数据仓库。</li>
+<li>方法阅读日期：2026-10-15</li>
+</ul>
+<h2 id="ref-39-frequency-step-cache-separating-synchronization-and-repair-for-efficient-autoregressive-video-diffusion">39. Frequency-Step Cache: Separating Synchronization and Repair for Efficient Autoregressive Video Diffusion</h2>
+<ul>
+<li>作者：Xu, Kerry；Misra, Param；Stenglein, Zachary；Karunamurthy, Athri；Ye, Fanjiang；Wang, Yuke</li>
+<li>单位：Rice University。<a href="https://arxiv.org/html/2610.15922v1">论文全文</a></li>
+<li>发表状态：预印本 / technical report；截至2026-10-15未确认会议或期刊录用。<a href="https://arxiv.org/abs/2610.15922">核实来源</a>；核实于2026-10-15。</li>
+<li>初次提交：2026-10-11；所读版本日期：2026-10-11。</li>
+<li><a href="https://arxiv.org/abs/2610.15922">论文</a> · <a href="https://arxiv.org/html/2610.15922v1">全文</a> · <a href="#paper-frequency-step-cache">解读</a></li>
+<li>项目主页：核实时未找到</li>
+<li>GitHub：核实时未找到</li>
+<li>Hugging Face模型：核实时未找到</li>
+<li>数据资源：核实时未找到</li>
+<li>其他官方资源：核实时未找到</li>
+<li>备注：原文及公开检索未找到专属代码/权重/数据入口；不是KV历史检索方法。</li>
+<li>方法阅读日期：2026-10-15</li>
+</ul>
+<h2 id="ref-40-real-time-joint-audio-video-generation-by-parallel-adapter-composition">40. Real-Time Joint Audio-Video Generation by Parallel Adapter Composition</h2>
+<ul>
+<li>作者：Li, Jingyu；Xiang, Xiaoxiao；Guo, Yiwen</li>
+<li>单位：LIGHTSPEED；Independent Researcher。<a href="https://arxiv.org/html/2610.10343v2">论文全文</a></li>
+<li>发表状态：预印本；项目页注明ICLR 2027 under review，尚非录用。<a href="https://pac-demo-2027.github.io/demo/">核实来源</a>；核实于2026-10-15。</li>
+<li>初次提交：2026-10-07；所读版本日期：2026-10-08。</li>
+<li><a href="https://arxiv.org/abs/2610.10343">论文</a> · <a href="https://arxiv.org/html/2610.10343v2">全文</a> · <a href="#paper-parallel-av">解读</a></li>
+<li>项目主页：<a href="https://pac-demo-2027.github.io/demo/">入口1</a></li>
+<li>GitHub：核实时未找到</li>
+<li>Hugging Face模型：核实时未找到</li>
+<li>数据资源：核实时未找到</li>
+<li>其他官方资源：核实时未找到</li>
+<li>备注：项目注明ICLR 2027 under review，不等于录用；项目说明代码将发布。lightx2v Turbo是使用的外部adapter，不是本工作新发布权重。</li>
+<li>方法阅读日期：2026-10-15</li>
+</ul>
+<h2 id="ref-41-editstream-a-unified-autoregressive-framework-for-interactive-video-generation-and-editing">41. EditStream: A Unified Autoregressive Framework for Interactive Video Generation and Editing</h2>
+<ul>
+<li>作者：Zhou, Yuqian；Zhou, Zhenghong；Wu, Zongze；Smith, Cameron；Zhang, Richard；Luo, Jiebo；Shechtman, Eli；Lin, Zhe</li>
+<li>单位：Adobe Research；University of Rochester。<a href="https://arxiv.org/html/2608.21424v1">论文全文</a></li>
+<li>发表状态：预印本 / technical report；截至2026-10-15未确认会议或期刊录用。<a href="https://arxiv.org/abs/2608.21424">核实来源</a>；核实于2026-10-15。</li>
+<li>初次提交：2026-08-16；所读版本日期：2026-08-16。</li>
+<li><a href="https://arxiv.org/abs/2608.21424">论文</a> · <a href="https://arxiv.org/html/2608.21424v1">全文</a> · <a href="#paper-editstream">解读</a></li>
+<li>项目主页：<a href="https://real-time-video-research.github.io/editstream/">入口1</a></li>
+<li>GitHub：核实时未找到</li>
+<li>Hugging Face模型：核实时未找到</li>
+<li>数据资源：核实时未找到</li>
+<li>其他官方资源：核实时未找到</li>
+<li>备注：8月遗漏补充；官方项目可访问，本轮未找到专属公开代码、权重及数据仓库。</li>
+<li>方法阅读日期：2026-10-15</li>
+</ul>
+<h2 id="ref-42-vidu-s2-real-time-interactive-editable-and-spatial-video-generation">42. Vidu S2: Real-Time Interactive, Editable, and Spatial Video Generation</h2>
+<ul>
+<li>作者：Zhang, Jintao；Jiang, Kai；Chen, Jintao；Wang, Xu；Liu, Deyuan；Li, Jungang；Chen, Dechuang；Lin, Ming；Zhou, Jingjiang；Jin, Haopeng；Jia, Qi；Wang, Xiaohang；Wang, Yaole；Zhang, Zhanqiang；Li, Ran；Huang, Zhengkun；Xiong, Shuyue；Wang, Yuji；Dai, Zikun；He, Hui；Luo, Yang；Ning, Mang；Feng, Weiqi；Ye, Chengyang；Lin, Xinyue；Zhao, Min；Zhu, Hongzhou；Tan, Hengkai；Wang, Zeyuan；Xiang, Chendong；Zheng, Kaiwen；Deng, Zhijie；Bao, Fan；Chen, Jianfei；Zhu, Jun</li>
+<li>单位：Tsinghua University；Shengshu Technology。<a href="https://arxiv.org/html/2609.11638v1">论文全文</a></li>
+<li>发表状态：预印本 / technical report；截至2026-10-15未确认会议或期刊录用。<a href="https://arxiv.org/abs/2609.11638">核实来源</a>；核实于2026-10-15。</li>
+<li>初次提交：2026-09-10；所读版本日期：2026-09-10。</li>
+<li><a href="https://arxiv.org/abs/2609.11638">论文</a> · <a href="https://arxiv.org/html/2609.11638v1">全文</a> · <a href="#paper-vidu-s2">解读</a></li>
+<li>项目主页：<a href="https://vidu.com/vidu-stream">入口1</a></li>
+<li>GitHub：核实时未找到</li>
+<li>Hugging Face模型：核实时未找到</li>
+<li>数据资源：核实时未找到</li>
+<li>其他官方资源：核实时未找到</li>
+<li>备注：9月technical report补充；官方服务入口不等于代码与权重公开。</li>
+<li>方法阅读日期：2026-10-15</li>
+</ul>
+<h2 id="ref-43-zing-05-toward-playable-worlds-with-real-time-joint-action-and-text-control">43. Zing-0.5: Toward Playable Worlds with Real-Time Joint Action and Text Control</h2>
+<ul>
+<li>作者：Chen, Mingyang；Chen, Shengdong；Fu, Xiaoxiao；Gong, Bosheng；Guo, Haoyuan；Li, Bowen；Li, Jiawen；Li, Kejun；Li, Tianpeng；Liu, Yin；Sun, Haoze；Tian, Zeyang；Wang, Meng；Wu, Xinmiao；Yan, Jiangqiao；Zhao, Zining</li>
+<li>单位：Zing Team, SeedLeap.ai。<a href="https://arxiv.org/html/2609.17909v1">论文全文</a></li>
+<li>发表状态：预印本 / technical report；截至2026-10-15未确认会议或期刊录用。<a href="https://arxiv.org/abs/2609.17909">核实来源</a>；核实于2026-10-15。</li>
+<li>初次提交：2026-09-15；所读版本日期：2026-09-15。</li>
+<li><a href="https://arxiv.org/abs/2609.17909">论文</a> · <a href="https://arxiv.org/html/2609.17909v1">全文</a> · <a href="#paper-zing">解读</a></li>
+<li>项目主页：<a href="https://zing.loopit.me/">入口1</a></li>
+<li>GitHub：<a href="https://github.com/seedleap/zing-world-model">入口1</a> · <a href="https://github.com/seedleap/Zing-SGLang">入口2</a></li>
+<li>Hugging Face模型：<a href="https://huggingface.co/seedleap/zing-0.5">入口1</a></li>
+<li>数据资源：核实时未找到</li>
+<li>其他官方资源：核实时未找到</li>
+<li>备注：论文首页署名Zing Team，个人作者按arXiv元数据完整列出；9月technical report补充。</li>
+<li>方法阅读日期：2026-10-15</li>
 </ul></details></article>
     </div>
   </main>

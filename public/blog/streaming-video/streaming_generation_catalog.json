@@ -1,7 +1,7 @@
 {
-  "scope": "20篇生成、解码或系统研究，以及7篇基础读物；非穷尽性目录。",
-  "scope_updated": "2026-10-12",
-  "verification": "沿用原条目的核实日期；本轮按生成主题整理，未重新检索发表状态或新增论文。",
+  "scope": "36篇生成、解码或系统研究，以及7篇基础读物；非穷尽性目录。",
+  "scope_updated": "2026-10-15",
+  "verification": "新增16篇全文阅读与资源核实，更新Causal Forcing++至v4；其余旧条目保留原发表状态核实日期。",
   "missing_value_semantics": "空列表表示核实时未找到，不等同于作者明确尚未公开。",
   "papers": [
     {
@@ -573,7 +573,9 @@
       },
       "scope": "生成 / 解码 / 系统",
       "method_reviewed_on": "2026-10-03",
-      "reading_section": "streaming_video_research.html#paper-causal-forcing"
+      "reading_section": "streaming_video_research.html#paper-causal-forcing",
+      "version_checked_on": "2026-10-15",
+      "version_check_note": "复查arXiv版本日期；未将此操作视为重新核实原有会议录用状态。"
     },
     {
       "id": "diagonal_distillation",
@@ -686,9 +688,9 @@
       ],
       "authors_format": "arXiv citation metadata 原样",
       "first_submitted": "2026-05-14",
-      "latest_version_date": "2026-06-01",
+      "latest_version_date": "2026-10-04",
       "paper": "https://arxiv.org/abs/2605.15141",
-      "fulltext": "https://arxiv.org/html/2605.15141v3",
+      "fulltext": "https://arxiv.org/html/2605.15141v4",
       "checked": "2026-09-27",
       "affiliations": [
         "Tsinghua University",
@@ -711,7 +713,13 @@
         "datasets": [],
         "other_official_resources": []
       },
-      "scope": "生成 / 解码 / 系统"
+      "scope": "生成 / 解码 / 系统",
+      "version_checked_on": "2026-10-15",
+      "version_check_note": "复查arXiv版本日期；未将此操作视为重新核实原有会议录用状态。",
+      "previous_read_fulltext": "https://arxiv.org/html/2605.15141v3",
+      "method_reviewed_on": "2026-10-15",
+      "reading_section": "streaming_video_research.html#paper-causal-forcing-pp",
+      "method_review_note": "本轮读取10月4日v4方法与实验；未逐版本比较，不将当前内容自动称为v4新增贡献。"
     },
     {
       "id": "longlive2",
@@ -764,7 +772,9 @@
       "scope": "生成 / 解码 / 系统",
       "method_reviewed_on": "2026-10-03",
       "method_review_note": "基于已归档全文Markdown重读方法、算法及关键实验，另复查官方项目或论文入口；发表状态保留原核实记录。",
-      "reading_section": "streaming_video_research.html#paper-longlive2"
+      "reading_section": "streaming_video_research.html#paper-longlive2",
+      "version_checked_on": "2026-10-15",
+      "version_check_note": "复查arXiv版本日期；未将此操作视为重新核实原有会议录用状态。"
     },
     {
       "id": "causal_rcm",
@@ -806,7 +816,9 @@
         ],
         "other_official_resources": []
       },
-      "scope": "生成 / 解码 / 系统"
+      "scope": "生成 / 解码 / 系统",
+      "version_checked_on": "2026-10-15",
+      "version_check_note": "复查arXiv版本日期；未将此操作视为重新核实原有会议录用状态。"
     },
     {
       "id": "flashdecoder",
@@ -873,7 +885,9 @@
         "datasets": [],
         "other_official_resources": []
       },
-      "scope": "生成 / 解码 / 系统"
+      "scope": "生成 / 解码 / 系统",
+      "version_checked_on": "2026-10-15",
+      "version_check_note": "复查arXiv版本日期；未将此操作视为重新核实原有会议录用状态。"
     },
     {
       "id": "foundation_attention",
@@ -1087,7 +1101,9 @@
         "other_official_resources": [
           "https://huggingface.co/spaces/TencentARC/RollingForcing"
         ]
-      }
+      },
+      "version_checked_on": "2026-10-15",
+      "version_check_note": "复查arXiv版本日期；未将此操作视为重新核实原有会议录用状态。"
     },
     {
       "id": "dmd",
@@ -1169,6 +1185,729 @@
         "other_official_resources": []
       },
       "presentation_status_source": "https://github.com/tianweiy/DMD2"
+    },
+    {
+      "id": "sgf",
+      "title": "Self Gradient Forcing: Native Long Video Extrapolation",
+      "authors": [
+        "Zhuang, Junhao",
+        "Zhang, Shiyi",
+        "Bian, Yuxuan",
+        "Li, Yaowei",
+        "Luo, Yawen",
+        "Liu, Yijun",
+        "Jin, Weiyang",
+        "Zhang, Songchun",
+        "He, Xianglong",
+        "Zhang, Xuying",
+        "Li, Haoran",
+        "Huang, Haoyang",
+        "Xue, Zeyue",
+        "Duan, Nan"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-07-22",
+      "latest_version_date": "2026-07-24",
+      "paper": "https://arxiv.org/abs/2607.20368",
+      "fulltext": "https://arxiv.org/html/2607.20368v2",
+      "checked": "2026-10-15",
+      "affiliations": [
+        "Joy Future Academy, JD"
+      ],
+      "publication_status": "预印本 / technical report；截至2026-10-15未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2607.20368",
+      "resource_note": "两遍replay恢复context参数梯度，记录的历史latent仍detach；7月旧文补读。",
+      "resources": {
+        "project": [
+          "https://zhuang2002.github.io/SelfGradientForcing"
+        ],
+        "github": [
+          "https://github.com/zhuang2002/Self_Gradient_Forcing"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/JunhaoZhuang/Self_Gradient_Forcing"
+        ],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-15",
+      "method_review_note": "先解析全文Markdown，再核对方法、实验及适用边界；不表示完成代码复现。",
+      "reading_section": "streaming_video_research.html#paper-sgf"
+    },
+    {
+      "id": "sgf_plus",
+      "title": "SGF+: Decoupling Gradient Flows for Autoregressive Video Generation",
+      "authors": [
+        "Su, Zihan",
+        "Zhuang, Junhao",
+        "Li, Yaowei",
+        "Lu, Siwen",
+        "Li, Haoran",
+        "Li, Lingen",
+        "Wu, Haoyu",
+        "Jin, Weiyang",
+        "Zhang, Songchun",
+        "Huang, Haoyang",
+        "Yuan, Chun",
+        "Xue, Zeyue",
+        "Duan, Nan"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-10-07",
+      "latest_version_date": "2026-10-08",
+      "paper": "https://arxiv.org/abs/2610.10429",
+      "fulltext": "https://arxiv.org/html/2610.10429v2",
+      "checked": "2026-10-15",
+      "affiliations": [
+        "Tsinghua University",
+        "Joy Future Academy, JD",
+        "The Chinese University of Hong Kong"
+      ],
+      "publication_status": "预印本 / technical report；截至2026-10-15未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2610.10429",
+      "resource_note": "主文按Wan实验精读；24小时是定性长时结果，量化评测另见60/240秒设置。",
+      "resources": {
+        "project": [
+          "https://zihan-su.github.io/self-gradient-forcing-plus"
+        ],
+        "github": [
+          "https://github.com/Zihan-Su/Self_Gradient_Forcing_Plus"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/ZihanSu/Self_Gradient_Forcing_Plus"
+        ],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-15",
+      "method_review_note": "先解析全文Markdown，再核对方法、实验及适用边界；不表示完成代码复现。",
+      "reading_section": "streaming_video_research.html#paper-sgf-plus"
+    },
+    {
+      "id": "connected_sf",
+      "title": "Connected Self Forcing: Beyond Local Learning in Video Autoregression",
+      "authors": [
+        "Zhang, Dongbin",
+        "Zheng, Chaoda",
+        "Chen, Kangjie",
+        "Li, Xiangyu",
+        "Chen, Shijia",
+        "Deng, Jinhao",
+        "Zhang, Yuqi",
+        "Jiang, Guangfeng",
+        "Lin, Hongbin",
+        "Wai, Choo Sin",
+        "Wang, Minqi",
+        "Wang, Puyi",
+        "Zhang, Jingye",
+        "Zhang, Yu",
+        "Liu, Xianming",
+        "Wang, Boyang"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-10-08",
+      "latest_version_date": "2026-10-08",
+      "paper": "https://arxiv.org/abs/2610.12156",
+      "fulltext": "https://arxiv.org/html/2610.12156v1",
+      "checked": "2026-10-15",
+      "affiliations": [
+        "XPeng",
+        "The Chinese University of Hong Kong",
+        "Tsinghua University"
+      ],
+      "publication_status": "预印本 / technical report；截至2026-10-15未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2610.12156",
+      "resource_note": "shortcut replay恢复选定跨块梯度，不能视为完整多步BPTT；官方代码入口可访问，专属HF权重未找到。",
+      "resources": {
+        "project": [
+          "https://eastbeanzhang.github.io/CSF/"
+        ],
+        "github": [
+          "https://github.com/EastbeanZhang/Connected-Self-Forcing"
+        ],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-15",
+      "method_review_note": "先解析全文Markdown，再核对方法、实验及适用边界；不表示完成代码复现。",
+      "reading_section": "streaming_video_research.html#paper-connected-sf"
+    },
+    {
+      "id": "id_forcing",
+      "title": "In-Distribution Forcing for Long Video Generation at Test Time",
+      "authors": [
+        "Shin, Jeongwoo",
+        "Choi, Youngyoon",
+        "Jo, Sangwoo",
+        "Kim, Hyunmog",
+        "Choi, Sungjoon",
+        "Lee, Joonseok",
+        "Choi, Jaewoong",
+        "Choi, Jaemoo"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-10-02",
+      "latest_version_date": "2026-10-07",
+      "paper": "https://arxiv.org/abs/2610.03120",
+      "fulltext": "https://arxiv.org/html/2610.03120v2",
+      "checked": "2026-10-15",
+      "affiliations": [
+        "Seoul National University",
+        "Korea University",
+        "Sungkyunkwan University",
+        "Georgia Institute of Technology"
+      ],
+      "publication_status": "预印本 / technical report；截至2026-10-15未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2610.03120",
+      "resource_note": "training-free推理策略；官方仓库引用原Self Forcing/LongLive权重，不把这些基座计作本方法新权重。",
+      "resources": {
+        "project": [
+          "https://in-distribution-forcing.github.io/"
+        ],
+        "github": [
+          "https://github.com/In-Distribution-Forcing/ID-Forcing"
+        ],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-15",
+      "method_review_note": "先解析全文Markdown，再核对方法、实验及适用边界；不表示完成代码复现。",
+      "reading_section": "streaming_video_research.html#paper-id-forcing"
+    },
+    {
+      "id": "agf",
+      "title": "Adversarial Gradient Forcing for Robust Few-Step Autoregressive Video Generation",
+      "authors": [
+        "Xia, Chenxi",
+        "Xu, Yixuan",
+        "Liu, Shan",
+        "Wang, Jiapeng",
+        "Li, Maohua",
+        "Tang, Hanlin",
+        "Liu, Kan",
+        "Lan, Tao",
+        "Lu, Weiyi",
+        "Liu, Xinggao"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-10-10",
+      "latest_version_date": "2026-10-10",
+      "paper": "https://arxiv.org/abs/2610.14553",
+      "fulltext": "https://arxiv.org/html/2610.14553v1",
+      "checked": "2026-10-15",
+      "affiliations": [
+        "Zhejiang University",
+        "Alibaba Group",
+        "Nanjing University"
+      ],
+      "publication_status": "预印本 / technical report；截至2026-10-15未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2610.14553",
+      "resource_note": "5秒训练、60/240秒评测；Q5与VBench Total不同。",
+      "resources": {
+        "project": [
+          "https://wuli-art.github.io/Adversarial-Gradient-Forcing/"
+        ],
+        "github": [
+          "https://github.com/wuli-art/Adversarial-Gradient-Forcing"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/Wuli-art/Adversarial-Gradient-Forcing"
+        ],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-15",
+      "method_review_note": "先解析全文Markdown，再核对方法、实验及适用边界；不表示完成代码复现。",
+      "reading_section": "streaming_video_research.html#paper-agf"
+    },
+    {
+      "id": "framefold",
+      "title": "FrameFold: Response-Guided KV Cache Consolidation for Autoregressive Long Video Generation",
+      "authors": [
+        "Liu, Muyu",
+        "Liu, Mingming",
+        "Gu, Hong",
+        "Zhang, Yuyao",
+        "Lu, Qin"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-10-10",
+      "latest_version_date": "2026-10-10",
+      "paper": "https://arxiv.org/abs/2610.14568",
+      "fulltext": "https://arxiv.org/html/2610.14568v1",
+      "checked": "2026-10-15",
+      "affiliations": [
+        "ShanghaiTech University",
+        "vivo BlueImage Lab"
+      ],
+      "publication_status": "预印本 / technical report；截至2026-10-15未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2610.14568",
+      "resource_note": "无训练的KV合并；项目页未提供代码/权重链接，检索未找到专属仓库。",
+      "resources": {
+        "project": [
+          "https://vivocameraresearch.github.io/FrameFold-Webpage/dist"
+        ],
+        "github": [],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-15",
+      "method_review_note": "先解析全文Markdown，再核对方法、实验及适用边界；不表示完成代码复现。",
+      "reading_section": "streaming_video_research.html#paper-framefold"
+    },
+    {
+      "id": "mosaichunk",
+      "title": "MosaiChunk: Compositing Spatio-Temporal Memory for Autoregressive Video Generation",
+      "authors": [
+        "Zhang, Yiwen",
+        "Xi, Haocheng",
+        "Liu, Michael Tian-Yue",
+        "Efros, Alexei A.",
+        "Averbuch-Elor, Hadar",
+        "Wang, Qianqian",
+        "Feng, Haiwen"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-10-01",
+      "latest_version_date": "2026-10-01",
+      "paper": "https://arxiv.org/abs/2610.02153",
+      "fulltext": "https://arxiv.org/html/2610.02153v1",
+      "checked": "2026-10-15",
+      "affiliations": [
+        "Cornell University",
+        "University of California, Berkeley",
+        "Harvard University",
+        "Impossible, Inc."
+      ],
+      "publication_status": "预印本 / technical report；截至2026-10-15未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2610.02153",
+      "resource_note": "CPU section bank与固定active KV预算不同；RememBench为作者发布的重访数据。",
+      "resources": {
+        "project": [
+          "https://mosaichunk.github.io/"
+        ],
+        "github": [
+          "https://github.com/mosaichunk/MosaiChunk"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/mosaichunk/MosaiChunk"
+        ],
+        "datasets": [
+          "https://huggingface.co/datasets/mosaichunk/RememBench"
+        ],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-15",
+      "method_review_note": "先解析全文Markdown，再核对方法、实验及适用边界；不表示完成代码复现。",
+      "reading_section": "streaming_video_research.html#paper-mosaichunk"
+    },
+    {
+      "id": "tempokv",
+      "title": "TempoKV: Predictive KV Cache Quantization for Autoregressive Video Generation",
+      "authors": [
+        "Hu, Jiahui",
+        "Mo, Weile",
+        "Cai, Peiliang",
+        "Liu, Jiacheng",
+        "Ren, Jinkui",
+        "Zhang, Xiantao",
+        "Tu, Xiaobing",
+        "Zhang, Linfeng"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-10-11",
+      "latest_version_date": "2026-10-11",
+      "paper": "https://arxiv.org/abs/2610.15324",
+      "fulltext": "https://arxiv.org/html/2610.15324v1",
+      "checked": "2026-10-15",
+      "affiliations": [
+        "Shanghai Jiao Tong University",
+        "South China University of Technology",
+        "Alibaba Group"
+      ],
+      "publication_status": "预印本 / technical report；截至2026-10-15未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2610.15324",
+      "resource_note": "论文声明代码将发布；核实时未找到GitHub入口。需要离线预测器校准，不更新生成主干。",
+      "resources": {
+        "project": [],
+        "github": [],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-15",
+      "method_review_note": "先解析全文Markdown，再核对方法、实验及适用边界；不表示完成代码复现。",
+      "reading_section": "streaming_video_research.html#paper-tempokv"
+    },
+    {
+      "id": "prospective_forcing",
+      "title": "Prospective Forcing: Learning to Look Ahead for Autoregressive Long Video Diffusion",
+      "authors": [
+        "Shen, Yifan",
+        "Xia, Yewei",
+        "Luo, Gongxu",
+        "Zhu, Peiyuan",
+        "Sun, Boyang",
+        "Chen, Zhenhao",
+        "Liu, Guangyi",
+        "Chen, Guangyi",
+        "Zhang, Kun"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-10-10",
+      "latest_version_date": "2026-10-10",
+      "paper": "https://arxiv.org/abs/2610.14654",
+      "fulltext": "https://arxiv.org/html/2610.14654v1",
+      "checked": "2026-10-15",
+      "affiliations": [
+        "Mohamed bin Zayed University of Artificial Intelligence",
+        "Carnegie Mellon University",
+        "Institute of Foundation Models"
+      ],
+      "publication_status": "预印本 / technical report；截至2026-10-15未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2610.14654",
+      "resource_note": "原文与公开检索未找到专属项目、代码、HF或数据仓库；文中DeepForcing链接属于参考文献。",
+      "resources": {
+        "project": [],
+        "github": [],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-15",
+      "method_review_note": "先解析全文Markdown，再核对方法、实验及适用边界；不表示完成代码复现。",
+      "reading_section": "streaming_video_research.html#paper-prospective-forcing"
+    },
+    {
+      "id": "crp",
+      "title": "Conditional Residual Prediction: Improving Autoregressive Video Diffusion without a Bidirectional Teacher",
+      "authors": [
+        "Zheng, Bowen",
+        "Liu, Zhiguang",
+        "Ou, Jiarong",
+        "Chen, Rui",
+        "Hu, Tianyang"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-10-08",
+      "latest_version_date": "2026-10-08",
+      "paper": "https://arxiv.org/abs/2610.11479",
+      "fulltext": "https://arxiv.org/html/2610.11479v1",
+      "checked": "2026-10-15",
+      "affiliations": [
+        "The Chinese University of Hong Kong, Shenzhen",
+        "Tencent Hunyuan"
+      ],
+      "publication_status": "预印本 / technical report；截至2026-10-15未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2610.11479",
+      "resource_note": "Optica使用50步；本轮未找到专属代码、模型或内部训练数据仓库。",
+      "resources": {
+        "project": [],
+        "github": [],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-15",
+      "method_review_note": "先解析全文Markdown，再核对方法、实验及适用边界；不表示完成代码复现。",
+      "reading_section": "streaming_video_research.html#paper-crp"
+    },
+    {
+      "id": "duomatching",
+      "title": "DuoMatching: Joint-Marginal Distribution Matching for Few-Step Video Generation",
+      "authors": [
+        "Zhan, Jiahao",
+        "Wang, Yan",
+        "Ma, Yongrui",
+        "Xing, Qunliang",
+        "Yao, Ruchang",
+        "Liu, Runtao",
+        "Zhao, Shijie",
+        "Xue, Tianfan"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-10-02",
+      "latest_version_date": "2026-10-02",
+      "paper": "https://arxiv.org/abs/2610.03543",
+      "fulltext": "https://arxiv.org/html/2610.03543v1",
+      "checked": "2026-10-15",
+      "affiliations": [
+        "MMLab, The Chinese University of Hong Kong",
+        "ByteDance",
+        "Hong Kong University of Science and Technology",
+        "CPII under InnoHK"
+      ],
+      "publication_status": "预印本 / technical report；截至2026-10-15未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2610.03543",
+      "resource_note": "官方代码和模型可访问；LatentBridge训练数据来自OpenVid子集，未找到专属整理数据仓库。",
+      "resources": {
+        "project": [
+          "https://johnzhan2023.github.io/DuoMatching/"
+        ],
+        "github": [
+          "https://github.com/JohnZhan2023/DuoMatching"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/JohnZhan/DuoMatching"
+        ],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-15",
+      "method_review_note": "先解析全文Markdown，再核对方法、实验及适用边界；不表示完成代码复现。",
+      "reading_section": "streaming_video_research.html#paper-duomatching"
+    },
+    {
+      "id": "frequency_step_cache",
+      "title": "Frequency-Step Cache: Separating Synchronization and Repair for Efficient Autoregressive Video Diffusion",
+      "authors": [
+        "Xu, Kerry",
+        "Misra, Param",
+        "Stenglein, Zachary",
+        "Karunamurthy, Athri",
+        "Ye, Fanjiang",
+        "Wang, Yuke"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-10-11",
+      "latest_version_date": "2026-10-11",
+      "paper": "https://arxiv.org/abs/2610.15922",
+      "fulltext": "https://arxiv.org/html/2610.15922v1",
+      "checked": "2026-10-15",
+      "affiliations": [
+        "Rice University"
+      ],
+      "publication_status": "预印本 / technical report；截至2026-10-15未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2610.15922",
+      "resource_note": "原文及公开检索未找到专属代码/权重/数据入口；不是KV历史检索方法。",
+      "resources": {
+        "project": [],
+        "github": [],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-15",
+      "method_review_note": "先解析全文Markdown，再核对方法、实验及适用边界；不表示完成代码复现。",
+      "reading_section": "streaming_video_research.html#paper-frequency-step-cache"
+    },
+    {
+      "id": "parallel_av",
+      "title": "Real-Time Joint Audio-Video Generation by Parallel Adapter Composition",
+      "authors": [
+        "Li, Jingyu",
+        "Xiang, Xiaoxiao",
+        "Guo, Yiwen"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-10-07",
+      "latest_version_date": "2026-10-08",
+      "paper": "https://arxiv.org/abs/2610.10343",
+      "fulltext": "https://arxiv.org/html/2610.10343v2",
+      "checked": "2026-10-15",
+      "affiliations": [
+        "LIGHTSPEED",
+        "Independent Researcher"
+      ],
+      "publication_status": "预印本；项目页注明ICLR 2027 under review，尚非录用",
+      "publication_status_source": "https://pac-demo-2027.github.io/demo/",
+      "resource_note": "项目注明ICLR 2027 under review，不等于录用；项目说明代码将发布。lightx2v Turbo是使用的外部adapter，不是本工作新发布权重。",
+      "resources": {
+        "project": [
+          "https://pac-demo-2027.github.io/demo/"
+        ],
+        "github": [],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-15",
+      "method_review_note": "先解析全文Markdown，再核对方法、实验及适用边界；不表示完成代码复现。",
+      "reading_section": "streaming_video_research.html#paper-parallel-av"
+    },
+    {
+      "id": "editstream",
+      "title": "EditStream: A Unified Autoregressive Framework for Interactive Video Generation and Editing",
+      "authors": [
+        "Zhou, Yuqian",
+        "Zhou, Zhenghong",
+        "Wu, Zongze",
+        "Smith, Cameron",
+        "Zhang, Richard",
+        "Luo, Jiebo",
+        "Shechtman, Eli",
+        "Lin, Zhe"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-08-16",
+      "latest_version_date": "2026-08-16",
+      "paper": "https://arxiv.org/abs/2608.21424",
+      "fulltext": "https://arxiv.org/html/2608.21424v1",
+      "checked": "2026-10-15",
+      "affiliations": [
+        "Adobe Research",
+        "University of Rochester"
+      ],
+      "publication_status": "预印本 / technical report；截至2026-10-15未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2608.21424",
+      "resource_note": "8月遗漏补充；官方项目可访问，本轮未找到专属公开代码、权重及数据仓库。",
+      "resources": {
+        "project": [
+          "https://real-time-video-research.github.io/editstream/"
+        ],
+        "github": [],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-15",
+      "method_review_note": "先解析全文Markdown，再核对方法、实验及适用边界；不表示完成代码复现。",
+      "reading_section": "streaming_video_research.html#paper-editstream"
+    },
+    {
+      "id": "vidu_s2",
+      "title": "Vidu S2: Real-Time Interactive, Editable, and Spatial Video Generation",
+      "authors": [
+        "Zhang, Jintao",
+        "Jiang, Kai",
+        "Chen, Jintao",
+        "Wang, Xu",
+        "Liu, Deyuan",
+        "Li, Jungang",
+        "Chen, Dechuang",
+        "Lin, Ming",
+        "Zhou, Jingjiang",
+        "Jin, Haopeng",
+        "Jia, Qi",
+        "Wang, Xiaohang",
+        "Wang, Yaole",
+        "Zhang, Zhanqiang",
+        "Li, Ran",
+        "Huang, Zhengkun",
+        "Xiong, Shuyue",
+        "Wang, Yuji",
+        "Dai, Zikun",
+        "He, Hui",
+        "Luo, Yang",
+        "Ning, Mang",
+        "Feng, Weiqi",
+        "Ye, Chengyang",
+        "Lin, Xinyue",
+        "Zhao, Min",
+        "Zhu, Hongzhou",
+        "Tan, Hengkai",
+        "Wang, Zeyuan",
+        "Xiang, Chendong",
+        "Zheng, Kaiwen",
+        "Deng, Zhijie",
+        "Bao, Fan",
+        "Chen, Jianfei",
+        "Zhu, Jun"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-09-10",
+      "latest_version_date": "2026-09-10",
+      "paper": "https://arxiv.org/abs/2609.11638",
+      "fulltext": "https://arxiv.org/html/2609.11638v1",
+      "checked": "2026-10-15",
+      "affiliations": [
+        "Tsinghua University",
+        "Shengshu Technology"
+      ],
+      "publication_status": "预印本 / technical report；截至2026-10-15未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2609.11638",
+      "resource_note": "9月technical report补充；官方服务入口不等于代码与权重公开。",
+      "resources": {
+        "project": [
+          "https://vidu.com/vidu-stream"
+        ],
+        "github": [],
+        "huggingface_models": [],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-15",
+      "method_review_note": "先解析全文Markdown，再核对方法、实验及适用边界；不表示完成代码复现。",
+      "reading_section": "streaming_video_research.html#paper-vidu-s2"
+    },
+    {
+      "id": "zing",
+      "title": "Zing-0.5: Toward Playable Worlds with Real-Time Joint Action and Text Control",
+      "authors": [
+        "Chen, Mingyang",
+        "Chen, Shengdong",
+        "Fu, Xiaoxiao",
+        "Gong, Bosheng",
+        "Guo, Haoyuan",
+        "Li, Bowen",
+        "Li, Jiawen",
+        "Li, Kejun",
+        "Li, Tianpeng",
+        "Liu, Yin",
+        "Sun, Haoze",
+        "Tian, Zeyang",
+        "Wang, Meng",
+        "Wu, Xinmiao",
+        "Yan, Jiangqiao",
+        "Zhao, Zining"
+      ],
+      "authors_format": "arXiv citation metadata 原样",
+      "first_submitted": "2026-09-15",
+      "latest_version_date": "2026-09-15",
+      "paper": "https://arxiv.org/abs/2609.17909",
+      "fulltext": "https://arxiv.org/html/2609.17909v1",
+      "checked": "2026-10-15",
+      "affiliations": [
+        "Zing Team, SeedLeap.ai"
+      ],
+      "publication_status": "预印本 / technical report；截至2026-10-15未确认会议或期刊录用",
+      "publication_status_source": "https://arxiv.org/abs/2609.17909",
+      "resource_note": "论文首页署名Zing Team，个人作者按arXiv元数据完整列出；9月technical report补充。",
+      "resources": {
+        "project": [
+          "https://zing.loopit.me/"
+        ],
+        "github": [
+          "https://github.com/seedleap/zing-world-model",
+          "https://github.com/seedleap/Zing-SGLang"
+        ],
+        "huggingface_models": [
+          "https://huggingface.co/seedleap/zing-0.5"
+        ],
+        "datasets": [],
+        "other_official_resources": []
+      },
+      "scope": "生成 / 解码 / 系统",
+      "method_reviewed_on": "2026-10-15",
+      "method_review_note": "先解析全文Markdown，再核对方法、实验及适用边界；不表示完成代码复现。",
+      "reading_section": "streaming_video_research.html#paper-zing"
+    }
+  ],
+  "excluded_records": [
+    {
+      "title": "Memory Forcing: Attendable Mid-Horizon History for Streaming Video Generation",
+      "paper": "https://arxiv.org/abs/2610.11756",
+      "status": "2026-10-11撤回；作者说明严重排版问题",
+      "checked": "2026-10-15",
+      "note": "未计入43篇有效目录，未采纳摘要性能结论。"
     }
   ]
 }

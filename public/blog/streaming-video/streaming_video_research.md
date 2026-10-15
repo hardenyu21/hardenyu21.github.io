@@ -1,10 +1,10 @@
 # 流式视频生成：基础原理、模型架构与论文精读
 
-本文聚焦流式视频生成，覆盖基础表示、diffusion与flow matching、因果架构、训练与推理、长期状态、交互、多镜头及系统性能。共收录20篇生成／解码／系统研究和7篇基础读物；作者、单位、发表状态与官方资源见[文献资源附录](streaming_generation_resources.md)，机器可读版本见[资源目录](streaming_generation_catalog.json)。
+本文聚焦流式视频生成，覆盖基础表示、diffusion与flow matching、因果架构、训练与推理、长期状态、交互、多镜头及系统性能。共收录36篇生成／解码／系统研究和7篇基础读物；作者、单位、发表状态与官方资源见[文献资源附录](streaming_generation_resources.md)，机器可读版本见[资源目录](streaming_generation_catalog.json)。
 
-第0–3节建立基础与架构视角，第4节梳理技术路线，第5节解释性能与质量，第6节提供术语及阅读路径。[第7节](#paper-readings)精读七篇核心生成论文，[第8节](#forcing-reading-path)串起Forcing路线，并展开DMD、DMD2、Rolling Forcing与Causal Forcing。
+第0–3节建立基础与架构视角，第4节梳理技术路线，第5节解释性能与质量，第6节提供术语及阅读路径。[第7节](#paper-readings)精读七篇核心生成论文，[第8节](#forcing-reading-path)串起Forcing路线，并展开DMD、DMD2、Rolling Forcing与Causal Forcing。[第9节](#october-update)补充10月的梯度、状态与缓存研究，第10节精读EditStream、Vidu S2与Zing-0.5等交互生成报告。
 
-范围整理于2026-10-12；文献方法与资源核实沿用各条目的2026-09-27至2026-10-03日期，不表示已检索到10月12日的新进展。论文报告值、代码事实与教学推导分别标明；本次仅整理综述内容。
+本轮检索截至2026-10-15，新增16篇有效文献，并复查Causal Forcing++的10月修订版。新文献统一记录核实日期，旧条目保留既有发表状态来源；撤回记录单列。论文报告值、代码事实与教学推导分别标明。
 
 ## 0. 入门：一段视频是怎样从噪声生成出来的
 
@@ -196,6 +196,8 @@ Few-step distillation的另一个任务，是让student用较少采样步实现�
 
 目前最值得关注的是 **causal / block-causal DiT + few-step diffusion / flow matching + KV cache + streaming decoder**。CausVid 打通双向模型到 causal student 的蒸馏；Self Forcing 改善生成历史带来的 exposure bias；LongLive 处理长时间运行和提示切换；Causal Forcing / ++、Causal-rCM 进一步改进初始化和 1–2 步生成。另一条路线使用滚动去噪 buffer，FIFO-Diffusion、MAGI-1、StreamDiT 是理解它的重要入口；这些路线会交叉，不能只按论文名字分类。[CausVid](https://arxiv.org/abs/2412.07772)、[Self Forcing](https://arxiv.org/abs/2506.08009)、[LongLive](https://arxiv.org/abs/2509.22622)、[Causal Forcing++](https://arxiv.org/abs/2605.15141)、[Causal-rCM](https://arxiv.org/abs/2606.25473)
 
+**10月更新进一步把“历史状态”拆开研究：** SGF／SGF+／CSF研究梯度怎样训练历史；ID-Forcing研究KV构建来源；AGF研究历史误差敏感性；MosaiChunk、FrameFold和TempoKV分别处理检索、合并与精度。完整路线与精读见[第9节](#october-update)。
+
 可以沿四个问题组织阅读：当前输出能看到哪些信息；训练时历史从哪里来；去噪如何在视频时间轴上调度；状态、解码和设备如何协同。长时稳定性、低首帧延迟、交互响应和高吞吐需要分别评价，不能由一个指标代替。
 
 ## 2. “流式”究竟指什么
@@ -380,6 +382,8 @@ $$
 
 **Live2Diff 和 FlashDecoder 分别补足输入侧、输出侧。** 前者帮助理解带真实在线输入的多噪声缓存；后者帮助理解 latent 已经生成、像素仍没来得及输出的瓶颈。
 
+**2026年10月扩展。** 新工作已超出“更换forcing噪声配置”的单一视角：包括可学习context-writing、跨块梯度、cache provenance、历史检索与预测压缩，以及多任务交互服务。[第9.1节](#october-update)将它们按具体问题分类，避免把所有长流改进归为exposure bias。
+
 ### 4.5 把几个“forcing”和蒸馏名词彻底分开
 
 | 名词 | 主要改变哪一层 | 训练时的关键操作 | 不应误读成 |
@@ -469,6 +473,11 @@ PSNR、MSE、LPIPS等配对指标衡量输出与参照的差异，但同一seed�
 | Rolling window | 固定容量的近期历史 | 不是完整历史的无损压缩 |
 | Sink | 额外保留的长期锚点token或帧 | 不保证承载所有长时信息 |
 | Recache | 按指定条件重新构建历史特征 | 原始像素可以不变，cache仍发生变化 |
+| Context writer | 把已生成latent编码为供后续读取的KV的计算角色 | 不一定是独立参数网络；SGF+才明确拆分角色参数 |
+| KV provenance | 构建某条KV时使用过的历史上下文 | 移除旧条目不等于抹去其他条目已经吸收的信息 |
+| Replay | 用记录状态重算选定训练前向与梯度 | 是否回到历史latent或历史生成，取决于detach边界 |
+| Active cache / history bank | 当前attention读取的缓存 / 归档的历史库 | 前者固定大小不代表CPU历史库也固定大小 |
+| Residual quantization | 预测张量后，量化并存储预测残差 | 压缩率、总显存和延迟是不同指标 |
 | RoPE | 用旋转变换引入位置关系的一类编码 | 位置管理变化可能影响缓存复用 |
 | GQA | 多个query head共享较少的KV head | 减少KV容量，不等同减少全部计算 |
 | Teacher forcing | 训练时给真实历史 | 不等于知识蒸馏 |
@@ -505,9 +514,11 @@ PSNR、MSE、LPIPS等配对指标衡量输出与参照的差异，但同一seed�
 
 **第一遍：能画出系统。** 阅读第0节、第2节与第3.1–3.4节；不要求理解每篇论文。自己画出条件、noise、DiT、sampler、VAE、RGB六个模块，并标明生成KV与VAE状态分别在哪里、两个循环沿哪个时间轴推进。
 
-**第二遍：能解释方法差异。** 先读CausVid的推理算法，再读Self Forcing的训练示意和rollout算法，随后读LongLive的窗口、sink和recache。对每篇只回答：它改变了哪个模块，解决哪个失败模式，为此新增了什么成本？之后再读MAGI-1 / StreamDiT，理解重叠去噪；不必一开始把20篇生成相关工作全部读完。
+**第二遍：能解释方法差异。** 先读CausVid的推理算法，再读Self Forcing的训练示意和rollout算法，随后读LongLive的窗口、sink和recache。对每篇只回答：它改变了哪个模块，解决哪个失败模式，为此新增了什么成本？之后再读MAGI-1 / StreamDiT，理解重叠去噪；不必一开始把36篇生成相关工作全部读完。
 
 **第三遍：能设计公平实验。** 阅读第5节与论文消融，固定硬件、分辨率、生成长度及解码配置，分别测量首块、稳态和控制响应。把短视频质量、长时漂移和系统吞吐拆开，判断改进来自训练、采样、缓存还是工程实现。
+
+**接入10月进展。** 在理解上述基础后，读[SGF／SGF+](#paper-sgf)、[CSF](#paper-connected-sf)、[ID-Forcing](#paper-id-forcing)和[AGF](#paper-agf)，对照画出前向历史与反向梯度；再用[FrameFold](#paper-framefold)、[MosaiChunk](#paper-mosaichunk)、[TempoKV](#paper-tempokv)比较记忆预算。想理解实际交互系统，再读[EditStream](#paper-editstream)与[Zing-0.5](#paper-zing)。
 
 基础读物按缺口选择：不懂Q/K/V读Transformer；不懂加噪与采样读DDPM；不懂latent读LDM；不懂patch与生成主干读DiT；不懂速度场读Flow Matching。它们都是基础来源，不能用其图像实验替代流式视频上的实证。作者、单位、发表状态与官方资源统一放在下方文献附录。
 
@@ -1393,3 +1404,541 @@ Diffusion Forcing给出不同位置噪声条件的统一视角；CausVid把强�
 截图对DF的long-horizon guidance还涉及一个值得补充的基础区别：**前向因果与反向梯度方向不同**。例如未提交A影响未来预测B，规划损失在B上定义，它的梯度可以沿B对A的依赖回到A；这不代表A前向读取真实未来。已经播放或冻结的历史则不能由这一优化回头更改。相关机制见[DF §3.3](https://arxiv.org/html/2407.01392v4#S3.SS3)，不能将其概括成任意流式系统都允许回改过去。
 
 设计新生成方法时，可以先定位不匹配发生在何处：监督信息是否可见、训练历史是否代表自由生成、活动窗口是否覆盖真实噪声日程、位置与缓存是否适应长时运行。再选择对应的训练或系统改动，并分别评估质量、长时稳定性与交互延迟。
+
+<a id="october-update"></a>
+
+## 9. 2026年10月更新：从自生成历史到可学习、可管理的状态
+
+本轮检索与资源核实截至 **2026-10-15**，新增16篇有效文献：12篇10月新论文，以及此前遗漏的SGF、EditStream、Vidu S2、Zing-0.5。它们均按预印本／technical report记录，未确认会议或期刊录用；此前已收录论文的发表状态仍以各自核实日期为准。本节先解释新机制，第10节精读交互生成报告。新原文已先解析为Markdown并保存在 `work/papers/`，正文中的实验数字均为作者报告，本轮没有复现实验。
+
+### 9.1 用六个问题重画路线图
+
+“自回归生成很长的视频”不再足以区分方法。假设模型生成到第100个chunk：当前图像是否清晰、早先出现过的物体是否记得、历史误差是否放大、收到新条件后多久响应，是不同问题。
+
+| 要解决的问题 | 新代表工作 | 改动发生在哪里 | 阅读时抓住什么 |
+| --- | --- | --- | --- |
+| 历史如何获得未来的训练反馈？ | SGF、SGF+、Connected Self Forcing | 梯度路径与参数分工 | 梯度停在KV、历史latent，还是回到历史生成过程？ |
+| 历史有一点错，未来会不会迅速变坏？ | AGF、CRP | 历史扰动训练、条件依赖结构 | 历史来源对齐与历史误差鲁棒性不同 |
+| 同一段历史为何在长流中表现不同？ | ID-Forcing | KV构建上下文与位置 | KV保存了怎样的上下文来源？ |
+| 固定预算内如何保留有用记忆？ | MosaiChunk、FrameFold、TempoKV | 检索、合并、低比特存储 | 活跃缓存、外部历史库、总显存分别是多少？ |
+| 能否少算一些而保持质量？ | Prospective Forcing、Frequency-Step Cache | 未来预测、去噪中间计算复用 | 哪些前向被省掉，哪些cache更新仍必须执行？ |
+| 怎样接收持续变化的外部输入？ | EditStream、Vidu S2、Zing-0.5、Parallel Adapter Composition | 条件接口、联合生成与系统执行 | 输入何时可见、哪个状态需更新、端到端延迟是多少？ |
+
+DuoMatching补充另一条训练路线：视频教师管跨帧联合分布，图像教师补充单帧视觉和语义监督。它改善生成质量，但自身并不解决缓存随时间增长或交互延迟。
+
+建议阅读顺序：已有Self Forcing精读 → **SGF／SGF+ → Connected Self Forcing → ID-Forcing → AGF**；之后再读缓存三篇。最后将这些机制放入第10节的完整系统。以下机制解释和算例是本文组织的教学视角，具体效果以相应原文实验为准。
+
+<a id="paper-sgf"></a>
+<a id="paper-sgf-plus"></a>
+
+### 9.2 SGF与SGF+精读：未来的损失怎样教会模型“写好历史”
+
+**文献定位。** SGF：*Self Gradient Forcing: Native Long Video Extrapolation*，Junhao Zhuang等，JD Joy Future Academy，2026-07-22；本轮补读v2。SGF+：*SGF+: Decoupling Gradient Flows for Autoregressive Video Generation*，Zihan Su等，清华、JD Joy Future Academy、香港中文大学，2026-10-07；本轮读v2。完整作者与官方代码、权重见附录。[SGF原文](https://arxiv.org/html/2607.20368v2) · [SGF+原文](https://arxiv.org/html/2610.10429v2)
+
+#### 9.2.1 Self Forcing还截断了什么
+
+回忆第7节：Self Forcing让训练时的历史也来自模型自身。可是“用自己生成的历史”只是前向过程的描述。如果历史KV被detach，未来损失虽然看得见历史，却不能教会模型怎样把历史编码成更有用的KV。历史画面仍有自己的直接DMD监督；缺失的是它作为未来条件时的反馈。
+
+用教学记号表示：C把历史latent写成KV，D利用KV去噪当前chunk。在冻结历史KV的训练图中，未来损失只更新当前D；SGF恢复“未来损失→KV→C的参数”这条路径。
+
+#### 9.2.2 SGF的两遍计算与精确梯度边界
+
+第一遍无梯度自回归rollout，记录干净预测X，以及随机退出去噪步对应的带噪输入Z*。第二遍用这些记录重算：在因果mask约束下构建可微的干净历史KV，再重算带噪位置的预测，用视频级DMD监督。
+
+$$
+M_\theta=C_\theta(\operatorname{sg}(X),0),\qquad
+\widehat X=D_\theta(Z^*,t^*;M_\theta),\qquad
+\mathcal L=\mathcal L_{\rm DMD}(\widehat X).
+$$
+
+这里sg表示stop-gradient。**梯度能够进入C的参数，但记录的X仍然detach。** 所以SGF不等于把整段多步采样图保留下来做完整BPTT，也不意味着未来损失已经回到了产生X的原始去噪过程。两个角色仍共享同一套参数，这是SGF+接下来研究的矛盾。
+
+#### 9.2.3 SGF+为何拆参数，而不是再加一种loss
+
+SGF+把共享参数收到的梯度拆成context-writing与denoising两部分。作者在128个prompt、4个去噪步的512组测量中，观察到attention与FFN中的两类梯度系统性负对齐；报告的平均夹角分别约104.2°、106.3°。这支持“在所测模型和状态上，两种职责存在优化冲突”，不是所有视频模型的普遍定理。
+
+SGF+给两种职责各一套参数：
+
+$$
+M_{\theta_c}=C_{\theta_c}(\operatorname{sg}(X),0),\qquad
+\widehat X=D_{\theta_d}(Z^*,t^*;M_{\theta_c}).
+$$
+
+DMD仍是同一个目标。Context writer通过改善未来预测获得监督，并没有新增“正确KV标签”。两套参数初始化于同一AR模型，随后分别学习怎样存储历史与怎样完成当前去噪；它们通过attention继续交互。
+
+![SGF与SGF+的两遍训练及参数分工](streaming_paper_figures/sgf_plus_method.png)
+
+原图为[SGF+ Figure 4](https://arxiv.org/html/2610.10429v2#S1.F4)。先读上半图：无梯度rollout保存两类输入。再看左下：两种计算共用θ；右下：θc与θd分离。红虚线是训练梯度，不是推理时让未来视频反过来改变已经播放的帧。
+
+#### 9.2.4 实验支持什么，代价是什么
+
+作者用Wan系1.3B学生与14B教师，训练rollout为5秒，评测包含60秒及240秒长视频。24小时连续生成出现在定性结果与附录，不能当成24小时多prompt量化基准。
+
+| SGF+ Table 3的同组测量 | SGF | SGF+ | 解读 |
+| --- | --- | --- | --- |
+| 生成器参数量 | 约1.4B | 约2.8B | 报告方案使用两套完整参数 |
+| 训练每步时间 | 11.79秒 | 12.76秒 | 增加约8.2% |
+| 推理显存 | 24.85 GB | 27.96 GB | 参数分离增加存储 |
+| 81帧推理耗时 | 4.962秒 | 4.969秒 | 该工作负载下接近不变 |
+
+参数翻倍不自动意味着FLOPs翻倍，因为原本就需要分别做去噪和context-writing调用，SGF+是在相应调用中换用角色参数。上表只用于论文内部比较；未以可核实的统一硬件口径与其他论文横比。关键自测：**SGF+训练了两个角色，不等于一次当前chunk去噪要同时跑两个完整denoiser。**
+
+<a id="paper-connected-sf"></a>
+
+### 9.3 Connected Self Forcing精读：让历史生成过程也收到未来反馈
+
+*Connected Self Forcing: Beyond Local Learning in Video Autoregression*，Dongbin Zhang等，XPeng、香港中文大学、清华；2026-10-08，v1。[原文](https://arxiv.org/html/2610.12156v1) · [项目与代码入口](https://eastbeanzhang.github.io/CSF/)
+
+#### 9.3.1 它与SGF的差别发生在历史latent处
+
+设第j块被写成缓存Cj，第i块在后面读取它。未来DMD梯度先到Cj，再经context writer到历史输出xj，最后进入生成xj的计算。SGF在记录的xj处停止；CSF继续回传这一段。
+
+$$
+g_{C_j}=\left(\frac{\partial \widehat x_i}{\partial C_j}\right)^\top g_i^{\rm DMD},\qquad
+g_{x_j}^{\rm cross}=\left(\frac{\partial C_j}{\partial\widehat x_j}\right)^\top g_{C_j}.
+$$
+
+直观上，某个历史块既要自己看起来好，也要给后续块提供有用条件。未来损失因此参与训练历史生成器。这是训练时的信用分配，推理仍然因果输出，不需要预知真实未来。
+
+#### 9.3.2 Shortcut Gradient Replay不是完整BPTT
+
+完整保留所有chunk、所有去噪步的计算图很贵。CSF先记录rollout状态，再重放选中的计算：
+
+1. 重放未来chunk，把所选历史KV当作可微叶子，其他历史保持detach，求KV梯度。
+2. 重放该历史块的context-writing，把梯度传到writer参数和记录的历史latent。
+3. 重放该历史块的生成，把上述latent梯度用于更新生成参数。
+
+它通过保留KV的直接attention依赖取回**选定路径**的梯度，跳过中间chunk的逐块生成递归；生成反馈在目标历史块终止。Writer路径还可向更早的writer传播，但相应历史latent仍detach，防止重新进入更早的生成分支。因此不能把“connected”写成“无截断地精确恢复整段全采样梯度”。
+
+#### 9.3.3 消融比单个最高分更有解释力
+
+主实验是Wan1.3B、4步、7个chunk组成21 latent帧训练序列；60秒使用40个VBench-Long prompt，240秒使用固定128个MovieGen prompt。论文控制初始化、训练预算与推理配置比较SF、SGF、CSF。
+
+在60秒Causal-CD初始化组，Avg.(6)从SF的0.8537、SGF的0.8563到CSF的0.8589；CSF Dynamic Degree为0.5976，低于SGF的0.6113。Avg.(6)明确不包含Dynamic Degree。消融中的Full BPTT为0.8529，CSF为0.8589，而减半跨块反馈会提高运动量却损失若干质量指标。证据支持该设置下更好的质量—运动折中，不支持“梯度越完整，视频必然越好”。
+
+| 方法 | 重算历史KV的参数可获未来梯度 | 历史latent收到未来反馈 | 反馈进入历史生成 |
+| --- | --- | --- | --- |
+| 常规detached-cache SF | 否，指被detach的历史路径 | 否 | 否 |
+| SGF | 是 | 记录latent处截断 | 否 |
+| SGF+ | 是，独立context参数 | 记录latent处截断 | 否 |
+| CSF | 是 | 是，选定路径 | 是，shortcut replay边界内 |
+
+这张表描述论文讨论的训练图，不意味着各方法的完整系统、初始化与训练预算完全相同。
+
+<a id="paper-id-forcing"></a>
+
+### 9.4 ID-Forcing精读：窗口里留下的KV，可能仍携带窗外历史
+
+*In-Distribution Forcing for Long Video Generation at Test Time*，Jeongwoo Shin等，首尔大学、高丽大学、成均馆大学、Georgia Tech；2026-10-02，所读v2更新于10月7日。[原文](https://arxiv.org/html/2610.03120v2) · [项目](https://in-distribution-forcing.github.io/)
+
+#### 9.4.1 先分清caching与conditioning
+
+**KV caching**是把已生成latent编码成KV；**KV conditioning**是下一个chunk读取哪些KV。滑动窗口只限制第二件事，并不保证第一件事处于训练中见过的条件范围。
+
+例如，第6块的KV构建时读过0–5块；后来0、1块被逐出窗口，但第6块KV已经混入这些上下文。保留同样的“最近三块”，并不能保证它们与短序列训练时的KV分布相同。可用教学式表达：
+
+$$
+\kappa_i=E_\theta(x_i;\kappa_{<i}),\qquad
+E_\theta(x_i;H_a)\ne E_\theta(x_i;H_b)\quad\text{in general}.
+$$
+
+论文把这种构建来源称为KV provenance。它不是视频像素内容来源，而是**一个缓存表示在计算时见过什么上下文**。
+
+![相同条件窗口，不同KV构建来源](streaming_paper_figures/id_forcing_provenance.png)
+
+原图来自[ID-Forcing Figure 2](https://arxiv.org/html/2610.03120v2#S1.F2)。三种设置改变第6块的缓存构建路径，而后续生成读取的窗口形式相近；下方差异用于展示构建来源的重要性。此图是案例，平均表现需看Table 1。
+
+#### 9.4.2 Self-caching与受控recache如何配合
+
+Self-caching让已生成chunk在无旧KV的条件下重新编码，得到不递归吸收任意长历史的基础KV。**这是生成之后的缓存编码操作，不是让生成当前画面时丢弃全部历史。**
+
+完整算法还包括：保留特殊首块作为sink；将近期窗口的RoPE重新映射到训练位置范围；窗口前部使用self-cached表示，必要时在其后重算尾部的上下文KV。论文Self Forcing配置为L=3、ℓ=2，包含尾部recache；LongLive配置为L=3、ℓ=3。不能概括为“所有缓存永远只独立编码一次”。
+
+#### 9.4.3 哪些数据支持它
+
+在同组128个MovieGen prompt、240秒Self Forcing实验中，Imaging Quality由58.38到67.88，Dynamic Degree由29.61到64.76。论文的Color Drift、Motion Drift已经从距离转换成0–100的分数，**越高越好**，不可按字面当作越小越好。
+
+120秒逐项消融很有帮助：加入sink，再加位置重映射，仍不及加入self-caching后的颜色和视觉质量；这说明仅仅保留首块、限制位置不足以解释全部收益。
+
+“in-distribution”主要针对论文所定义的缓存构建与条件配置。它不构成任意时长像素分布完全一致的证明；重编码还有计算代价，应核算每个chunk实际增加的前向，而不能因为“training-free”就写成零overhead。
+
+<a id="paper-agf"></a>
+
+### 9.5 AGF精读：见过自己的历史，还要学会承受历史误差
+
+*Adversarial Gradient Forcing for Robust Few-Step Autoregressive Video Generation*，Chenxi Xia等，浙江大学、Alibaba、南京大学；2026-10-10，v1。[原文](https://arxiv.org/html/2610.14553v1) · [项目](https://wuli-art.github.io/Adversarial-Gradient-Forcing/)
+
+#### 9.5.1 Exposure bias与局部敏感性是两个轴
+
+SF让训练历史来自模型，但模型仍可能对历史中的微小偏差敏感。教学上设下一块为F(h,z)：训练覆盖了h，不自动保证F(h+δ,z)与F(h,z)都合理。AGF用未来生成质量的DMD梯度寻找对模型不利的历史扰动，再同时训练干净和扰动历史。
+
+#### 9.5.2 扰动不是任意高斯噪声
+
+先无梯度rollout并记录状态，选一个历史块j，在其干净latent上加入初始为零的δ，重算它影响的后续预测。设后续DMD梯度为g，预测对δ的Jacobian为J，则历史的有害方向由J的转置把未来损失带回来。
+
+$$
+u=J^\top g,\qquad
+\delta^*=\operatorname{sg}\left(\varepsilon\frac{\operatorname{Mean}_{\rm time}(u)}{\operatorname{RMS}(\operatorname{Mean}_{\rm time}(u))}\right).
+$$
+
+这是省略数值稳定项的机制式。实现把同一空间—通道扰动模式共享到该块的各latent帧，控制RMS预算；默认预算0.05。随后两分支训练：原历史分支监督全部块，扰动分支只监督j之后的块，避免要求模型把人为扰动本身当成好图像。
+
+训练前期还约束两分支**首个去噪步的velocity预测**接近干净分支的stop-gradient目标，缓解一开始过强扰动对学习的破坏；后期关闭该正则。它不是始终把所有未来输出强行拉成一样。
+
+#### 9.5.3 为什么说它主要改善长流
+
+| 作者同组比较 | 5秒VBench Total | 60秒VBench Total | 240秒Q5 |
+| --- | --- | --- | --- |
+| Self Forcing | 82.21 | 79.56 | 82.47 |
+| Causal Forcing | 82.94 | 79.83 | 81.79 |
+| LongLive | 80.34 | 79.81 | 83.62 |
+| SGF | 82.08 | 79.67 | 84.07 |
+| AGF | 82.03 | 81.47 | 84.82 |
+
+该表来自原文Table 1；Q5是五项质量指标平均值，不是VBench Total。三个时长分别使用944、240、120个prompt，不是同一批视频简单延长。AGF短视频总分并非最高，长视频优势更明显，这与“抑制误差放大”的动机相符。
+
+Table 2进一步比较同RMS的高斯扰动：240秒Q5为75.11，低于AGF的84.82；去掉首步一致性正则后为82.75。这表明收益来自所选扰动与配套稳定训练，不是任意加噪都会变好。
+
+训练使用5秒rollout、Wan1.3B四步学生与14B教师。论文报告从现成ODE初始化开始的364.4 GPU-hours；这不包含上游模型预训练和ODE初始化成本。方法值得与SGF／CSF对照：后者改变历史的训练反馈路径，AGF改变训练时要求模型承受的历史邻域；兼容性需实验，不能直接假定收益可相加。
+
+<a id="paper-framefold"></a>
+
+### 9.6 FrameFold精读：压缩记忆时保留“读出来的内容”
+
+*FrameFold: Response-Guided KV Cache Consolidation for Autoregressive Long Video Generation*，Muyu Liu等，上海科技大学、vivo BlueImage Lab；2026-10-10，v1。[原文](https://arxiv.org/html/2610.14568v1) · [项目](https://vivocameraresearch.github.io/FrameFold-Webpage/dist/)
+
+#### 9.6.1 为什么attention分数高，不一定值得保留
+
+不同空间位置的query需要不同的历史内容。全局Top-K选取可能保住总attention mass，却遗漏某些位置所需的信息。FrameFold从另一角度问：**合并前后，同一批query实际读到的value是否变化很大？**
+
+它保护sink和近期块，在较旧历史中寻找相邻条目对；每个条目保留完整空间网格，把两个时间条目合成一个，而不是从空间上零散删token。
+
+#### 9.6.2 从attention读出到闭式解
+
+先按条目代表的原始帧数，对pre-RoPE keys做加权合并。固定这个合并K之后，attention权重A也固定。令合并V为αV1+(1−α)V2，则读出是一个关于α的线性函数：
+
+$$
+O^+(\alpha)=C+\alpha D,\qquad C=AV_2,\quad D=A(V_1-V_2),
+$$
+
+$$
+\alpha^*=\operatorname{clip}_{[0,1]}\frac{\langle D,O^- - C\rangle_F}{\|D\|_F^2}.
+$$
+
+O−是同一query从原始条目对读出的结果。对每个候选对算拟合误差，选失真最小的一对合并，仍超预算则重复。实际使用池化query/KV降低评分成本，将得到的系数应用于完整网格。
+
+这里的softmax在候选历史块内部归一化，称为conditional response；并非证明完整attention输出在任意未来query下都相同。闭式最优也仅限于固定K、固定query、单个共享混合系数的局部拟合问题。
+
+![FrameFold的合并选择与代表构建](streaming_paper_figures/framefold_method.png)
+
+原图为[Figure 3](https://arxiv.org/html/2610.14568v1#S4.F3)。左侧是缓存超限触发，中间是逐对试算与选择，右侧展示K的跨度加权与V的闭式拟合。应把“保持空间网格”和“压缩时间历史”同时记住。
+
+#### 9.6.3 固定显存不等于免费计算
+
+主要实验对齐128个prompt、480×832、30／60秒、12个frame-equivalent KV条目预算（包含当前3帧chunk）。在Self Forcing 60秒组，Imaging Quality从66.12到68.80，Dynamic Degree从55.34到62.11。另有24个prompt的480秒嵌套rollout量化实验，不能与仅有8分钟展示的工作混淆。
+
+H20计时明确**排除VAE解码和视频保存**：同12条目预算下，FIFO 6.39 FPS、FadeMem 6.21、FrameFold 5.56。FrameFold比FIFO慢约13%；与更大缓存基线的比较才可能同时节省计算。它的主要贡献是固定记忆容量内的质量，而不是同预算下无代价提速。
+
+<a id="paper-mosaichunk"></a>
+
+### 9.7 MosaiChunk精读：遗忘的对象需要什么粒度的历史
+
+*MosaiChunk: Compositing Spatio-Temporal Memory for Autoregressive Video Generation*，Yiwen Zhang等，Cornell、UC Berkeley、Harvard、Impossible Inc.；2026-10-01，v1。[原文](https://arxiv.org/html/2610.02153v1) · [项目](https://mosaichunk.github.io/)
+
+#### 9.7.1 从“记住整块”到“只取回相关区域”
+
+例如打开饼干盒，看见粉色星形饼干，关上很久，再次打开。近期窗口看不见最初饼干，首帧sink也未必包含它。论文先做手工KV移植：从早先chunk选取饼干区域对应的KV，加入当前条件，即使主干冻结，也能帮助恢复外观。这个干预提示KV可以作为可取回的视觉记忆。
+
+方法将每个chunk的未加RoPE的KV用balanced k-means分为等大小section；轻量descriptor encoder把pooled keys映射成描述向量。最新chunk的section作为query，在窗外历史库中检索：
+
+$$
+\operatorname{score}(h)=\max_{q\in\mathcal Q}\cos(d(q),d(h)).
+$$
+
+取全局Top-N section，按归一化权重缩放V，组合成一个MosaiChunk，与近期窗口一起供冻结DiT读取。它可以来自多个不连续时间点，不必把整段旧视频塞回attention。
+
+#### 9.7.2 Router怎样训练，梯度穿过哪里
+
+教师和学生使用同一个冻结DiT、同样的带噪输入与近期窗口，只改变far memory：教师得到覆盖重访目标的完整旧chunks，学生得到小预算检索结果。匹配两者velocity训练descriptor encoder。
+
+离散Top-N索引本身不求导，梯度通过被选section的value权重进入encoder。教师旧chunks由训练prompt阶段或相机姿态选定；这解释了它虽不需要真实目标渲染视频，却仍需要构造“何时重访何种历史”的监督关系。
+
+#### 9.7.3 评价应真正把物体移出视野
+
+作者提出RememBench：100个T2V场景，以及150个I2V场景，后者包含不同角度旋转及部分平移。测试重点是离开后重访，而非始终看着同一主体。T2V基座为H3-AR，I2V为LingBot-World-Infinity。
+
+例如I2V仅旋转、1个chunk远期记忆预算下，重访CLIP中位数相对同预算Base提高0.072；WBench与WorldMark另有公开基准比较。必须区分**固定活跃KV预算**和**总历史存储**：论文把section原始KV及descriptor存入CPU bank。若持续归档而不清理，历史库仍随生成长度增长。它解决有限attention预算下的取用效率，不能据此写成整个系统恒定内存。
+
+<a id="paper-tempokv"></a>
+
+### 9.8 TempoKV精读：预测缓存，再低比特存残差
+
+*TempoKV: Predictive KV Cache Quantization for Autoregressive Video Generation*，Jiahui Hu等，上海交大、华南理工、Alibaba；2026-10-11，v1。[原文](https://arxiv.org/html/2610.15324v1)
+
+#### 9.8.1 K与V的依赖为什么要分开
+
+相邻视频latent在相同空间位置通常高度相关。论文测得K较容易由历史K预测；V单靠历史V较差，但加入当前K后明显改善。因此先恢复K，再用恢复出的K帮助恢复V，避免K与V互相依赖造成解码循环。
+
+$$
+\widetilde K_t=\beta_K+\sum_i A_i^K\odot\widehat K_{t-i},\qquad
+\widetilde V_t=\beta_V+W_{K\to V}\widehat K_t+\sum_j A_j^V\odot\widehat V_{t-j},
+$$
+
+$$
+R_t=X_t-\widetilde X_t,\qquad \widehat X_t=\widetilde X_t+\operatorname{Dequant}(\operatorname{Quant}(R_t)).
+$$
+
+默认K用2帧历史、V用1帧。首latent帧作为较高精度anchor，初始化后续预测。K误差既改变softmax attention，又进入V预测，因此K通常分配更多bit。
+
+#### 9.8.2 Training-free仍需要校准
+
+模型权重不训练，但预测器需要少量BF16缓存轨迹做离线线性回归。校准输入使用量化后重建的历史，以贴近真实解码依赖；不同bit配置可以复用记录轨迹，不必重新生成。它既不是简单把KV转成int4，也不是每一步在线拟合一个预测网络。
+
+#### 9.8.3 压缩率、峰值显存、运行时间是三列
+
+论文Self Forcing配置中，INT4方案把KV存储48.18 GB降至13.2 GB，峰值显存由68.27降至35.59 GB；相对BF16 337.9秒基线，生成耗时增加11.9%。最高6.71×是某低比特配置的**KV压缩率**，不是总显存缩减6.71倍，更不是速度提升6.71倍。
+
+保留完整历史时，低比特仅缩小每个条目的常数，条目总数仍随时长增长。论文还单独用固定180 latent帧attention窗口做质量比较，避免因为上下文不同而误判压缩质量。代码在摘要中承诺后续发布；截至核实时未找到实际仓库入口。
+
+<a id="paper-prospective-forcing"></a>
+
+### 9.9 Prospective Forcing精读：预测未来表示，并让验证器决定能否跳算
+
+*Prospective Forcing: Learning to Look Ahead for Autoregressive Long Video Diffusion*，Yifan Shen等，MBZUAI、CMU、Institute of Foundation Models；2026-10-10，v1。[原文](https://arxiv.org/html/2610.14654v1)
+
+#### 9.9.1 它在Rolling Forcing上加了什么
+
+一个窗口同时去噪W个不同噪声水平的chunk。模型取最新位置的feature，用多个轻量head分别预测未来offset的feature和velocity；各head共享当前条件、独立预测，不是第一个head预测错后让第二个继续递归。
+
+未来噪声提前采样，等对应chunk真的进入后续窗口时复用相同噪声。训练仍执行所有窗口，因此能拿到后续主干真实计算出的feature和velocity作为stop-gradient目标，加入DMD一起训练。默认W=5、offset heads为1和2。
+
+这为当前表示增加“对更远未来有用”的学习压力。训练对齐的是模型后续计算，不是提前获知用户尚未输入的未来指令。
+
+#### 9.9.2 候选与拒绝机制怎么工作
+
+下一块head再加不同的可学习candidate embedding，产生多个候选。训练时找最接近后续主干输出的候选；若连最佳候选误差也超过阈值，则标为拒绝。轻量MLP verifier学习选择一个候选或全部拒绝。
+
+推理接受时可额外提交一个预测chunk并省去一次窗口主干执行；拒绝时回到常规滚动生成。这里是**学习到的近似接受规则**，不是LLM中保证保持原分布的精确rejection sampling。作者的理论分析有误差与稳定性条件，不意味着任意提示、任意交互切换都保持原分布。
+
+#### 9.9.3 为什么接受一个候选不等于速度翻倍
+
+原文在同一A100 80GB、batch=1、BF16上比较30秒、480帧输出：标准推理有46次sampling和46次cache-update；即使不验证而全接受一个预测，sampling也只降到27次，cache-update仍为46次。
+
+| 推理模式 | Sampling调用 | Cache更新调用 | 速度比 |
+| --- | --- | --- | --- |
+| 标准 | 46 | 46 | 1.00× |
+| 不验证，接受一个未来预测 | 27 | 46 | 1.56× |
+| 学习验证器 | 37 | 46 | 1.20× |
+
+验证器接受率32.1%；正式表中9.23 FPS，低于视频设定16 FPS的播放速度，因此该配置不能直接称为实时。200个MovieGen prompt评测中VBench Total为81.40；效果更好也不能跨论文与不同初始化、硬件、时长的分数直接排序。
+
+<a id="paper-crp"></a>
+
+### 9.10 CRP精读：没有双向视频教师，能否训练好因果模型
+
+*Conditional Residual Prediction: Improving Autoregressive Video Diffusion without a Bidirectional Teacher*，Bowen Zheng等，香港中文大学（深圳）、Tencent Hunyuan；2026-10-08，v1。[原文](https://arxiv.org/html/2610.11479v1)
+
+#### 9.10.1 将历史限制为当前预测的补充
+
+论文假设：教师强制训练中，因果模型可能过度依赖干净历史，而当前带噪输入与文本本来就能决定不少内容。CRP用**共享参数**的网络做两次计算：history-free分支只看当前输入和文本；history-conditioned分支看历史，预测残差。
+
+$$
+\widehat x_f=f_\theta(c),\qquad r=f_\theta(c,h),\qquad
+\mathcal L=\|\widehat x_f-x\|^2+\|\operatorname{sg}(\widehat x_f)+r-x\|^2.
+$$
+
+推理输出为两者相加；无历史的首块仅用free分支。残差分支可以读取free分支的detach hidden states，但反向信息不能传回free分支。这里“history-free”不等于unconditional，因为文本和当前噪声仍是输入。无新增参数也不等于无额外前向计算。
+
+#### 9.10.2 为什么同时研究VAE
+
+视频VAE自身也有历史依赖：早先latent的误差可通过时序解码影响后续帧；首帧latent与后续四帧压缩latent的统计也不同。作者将同一个Wan VAE改用逐帧image mode，让每帧独立编码；输入端用轻量temporal patch layer合并四帧latent，输出再拆分，控制DiT token成本。这是另一个改动，应与CRP分开看消融。
+
+#### 9.10.3 最强证据是控制变量实验
+
+同样4M训练视频、256p、5秒条件下：双向参考VBench Total 77.28；因果baseline 71.14；改x0-prediction后72.41；再加CRP到77.09；再加image VAE到77.48。CRP相对其直接前项提高4.68分，不能把所有增益都算给单一改动。
+
+扩展后的Optica为2B，约15M训练视频、480p、5秒、**50步采样**，VBench Total 82.78。它说明无需双向视频模型参与初始化或蒸馏也能训练较强因果生成器，但不是已验证的少步实时长流方案。“没有双向视频教师”也不等于从随机权重起步：使用了图像模型初始化。
+
+<a id="paper-duomatching"></a>
+
+### 9.11 DuoMatching：视频联合监督之外，再加单帧边缘监督
+
+*DuoMatching: Joint-Marginal Distribution Matching for Few-Step Video Generation*，Jiahao Zhan等，CUHK、ByteDance、HKUST、CPII/InnoHK；2026-10-02，v1。[原文](https://arxiv.org/html/2610.03543v1) · [项目](https://johnzhan2023.github.io/DuoMatching/)
+
+视频教师同时负责运动和外观，但其单帧质量与语义先验未必优于强图像模型。DuoMatching保留video joint DMD，另用image marginal DMD监督抽样帧，默认图像教师为Qwen-Image。用M表示帧抽样，机制目标为：
+
+$$
+\mathcal J(\theta)=D_{\rm KL}(Q_\theta\|P_v)+\omega D_{\rm KL}(MQ_\theta\|P_i).
+$$
+
+关键实现并非简单把视频latent送给图像教师：二者VAE表示不兼容。LatentBridge用当前及前一video latent slice，加上该slice内的RGB帧索引，预测对应image latent；先用配对数据训练，之后冻结参数但保留输入梯度。这样不用为每次监督反传完整video decoder和image encoder。
+
+帧抽样也有设计：按相邻latent变化最大的K−1个位置分段，每段采样一个slice，减少预算全部花在静态区域。默认K=4、边缘loss权重0.4；Bridge使用29,400个OpenVid视频训练。生成评测以81帧480×832、VBench和400个挑战prompt为主，支持视觉、构图、语义改善；不要把这些短片段结果外推成任意长度记忆能力。该训练思路也可用于双向生成器，属于生成质量路线，并非流式专属状态机制。
+
+<a id="paper-frequency-step-cache"></a>
+
+### 9.12 Frequency-Step Cache：把“完全校准”和“局部修补”分开调度
+
+*Frequency-Step Cache: Separating Synchronization and Repair for Efficient Autoregressive Video Diffusion*，Kerry Xu等，Rice University；2026-10-11，v1。[原文](https://arxiv.org/html/2610.15922v1)
+
+这里cache的主要对象是**去噪迭代中的中间计算复用**，与MosaiChunk检索远期历史的目标不同。FSC安排由密到疏的完整计算anchor，承担精确同步；两次anchor之间，根据latent频率分量的变化和token距上次更新的年龄决定：整步复用、选择性token重算，或完整修补。一个信号不再同时控制“什么时候必须重置”和“这一步修多少”。
+
+论文指出SkyReels-V2上大部分加速来自整步复用，稀疏token计算更适合作为质量修补，因为稀疏执行自身也有开销。在作者同栈设置中，FSC-Speed为2.36×；与MotionCache同延迟的FSC-Quality把SSIM从0.790提高到0.821。SSIM／PSNR在这里比较**相同seed下未加速模型的轨迹**，不是拿真实视频当GT；它们刻画近似误差，不能替代无参考生成质量。
+
+该文还明确报告某些VBench差异未达到统计可分辨程度。因此合理结论是更好的速度—保真折中，而不是所有生成语义或真实感都显著提升。它也没有直接证明同等加速能迁移到只剩4步的蒸馏模型：可复用的去噪步数和轨迹不同，需重新测量。
+
+<a id="paper-parallel-av"></a>
+
+### 9.13 Parallel Adapter Composition：流式音视频的两种能力能否并行学习
+
+*Real-Time Joint Audio-Video Generation by Parallel Adapter Composition*，Jingyu Li、Xiaoxiao Xiang、Yiwen Guo，LIGHTSPEED／Independent Researcher；2026-10-07，所读v2更新于10月8日。[原文](https://arxiv.org/html/2610.10343v2) · [官方演示](https://pac-demo-2027.github.io/demo/)
+
+本节讨论联合生成机制。音频与视频共同生成时，不仅需要画面连续，还要保证语音内容、节奏与口型同步。
+
+作者基于MiniMax-H3 FL2VA冻结主干，单独用clean-context teacher forcing训练causal LoRA；few-step LoRA则使用现成lightx2v Turbo。推理时将两种权重增量相加：一个改变时间可见性适应，另一个提供四步采样能力。它们不串行覆盖彼此参数，也不做合并后的联合训练；实验测得更新方向近正交，但没有训练时强制正交，也不能保证任意两个LoRA都能直接相加。
+
+每个chunk为34个视频帧，最多7个chunk上下文；输出后额外前向把干净块写入cache，首帧anchor保留。论文承认旧cache是在较早、较短上下文中编码的，仍有stale-cache错配。这与ID-Forcing所分析的状态来源形成有价值的对照：解决参数组合，不等于解决缓存构建分布。
+
+约26 FPS是在480×832、**六张GPU**的系统上测得，30秒持续生成是其长时验证尺度。四步因果版本WER约0.126–0.136，而双向Whole-seg为0.047；组合版本保持较好的图像质量，但口型同步也不是各配置最佳。联合流式系统的画质、语音准确性、同步和延迟必须分别报告，单个视频质量分数无法说明全部能力。
+
+
+<a id="paper-causal-forcing-pp"></a>
+
+### 9.14 Causal Forcing++版本复查：把完整轨迹回归换成局部一致性学习
+
+这篇已在原目录，**不是本轮新增论文**；arXiv于2026-10-04更新到v4，本轮将精读与资源指向该版本。[v4原文](https://arxiv.org/html/2605.15141v4)
+
+#### 9.14.1 相同目标，换一种获得监督的方式
+
+Causal Forcing先让AR教师生成完整ODE轨迹，再用中间状态回归教师干净终点。Causal Forcing++的Stage 2使用causal consistency distillation：从数据加噪状态出发，由同一历史条件下的AR教师在线走一个相邻时间步，让学生在这两个状态上的终点预测一致。
+
+$$
+\mathcal L_{\rm CD}=\mathbb E\left[w(t)\,d\left(G_\theta(x_t,h,t),\operatorname{sg}\left[G_{\bar\theta}(\widehat x_{t-\Delta t},h,t-\Delta t)\right]\right)\right].
+$$
+
+h是同一个干净历史前缀，后一个G使用EMA参数。它学习的仍是AR条件流映射；“只做一个教师ODE步”描述训练监督构造，不代表最后系统所有视频都只需一步。Stage 1的AR teacher forcing与Stage 3的on-policy非对称DMD仍保留。
+
+#### 9.14.2 哪部分成本下降，哪部分延迟不随步数变
+
+论文80K视频规模下，Stage 2数据构建与训练由约11,600降到2,900 A800 GPU-hours，额外轨迹存储由约1,900 GiB变为不需要离线轨迹文件。这不是整个预训练到部署流程都减少四倍，也不是训练不再需要数据或显存。
+
+A800表中，frame-wise的1／2／4步吞吐分别为20.7／14.1／8.69 FPS，但首帧延迟均为0.27秒：因为采用ASD，**首帧统一执行4步**，后续才按各配置步数。由此可见，“每块少一步”不一定改善time-to-first-output。2步VBench Total为84.14，4步为84.10；不同质量子项仍有权衡。
+
+动作条件world-model扩展使用camera pose、chunk-wise四步，报告将frame-wise两步动作模型留作后续工作。不能把T2V的最快表格数字直接当成动作交互版本的已经测得性能。本轮核对的是v4的当前机制与结果，没有将未逐版本比对的内容标为v4新贡献。
+
+## 10. 交互生成technical report精读：条件、训练与服务链路
+
+这三篇在7–9月已出现，本轮作为旧survey的遗漏补充。保留论文与报告的具体公开时间，不称为10月才发布的新模型。
+
+<a id="paper-editstream"></a>
+
+### 10.1 EditStream：把生成、编辑与相机控制放入同一流式模型
+
+*EditStream: A Unified Autoregressive Framework for Interactive Video Generation and Editing*，Yuqian Zhou等，Adobe Research、University of Rochester；2026-08-16，v1。[原文](https://arxiv.org/html/2608.21424v1) · [项目](https://real-time-video-research.github.io/editstream/)
+
+#### 10.1.1 统一任务靠什么接口
+
+T2V、I2V、V2V、参考图编辑、首帧编辑传播、相机重拍并非简单把所有输入拼成同一种token。EditStream区分两类条件：
+
+- **像素对齐条件**：源视频、mask、根据目标相机重投影的视频，与目标latent沿channel拼接，避免把attention序列长度按输入数膨胀。新增patch embedding通道零初始化。
+- **参考条件**：参考图或首帧沿token维输入，供attention建立外观关系。不同任务用特殊文本前缀区分，否则相同输入可能对应不同“保留／修改”要求。
+
+例如相机控制使用重投影视频加有效区域mask：黑色像素可能是真的黑色，也可能是没有几何覆盖，mask使两者可区分。这里的统一来自条件表示与任务语义，不是所有任务数据天然等价。
+
+#### 10.1.2 VMM与DMD为什么不同
+
+DMD常在学生最终生成结果重新加噪后比较分布。VMM沿Moment Matching思路：让学生先从噪声状态做一次粗步转移，在**学生实际到达的下一噪声状态**比较条件velocity moments。冻结教师估计目标分布，辅助网络估计学生诱导分布，学生据其差异更新。
+
+因此二者都有教师／学生／辅助估计器，但监督所在的状态与匹配对象不同。VMM直接工作在flow velocity空间；与clean-sample moment在线性可逆参数化下有关系，却改变了时间相关梯度缩放。不能把它仅改名为“velocity形式DMD”。
+
+#### 10.1.3 从双向模型到因果学生的两阶段训练
+
+教师保持双向attention，混合全序列、首块cold-start和单块带噪／其余前后块干净的训练。注意最后一项允许教师看到clean suffix，**不能称为严格因果教师**。学生先teacher-forced warm-up，再在自生成历史上unroll蒸馏；因果约束由学生的block attention承担。
+
+这一做法与Causal Forcing的因果ODE教师路径不同，值得并读。报告展示了它在相应VMM训练配方中的效果，不构成“任何双向未来监督都不会产生错配”的结论。
+
+#### 10.1.4 性能表怎样读
+
+单H100、5B、1280×704、batch=1，Table 3定义首输出为首个**已解码RGB块**：0.90秒；稳态吞吐10.56 FPS。用两张GPU并行VAE解码与DiT可到16.10 FPS。作者也明确指出该720p设置还未达到目标实时播放速度；低首块延迟与长期不积压是不同要求。
+
+同表三种AR配方从ODE初始化+SF、VMM初始化+SF，到VMM初始化+VMM unroll，VBench Total为83.67／84.13／84.42，Dynamic Degree为48.06／66.67／79.17。这个消融支持初始化和unroll目标都影响动态性，不能只归因于“换成causal mask”。
+
+<a id="paper-vidu-s2"></a>
+
+### 10.2 Vidu S2：联合音视频、实时编辑与分层生成系统
+
+*Vidu S2: Real-Time Interactive, Editable, and Spatial Video Generation*，Jintao Zhang等，清华、Shengshu Technology；2026-09-10，technical report v1。[原文](https://arxiv.org/html/2609.11638v1) · [官方入口](https://vidu.com/vidu-stream)
+
+#### 10.2.1 Avatar与Editing不是同一个条件问题
+
+Avatar使用audio-visual joint DiT，联合预测视频与音频latent，参考图提供身份／外观条件，并按segment提供不同caption。它不是简单给无声视频接一个外部音轨。Editing使用源视频和可选参考图；源与目标视频的条件交互按对应帧约束，避免目标帧任意读取不对齐的源时间片。
+
+前者需要生成跨模态同步，后者需要尽快响应持续输入的视频。两种系统的延迟容忍度和评价方式应分开，不能只用一个“实时生成”标签替代。
+
+#### 10.2.2 Self-Replay Forcing怎样跨块训练
+
+训练先做双向适配，再用block-causal mask与TF／DF混合历史训练，之后进入Self-Replay Forcing：无梯度长rollout → 抽取自生成片段并重新加噪 → 可微因果replay → 对replay输出施加DMD与感知正则。Replay片段内部允许跨块梯度，继承自原rollout的外部历史固定。
+
+它与SGF同属“先生成、后可微重算”的思路，但replay对象、噪声状态、损失与边界不应自动当作完全相同。要判断训练算法是否等价，需逐项核对记录了什么、重算了什么、哪里detach，而不是只看名字中都有forcing。
+
+#### 10.2.3 一步Refiner与两套不同噪声的历史
+
+主干先低分辨率生成运动和粗结构，再由一步latent super-resolution refiner恢复细节。主干读取较高噪声历史以减轻细节伪影传播，refiner读取低噪声高分辨率历史保留身份与纹理。两阶段不是重复做同一件事，其cache也有不同职责。
+
+系统还包括混合attention实现、W8A8线性层、kernel fusion、CUDA Graphs和多卡context parallelism。报告25–42 FPS／720p的范围不能脱离这些执行条件理解为“任何单张消费卡均可达到”。现有公开文档不足以让本文把该范围绑定成与其他论文同硬件的公平对比。
+
+#### 10.2.4 读报告时要拆开模型与agent贡献
+
+动态参考图与复杂动作不仅来自DiT，报告还包含VLM agent生成prompt、视觉反馈及参考图管理。对于“戴上饰品／脱下饰品”等交互，需区分基础模型一次调用的能力和agent多步调整的最终成功率。
+
+评估包含公开数字角色／编辑基准及内部人类偏好；全身生成与face-only API另分轨道。空间视频还涉及左右视图一致性，不能由普通单目画质直接推出。项目入口可访问，本轮未找到专属公开代码、权重和训练数据仓库；在线服务不等于可复现训练配方。
+
+<a id="paper-zing"></a>
+
+### 10.3 Zing-0.5：键盘与文本共同控制的可玩世界
+
+*Zing-0.5: Toward Playable Worlds with Real-Time Joint Action and Text Control*，Zing Team／SeedLeap.ai，2026-09-15，technical report v1；完整个人作者列表见附录。[原文](https://arxiv.org/html/2609.17909v1) · [项目](https://zing.loopit.me/) · [代码](https://github.com/seedleap/zing-world-model) · [权重](https://huggingface.co/seedleap/zing-0.5)
+
+#### 10.3.1 两种控制在什么地方进入Wan5B
+
+基于Wan2.2-TI2V-5B保留VAE与DiT。键盘输入用8个非负强度通道表示移动及视角转动，不把按键先转换成累计相机姿态；强度表示相对动作量，不是米或角度的严格物理单位。按latent时间窗对动作对齐后，经轻量因果encoder加入视觉token；文本按时间段通过cross-attention注入。
+
+直接动作条件避免了“计划相机轨迹”和“实际生成画面”偏离后仍不断累积姿态的一个问题，但不保证物理一致性。Action encoder约3.68M参数，只是主干的一小部分；能力仍依赖动作—视频、文本—事件的联合训练数据。
+
+#### 10.3.2 为什么教师按事件段，学生按小块
+
+一句“打开门，走进去”可能跨越多个输出chunk。报告训练segment-level教师，在一个prompt事件段内双向去噪、段间因果；学生按4 latent帧一块输出。教师提供事件尺度的分布监督，学生满足交互输出尺度。
+
+完整路线包含双向动作适配、AR教师与学生分支、因果ODE初始化／local consistency distillation、on-policy DMD。首帧单独建模为T2I，后续作为I2V继续，形成1+4n latent布局；部分阶段训练到30秒。因而不能把其长流能力描述成“全程只用5秒数据训练”。
+
+DMD还采用两遍rollout/replay，将不同长度样本打包；先计算并保存scorer梯度，再构建学生replay图，减少scorer与学生激活同时驻留的峰值。生成的历史latent仍detach，重建context表示可微，这一边界与SGF相近。
+
+#### 10.3.3 文本更新时，哪些缓存留下
+
+更新文本时刷新text KV，保留visual KV；这与LongLive在新prompt下重算历史视觉特征的recache路线不同。固定prefix sink、近期窗口以及切换后参考帧pin共享总预算；新pin替换旧pin，不是每次prompt变化就永久增加一个sink。
+
+其好处是降低切换成本并保持视觉上下文；潜在代价是旧视觉表示仍受旧条件影响。报告展示该训练配方下可用，不能推广成所有主干上“只更新文本cache”都够用。
+
+#### 10.3.4 为什么这篇的实时数字更接近服务问题
+
+报告在8张RTX 5090服务器上运行8个独立832×480 stream，每卡一份完整副本；单流未限速稳态24.63 FPS，客户端播放24 FPS。**不是8卡共同生成一路24 FPS。** 四步生成4 latent帧，对应常规16个视频帧；续流使用轻量TAEHV decoder，原VAE主要负责初始图像编码。
+
+服务链路包括解码后的媒体编码、H.264/fMP4片段、有限ring buffer、浏览器worker及短播放队列。发生背压时偏向保持live edge；这属于低延迟服务策略，不应和“完整保存每一帧”混为同一目标。24.63 FPS是稳态能力，不能自行换算成按键到屏幕的交互延迟。
+
+WBench Navigation使用158个case，质量评测分辨率1248×704、四步，整体81.0、consistency 88.5；这与上述480p运行配置不同。报告也承认，视觉历史不等于完整世界状态，长期交互后果与持久世界仍需要进一步支持。可玩导航演示不能直接证明可靠的长期物理模拟。
+
+### 10.4 新文献共同改变了哪些认识
+
+**首先，历史不仅是输入，还由模型主动构建。** SF解决“历史来自谁”；SGF／SGF+／CSF讨论“历史怎样获得未来反馈”；ID-Forcing讨论“历史表示经过什么计算”；AGF／CRP讨论“模型有多依赖它”。这些是不同环节，比较时应把初始化、训练历史、梯度边界和推理cache策略分别列出。
+
+**其次，长期记忆与长期稳定不相同。** 画面能连续生成四分钟，并不意味着可以正确恢复一分钟前离开视野的对象；RememBench式重访任务更直接。检索、合并、量化分别改变取用方式、表示方式和存储精度，不能统一用“压缩KV”概括。
+
+**最后，流式、实时、交互、长时四个词要各自有证据。** 因果小块输出说明流式；吞吐赶上播放说明稳态实时；条件变化到画面响应需要端到端计时；长时稳定需要时长、prompt数量和动态性一起报告。新的研究没有消除这些区分，反而使它们更重要。
+
+### 10.5 检索边界、撤回记录与下一轮阅读入口
+
+本轮使用arXiv原页／全文、作者项目页及官方仓库，重点检索2026年10月流式、AR视频、长流状态与交互生成，并补入直接相关旧文。它是有选择的生成综述，不声称穷尽所有world model、机器人动作模型或多模态服务框架。新收录文献的全文版本、核实日期、作者单位及资源统一见附录；空资源项表示未找到。
+
+[Memory Forcing（2610.11756）](https://arxiv.org/abs/2610.11756)于10月8日提交、10月11日撤回，arXiv作者说明原因为严重排版问题。本轮确认撤回状态，未将摘要中的性能主张写入有效方法比较，也未计入43篇正式目录；此处仅留检索记录，后续若有新版本需重新核验。
+
+对系统研究可另读[vLLM-Omni technical report](https://arxiv.org/abs/2610.09307)：本轮仅核对摘要所述的多阶段调度与session服务范围，未做全文精读，未计入正式目录。它是服务运行时，不能替代某个因果视频生成模型的架构说明。
